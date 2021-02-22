@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
+    ></script>
+
+    <link rel="stylesheet" href="styles/style.css" />
+    <script defer src="scripts/split-in-groups.js"></script>
+    <script defer src="scripts/split-in-pairs.js"></script>
+    <script defer src="scripts/run.js"></script>
+  </head>
+  <body>
+    <header>
+      <img src="img/elb-logo.svg" alt="" height="100px" />
+      <h1>Groups Scheduler</h1>
+    </header>
+    <main>
+      <form name="studentsForm">
+        <label for="students">
+          Перечислите всех студентов группы через запятую
+        </label>
+        <input
+          type="text"
+          name="students"
+          class="input-field col s-6"
+          placeholder="Вася, Маша, Петя, ..."
+        />
+        <button name="getSchedule" class="btn waves-effect waves-light">
+          Вдави кнопку
+        </button>
+      </form>
+      <br />
+      <textarea
+        name="schedule"
+        id="schedule"
+        class="materialize-textarea"
+        cols="30"
+        rows="10"
+      >
+      </textarea>
+    </main>
+    <footer></footer>
+  </body>
+</html>

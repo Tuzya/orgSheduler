@@ -1,0 +1,11 @@
+form[name='newGroup'] {
+  text-align: center;
+}
+
+form[name='newGroup'] > textarea[name='schedule'] {
+  visibility: hidden;
+  overflow-y: scroll;
+  height: 0px;
+  resize: none;
+  border: lightgrey 1px solid;
+}

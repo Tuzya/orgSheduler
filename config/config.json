@@ -1,0 +1,11 @@
+{
+  "development": {
+    "db": "mongodb://localhost/groups-scheduler"
+  },
+  "test": {
+    "db": "mongodb://localhost/groups-scheduler-test"
+  },
+  "production": {
+    "db": "mongodb://localhost/groups-scheduler-prod"
+  }
+}

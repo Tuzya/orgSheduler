@@ -1,0 +1,15 @@
+form[name='editGroup'] {
+  text-align: center;
+}
+
+form[name='editGroup'] > textarea[name='schedule'] {
+  /* visibility: hidden; */
+  overflow-y: scroll;
+  height: 300px;
+  resize: none;
+  border: lightgrey 1px solid;
+}
+
+button.btn.btn-danger {
+  background-color: #ff2934;
+}

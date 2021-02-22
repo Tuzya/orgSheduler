@@ -1,0 +1,15 @@
+
+
+button.btn.btn-danger {
+  background-color: #ff2934;
+}
+
+.wrap {
+  min-width: 300px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+}
+
+

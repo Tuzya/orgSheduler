@@ -1,0 +1,70 @@
+.group-schedule {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.group-schedule-header {
+    text-align: center;
+    color: #4520ab;
+    margin-bottom: 50px;
+}
+
+.group-schedule-header > div.group-name {
+    display: inline-block;
+    padding: 10px 10px;
+    font-size: 50px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.group-schedule-week {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4520ab;
+    max-width: 200px;
+}
+
+.group-schedule-week-content {
+    display: inline-block;
+    text-align: left;
+}
+
+.group-schedule-week-content > div.week-num {
+    font-size: 20px;
+    color: #4520ab;
+}
+
+.group-schedule .name {
+    display: none;
+}
+
+.group-schedule ul {
+    min-height: 110px
+}
+
+@media (max-width: 1400px) {
+    .group-schedule {
+        flex-wrap: wrap;
+    }
+
+    .group-schedule-week {
+        min-width: 40%;
+        margin: 0 15px;
+    }
+}
+
+@media (max-width: 512px) {
+    .group-schedule {
+        justify-content: left;
+    }
+
+    .group-schedule-week {
+        min-width: 80%;
+        margin: auto 15px;
+    }
+
+    .group-schedule-week li {
+        margin: 1em 0;
+    }
+}
