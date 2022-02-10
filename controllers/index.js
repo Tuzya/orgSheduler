@@ -51,5 +51,6 @@ exports.logout = (req, res) => {
 };
 
 exports.isAuth = (req, res) => {
-  res.send(req.isAuthenticated());
+  const isAuth = req.isAuthenticated();
+  res.send(isAuth);
 };

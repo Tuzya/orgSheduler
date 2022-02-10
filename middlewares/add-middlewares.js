@@ -6,7 +6,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
 const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const connection = require('../connection');
 const User = require('../models/User');
@@ -24,8 +23,10 @@ function addMiddlewares(router) {
     next();
   };
   router.use(corsMiddleware);
-  router.use(cookieParser());
   router.use(express.static('public'));
+
+  router.use(express.urlencoded({ extended: false }));
+  router.use(express.json());
 
   passport.use(new LocalStrategy(
     async (username, password, done) => {
@@ -45,9 +46,6 @@ function addMiddlewares(router) {
       return done('Error. Password not correct!');
     },
   ));
-
-  router.use(express.urlencoded({ extended: false }));
-  router.use(express.json());
 
   router.use(session({
     key: 'elbrus_scheduler_sid',

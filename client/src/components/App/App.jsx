@@ -15,16 +15,24 @@ import Schema from '../Schema/Schema';
 
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isAuth, setAuth] = useState(false);
 
   const checkAuth = async () => {
     setLoading(true);
-    const authResponse = await fetch('/api/check-auth');
-    let auth = await authResponse.text();
-    auth = auth === 'true';
-    setLoading(false);
-    setAuth(auth);
+    try {
+      const authResponse = await fetch('/api/check-auth');
+      let auth = await authResponse.text();
+      auth = auth === 'true';
+      console.log('file-App.jsx auth:', auth);
+      setAuth(auth);
+    }
+    catch (e) {
+      console.error('Failed chech-auth', e.message);
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
