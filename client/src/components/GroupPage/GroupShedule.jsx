@@ -23,7 +23,7 @@ export default function GroupSchedule({shedule = []}) {
         continue;
       }
       if (groupIndex === 2 && (i === groupsCount - 2 || i === groupsCount - 1)) {
-        res.push(groupC.slice(i * peoplePerGroup - corrInd, (i * peoplePerGroup) + peoplePerGroup + 1));
+        res.push(groupC.slice(i * peoplePerGroup - corrInd, (i * peoplePerGroup) + peoplePerGroup + 2));
         peoplePerGroup = PEOPLE_PER_GR + 1;
         corrInd = 1;
         continue;

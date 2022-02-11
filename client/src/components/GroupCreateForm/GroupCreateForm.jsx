@@ -16,7 +16,7 @@ export default function GroupCreateForm() {
   const { value: name, bind: bindName } = useInput('');
   const { value: phase, bind: bindPhase } = useInput('');
   const { value: students, bind: bindStudents } = useInput('');
-  const { setValue: setSchedule } = useInput([]);
+  // const { setValue: setSchedule } = useInput([]);
   const { value: online, setValue: setOnline } = useInput(false);
 
   const generateSchedule = async (event) => {
