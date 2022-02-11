@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
-
-// const env = process.env.NODE_ENV || 'development';
-// const db = process.env.DB_FULL_URL || require('./config/config.json')[env].db;
-// const db = process.env.DB_FULL_URL;
-const db = process.env.LOCAL_DB;
+const db = process.env.NODE_ENV === 'production' ? process.env.DB_FULL_URL : process.env.LOCAL_DB;
 
 mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true });
 
