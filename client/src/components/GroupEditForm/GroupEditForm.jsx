@@ -14,23 +14,36 @@ export default function GroupEditForm() {
 
   const { value: name, bind: bindName, setValue: setName } = useInput('');
   const { value: phase, bind: bindPhase, setValue: setPhase } = useInput('');
-  const { value: students, bind: bindStudents, setValue: setStudents} = useInput('');
-  const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput([], 'json');
+  const {
+    value: students,
+    bind: bindStudents,
+    setValue: setStudents,
+  } = useInput('');
+  const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput(
+    [],
+    'json'
+  );
   const { value: online, setValue: setOnline } = useInput(false);
   const [isLoad, setLoad] = React.useState(true);
 
   React.useEffect(() => {
     (async () => {
       setLoad(true);
-      const group = await (await fetch(`/api/groups/${groupId}`)).json();
-      setName(group.name);
-      setPhase(group.phase);
-      setOnline(group.online);
-      setStudents(String(group.students));
-      setShedule(JSON.stringify(group.shedule, '', 4));
-      setLoad(false);
+      try {
+        const group = await (await fetch(`/api/groups/${groupId}`)).json();
+        setName(group.name);
+        setPhase(group.phase);
+        setOnline(group.online);
+        setStudents(String(group.students));
+        setShedule(JSON.stringify(group.shedule, '', 4));
+      } catch (e) {
+        console.error('Load error group', e.message);
+        alert(`Load error group. ${e.message}`);
+      } finally {
+        setLoad(false);
+      }
     })();
-  }, [groupId, setName, setPhase, setShedule, setStudents]);
+  }, [groupId, setName, setPhase, setShedule, setStudents, setOnline]);
 
   const updateGroup = async (event) => {
     event.preventDefault();
@@ -42,7 +55,6 @@ export default function GroupEditForm() {
       JSON.parse(shedule),
       groupId
     );
-
     if (res?.ok) history.push(`/groups/${groupId}`);
     else alert('Что то пошло не так...');
   };
@@ -69,15 +81,20 @@ export default function GroupEditForm() {
 
   const deleteGroup = async (event) => {
     event.preventDefault();
-    const response = await fetch(`/api/groups/${groupId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    });
-    if (response.status === 200) history.push('/groups');
-    else alert(`Error while delete: ${response.status}`);
+    try {
+      const response = await fetch(`/api/groups/${groupId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      if (response.status === 200) history.push('/groups');
+      else alert(`Error while delete: ${response.status}`);
+    } catch (e) {
+      console.log('Error while delete:', e.message);
+      alert(`Error while delete: ${e.message}`);
+    }
   };
 
   const handleChange = ({ target }) => {
