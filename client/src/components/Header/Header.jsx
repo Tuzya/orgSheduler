@@ -15,7 +15,8 @@ function Header({ isAuth, logout }) {
               Groups Scheduler
             </div>
           </Link>
-          <div id="nav-mobile" className="right hide-on-small-only">
+          <a href="#" data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons">menu</i></a>
+          <div id="nav-mobile" className="right hide-on-med-and-down">
             <Link to="/">Groups(Home)</Link>
             {
               isAuth ? (
@@ -32,6 +33,19 @@ function Header({ isAuth, logout }) {
     </header>
   );
 }
+
+{/*<nav>*/}
+{/*  <div className="nav-wrapper">*/}
+{/*    <a href="#!" className="brand-logo">Logo</a>*/}
+{/*    <a href="#" data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons">menu</i></a>*/}
+{/*    <ul className="right hide-on-med-and-down">*/}
+{/*      <li><a href="sass.html">Sass</a></li>*/}
+{/*      <li><a href="badges.html">Components</a></li>*/}
+{/*      <li><a href="collapsible.html">Javascript</a></li>*/}
+{/*      <li><a href="mobile.html">Mobile</a></li>*/}
+{/*    </ul>*/}
+{/*  </div>*/}
+{/*</nav>*/}
 
 Header.propTypes = {
   isAuth: PropTypes.bool.isRequired,
