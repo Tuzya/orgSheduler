@@ -15,7 +15,7 @@ function Header({ isAuth, logout }) {
               Groups Scheduler
             </div>
           </Link>
-          <div data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons">menu</i></div>
+          <a href="#" data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons">menu</i></a>
           <div id="nav-mobile" className="right hide-on-med-and-down">
             <Link to="/">Groups(Home)</Link>
             {
