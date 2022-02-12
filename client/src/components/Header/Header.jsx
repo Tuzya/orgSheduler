@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import logo from './elb-logo.svg';
 import './Header.css';
-import M from 'materialize-css';
 
 function Header({ isAuth, logout }) {
   return (
