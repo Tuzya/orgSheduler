@@ -6,7 +6,7 @@ import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
 import { MAX_NUMS_PHASES } from '../../consts';
 import LinearLoader from '../Loader/LinearLoader';
-import {getGroupId} from "../../libs/reqFunct/groups";
+import { getGroupId } from '../../libs/reqFunct/groups';
 
 export default function GroupCreateForm() {
   const history = useHistory();
@@ -27,7 +27,16 @@ export default function GroupCreateForm() {
 
     setLoad(true);
     const schemas = await getSchemas(phase);
-    if (!schemas) return;
+    if (!schemas) {
+      alert(
+        `Схема для фазы ${phase} ${
+          online ? 'онлайн' : 'оффлайн'
+        } группы не существует.\nСперва создайте эту схему.`
+      );
+      setLoad(false);
+      history.push('/groups/schema');
+      return;
+    }
     const generatedShedule = getShedule(
       studentsArr,
       4,
@@ -36,8 +45,13 @@ export default function GroupCreateForm() {
       schemas,
       false
     );
-
-    const { _id: fetchedGroupId } = await getGroupId(name, phase, online, studentsArr, generatedShedule);
+    const { _id: fetchedGroupId } = await getGroupId(
+      name,
+      phase,
+      online,
+      studentsArr,
+      generatedShedule
+    );
     setGroupId(fetchedGroupId);
     // setSchedule(generatedSchedule); // TODO: check if is is ok
     setLoad(false);
