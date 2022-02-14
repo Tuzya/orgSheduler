@@ -28,7 +28,7 @@ export default function Schema() {
     const res = await putSchemas(key, schema, phase);
     setLoad(false);
     if (res?.ok)
-      alert(`${key === "offline" ? "Оффлайн" : "Онлайн"} схема обнавленна...`);
+      alert(`${key === "offline" ? "Оффлайн" : "Онлайн"} схема обновлена...`);
     else alert("Что то пошло не так...");
   };
 
