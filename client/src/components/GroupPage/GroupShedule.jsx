@@ -6,37 +6,22 @@ export default function GroupSchedule({shedule = []}) {
   const pairs = (group, people) => {
     let peoplePerGroup = PEOPLE_PER_PAIR;
     let groupC = [...group];
-    let groupIndex = 0;
-    let groupsCount = groupC.length / 2;
+    let groupsCount = groupC.length / 2; //кол-во пар
     const res = [];
-    let corrInd = 0
-    if (people === GROUPS.solo) return [["Solo"]];
+    if (people === GROUPS.solo) return [['Solo']];
     if (people === GROUPS.groups) {
-      groupC = group.filter((person) => person !== "Solo");
-      groupIndex = groupC.length % PEOPLE_PER_GR;
-      groupsCount = Math.trunc(groupC.length / PEOPLE_PER_GR);
+      groupC = group.filter((person) => person !== 'Solo');
       peoplePerGroup = PEOPLE_PER_GR;
+      if (groupC.length > 20) peoplePerGroup++;
+      groupsCount = Math.floor(groupC.length / peoplePerGroup) || 1; // кол-во групп.
     }
-    for (let i = 0; i < groupsCount; i++) {
-      if (groupIndex === 1 && i === groupsCount - 1) {
-        res.push(groupC.slice(i * peoplePerGroup, (i * peoplePerGroup) + peoplePerGroup + 1));
-        continue;
+    for (let i = 0; i < groupsCount; i++) res.push([]);
+    for (let i = 0; i < groupC.length;)
+      for (let j = 0; j < groupsCount; j++) {
+        if (groupC[i]) res[j].push(groupC[i])
+        i++;
       }
-      if (groupIndex === 2 && (i === groupsCount - 2 || i === groupsCount - 1)) {
-        res.push(groupC.slice(i * peoplePerGroup - corrInd, (i * peoplePerGroup) + peoplePerGroup + 2));
-        peoplePerGroup = PEOPLE_PER_GR + 1;
-        corrInd = 1;
-        continue;
-      }
-      res.push(groupC.slice(i * peoplePerGroup, (i * peoplePerGroup) + peoplePerGroup));
-    }
     return res;
-    //   return groupC.reduce((result, value, index, array) => {
-    //       if(groupIndex === 1 && index === 0)
-    //     if (index % peoplePerGroup === 0)
-    //       result.push(array.slice(index, index + peoplePerGroup));
-    //     return result;
-    //   }, []);
   };
 
   return (
@@ -49,9 +34,9 @@ export default function GroupSchedule({shedule = []}) {
               <ul key={day}>
                 <b>{DAYTORU[day]}</b>
                 {Object.keys(shedule[week][day]).map((people) =>
-                  pairs(shedule[week][day][people], people).map((pair, i) => (
+                  pairs(shedule[week][day][people], people).map((pair, i) =>
                     <li key={i}>{pair.join(" - ")}</li>
-                  ))
+                  )
                 )}
               </ul>
             ))}
