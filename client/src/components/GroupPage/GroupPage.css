@@ -45,7 +45,7 @@
 
 .group-schedule li {
     list-style-type: disc !important;
-    line-height: 1.6;
+    margin: 10px 0;
 }
 
 .group-schedule li:nth-child(2n+1) {
