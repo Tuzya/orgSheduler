@@ -12,7 +12,7 @@ export default function GroupSchedule({shedule = []}) {
     if (people === GROUPS.groups) {
       groupC = group.filter((person) => person !== 'Solo');
       peoplePerGroup = PEOPLE_PER_GR;
-      if (groupC.length > 20) peoplePerGroup++;
+      if (groupC.length > 21) peoplePerGroup++;
       groupsCount = Math.floor(groupC.length / peoplePerGroup) || 1; // кол-во групп.
     }
     for (let i = 0; i < groupsCount; i++) res.push([]);
