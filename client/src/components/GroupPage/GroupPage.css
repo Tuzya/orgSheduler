@@ -52,7 +52,7 @@
     color: #2061ab;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1500px) {
     .group-schedule {
         flex-wrap: wrap;
     }
