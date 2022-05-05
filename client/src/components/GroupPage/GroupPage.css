@@ -43,6 +43,15 @@
     min-height: 110px
 }
 
+.group-schedule li {
+    list-style-type: disc !important;
+    line-height: 1.6;
+}
+
+.group-schedule li:nth-child(2n+1) {
+    color: #2061ab;
+}
+
 @media (max-width: 1400px) {
     .group-schedule {
         flex-wrap: wrap;
