@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const User = require('../models/User');
-const { saltRounds } = require('../config/constants');
+const {saltRounds} = require('../config/constants');
 
 exports.login = (req, res, next) => {
   passport.authenticate('local', (err, user) => {
@@ -29,20 +29,24 @@ exports.signup = async (req, res) => {
     secret,
   } = req.body;
 
-  if (secret === process.env.AUTH_SECRET) {
-    const sameUser = await User.findOne({ username });
-    if (!sameUser) {
-      const hash = await bcrypt.hash(password, saltRounds);
-      await User.create({
-        username,
-        email,
-        password: hash,
-      });
-      return res.status(200).send('Now log in');
+  try {
+    if (secret === process.env.AUTH_SECRET) {
+      const sameUser = await User.findOne({username});
+      if (!sameUser) {
+        const hash = await bcrypt.hash(password, saltRounds);
+        await User.create({
+          username,
+          email,
+          password: hash,
+        });
+        return res.status(200).send('Now log in');
+      }
+      return res.status(400).send('This username is already used');
     }
-    return res.status(400).send('This username is already used');
+    return res.status(403).send('Forbidden');
+  } catch (err) {
+    res.status(500).send(err.message);
   }
-  return res.status(403).send('Forbidden');
 };
 
 exports.logout = (req, res) => {
