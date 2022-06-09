@@ -15,11 +15,18 @@ export default function GroupSchedule({shedule = []}) {
       if (groupC.length > 21) peoplePerGroup++;
       groupsCount = Math.floor(groupC.length / peoplePerGroup) || 1; // кол-во групп.
     }
+
     for (let i = 0; i < groupsCount; i++) res.push([]);
     for (let i = 0; i < groupC.length;)
       for (let j = 0; j < groupsCount; j++) {
-        if (groupC[i]) res[j].push(groupC[i])
-        i++;
+        if (people === GROUPS.pairs) {
+          res[j].push(groupC[i], groupC[i + 1])
+          i += 2;
+        } else {
+          if (!groupC[i]) return res;
+          res[j].push(groupC[i])
+          i += 1;
+        }
       }
     return res;
   };
