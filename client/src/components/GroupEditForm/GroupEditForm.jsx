@@ -55,6 +55,7 @@ export default function GroupEditForm() {
       JSON.parse(shedule),
       groupId
     );
+    console.log('file-GroupEditForm.jsx res?.ok:', res);
     if (res?.ok) history.push(`/groups/${groupId}`);
     else alert('Что то пошло не так...');
   };

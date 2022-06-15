@@ -29,7 +29,7 @@ exports.createGroup = async (req, res) => {
     });
     res.status(201).json(group);
   } catch (err) {
-    console.log(err);
+    console.log('createGroup error', err);
     res.status(500).send(err);
   }
 };
@@ -56,8 +56,8 @@ exports.updGroup = async (req, res) => {
     );
     res.status(200).json(group);
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.log('updGroup error', err);
+    res.status(500).send(err.message);
   }
 };
 
