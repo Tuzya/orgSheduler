@@ -54,10 +54,10 @@ exports.updGroup = async (req, res) => {
         online
       },
     );
-    res.status(200).json(group);
+    res.status(200).json({message: 'ok', group});
   } catch (err) {
     console.log('updGroup error', err);
-    res.status(500).send(err.message);
+    res.status(500).json({err: err.message});
   }
 };
 

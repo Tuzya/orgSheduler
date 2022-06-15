@@ -19,10 +19,11 @@ export default function GroupEditForm() {
     bind: bindStudents,
     setValue: setStudents,
   } = useInput('');
-  const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput(
-    [],
-    'json'
-  );
+  const {
+    value: shedule,
+    bind: bindShedule,
+    setValue: setShedule,
+  } = useInput([], 'json');
   const { value: online, setValue: setOnline } = useInput(false);
   const [isLoad, setLoad] = React.useState(true);
 
@@ -55,9 +56,8 @@ export default function GroupEditForm() {
       JSON.parse(shedule),
       groupId
     );
-    console.log('file-GroupEditForm.jsx res?.ok:', res);
-    if (res?.ok) history.push(`/groups/${groupId}`);
-    else alert('Что то пошло не так...');
+    if (res?.message === 'ok') history.push(`/groups/${groupId}`);
+    else alert(`Что то пошло не так... ${res.err}`);
   };
 
   const regenerateSchedule = async (event) => {
@@ -82,7 +82,7 @@ export default function GroupEditForm() {
 
   const deleteGroup = async (event) => {
     event.preventDefault();
-    if(!window.confirm(`Удалить группу ${name}?`)) return;
+    if (!window.confirm(`Удалить группу ${name}?`)) return;
     try {
       const response = await fetch(`/api/groups/${groupId}`, {
         method: 'DELETE',
@@ -102,7 +102,10 @@ export default function GroupEditForm() {
   const handleChange = ({ target }) => {
     setOnline(target.checked);
   };
-  return name ? (
+
+  return isLoad ? (
+    <div className="spinner" />
+  ) : (
     <form name="editGroup" onSubmit={updateGroup}>
       <input type="text" {...bindName} placeholder="Groupname" />
       <input
@@ -148,7 +151,5 @@ export default function GroupEditForm() {
         DELETE
       </button>
     </form>
-  ) : (
-    <div className="spinner" />
   );
 }
