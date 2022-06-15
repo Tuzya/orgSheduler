@@ -81,6 +81,7 @@ export default function GroupEditForm() {
 
   const deleteGroup = async (event) => {
     event.preventDefault();
+    if(!window.confirm(`Удалить группу ${name}?`)) return;
     try {
       const response = await fetch(`/api/groups/${groupId}`, {
         method: 'DELETE',
