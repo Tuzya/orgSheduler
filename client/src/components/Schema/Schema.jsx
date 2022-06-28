@@ -25,11 +25,11 @@ export default function Schema() {
   const generateSchema = async (event, key, schema, phase) => {
     event.preventDefault();
     setLoad(true);
-    const res = await putSchemas(key, schema, phase);
+    const res = await putSchemas(key, schema, phase); //todo try-catch
     setLoad(false);
-    if (res?.ok)
+    if (res?.message === 'ok')
       alert(`${key === "offline" ? "Оффлайн" : "Онлайн"} схема обновлена...`);
-    else alert("Что то пошло не так...");
+    else alert(`Что то пошло не так... ${res?.err}`);
   };
 
   const setSchemasHandler = (week, day, key, people) => {

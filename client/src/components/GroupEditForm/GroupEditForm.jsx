@@ -48,7 +48,7 @@ export default function GroupEditForm() {
 
   const updateGroup = async (event) => {
     event.preventDefault();
-    const res = await putGroup(
+    const res = await putGroup( //todo try-catch
       name,
       phase,
       online,

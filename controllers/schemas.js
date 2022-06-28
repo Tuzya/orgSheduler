@@ -23,9 +23,9 @@ exports.updSchemas = async (req, res) => {
 
   try {
     const group = await GroupShema.updateOne({phase: phase}, { [key]: grschema });
-    res.status(200).json(group);
+    res.status(200).json({message: 'ok', group});
   } catch (err) {
     console.log('Schema update error', err);
-    res.status(500).send(err);
+    res.status(500).json({err: err.message});
   }
 };

@@ -27,7 +27,7 @@ export default function GroupCreateForm() {
 
     setLoad(true);
     const schemas = await getSchemas(phase);
-    if (!schemas[online ? 'online' : "offline"]) {
+    if (!schemas?.[online ? 'online' : "offline"]) {
       alert(
         `Схема для фазы ${phase} ${
           online ? 'онлайн' : 'оффлайн'
