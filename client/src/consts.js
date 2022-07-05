@@ -15,7 +15,7 @@ export const DAYTORU = {
 };
 
 const days = Object.fromEntries(DAYS.map((day)=>([[day], GROUPS.solo])));
-
+export const daysCR = Object.fromEntries(DAYS.map((day)=>([[day], false])));
 const offSoloDays = {
   w1: days,
   w2: days,

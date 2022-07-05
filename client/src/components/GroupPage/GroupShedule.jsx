@@ -42,7 +42,7 @@ export default function GroupSchedule({shedule = []}) {
                 <b>{DAYTORU[day]}</b>
                 {Object.keys(shedule[week][day]).map((people) =>
                   pairs(shedule[week][day][people], people).map((pair, i) =>
-                    <li key={i}>{pair.join(" - ")}</li>
+                    <li key={i}>{pair.join(" --- ")}</li>
                   )
                 )}
               </ul>

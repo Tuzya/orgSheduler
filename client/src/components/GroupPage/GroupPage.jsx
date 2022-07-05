@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
 
 import './GroupPage.css';
 import GroupShedule from './GroupShedule';
+import CodeReviewTable from "./CodeReviewTable"
 
 function GroupPage() {
-  const { groupId } = useParams();
+  const {groupId} = useParams();
   const [name, setName] = useState('');
   const [phase, setPhase] = useState('');
-  // const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState([]);
   const [shedule, setShedule] = useState([]);
   const [isOnline, setOnline] = useState(false);
 
@@ -18,7 +19,7 @@ function GroupPage() {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
         setName(group.name);
         setPhase(group.phase);
-        // setStudents(group.students);
+        setStudents(group.students);
         setShedule(group.shedule);
         setOnline(group.online);
       } catch (e) {
@@ -28,15 +29,18 @@ function GroupPage() {
   }, []);
 
   return name ? (
-    <div className="group-page">
-      <div className="group-schedule-header">
-        <div className="group-name">{name}</div>
-        <div>{`(${isOnline ? 'Online' : 'Offline'}, Phase: ${phase})`}</div>
+    <>
+      <div className="group-page">
+        <div className="group-schedule-header">
+          <div className="group-name">{name}</div>
+          <div>{`(${isOnline ? 'Online' : 'Offline'}, Phase: ${phase})`}</div>
+        </div>
+        {shedule ? <GroupShedule shedule={shedule}/> : <div/>}
+          <CodeReviewTable name={name} students={students}/>
       </div>
-      {shedule ? <GroupShedule shedule={shedule} /> : <div />}
-    </div>
+    </>
   ) : (
-    <div className="spinner" />
+    <div className="spinner"/>
   );
 }
 
