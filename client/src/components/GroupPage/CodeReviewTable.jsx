@@ -1,8 +1,6 @@
 import React from 'react';
-import { getCRSchemas, putCRSchemas } from '../../libs/reqFunct/Schemas';
-import { daysCR } from '../../consts';
 
-function CodeReviewTable({ name, students }) {
+function CodeReviewTable({ group }) {
   const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег', 'nnn', 'nnn2'];
   const times = [
     '14:30-14:55',
@@ -27,49 +25,28 @@ function CodeReviewTable({ name, students }) {
   ];
 
   const [rows, setRows] = React.useState([rowsInit]);
-  const [schemaCR, setCR] = React.useState([]);
   const [isLoad, setLoad] = React.useState(false);
 
-  // console.log('file-CodeReviewTable.jsx rowsInit:', rowsInit);
-  // console.log('file-CodeReviewTable.jsx rows:', rows);
-  console.log('file-CodeReviewTable.jsx schemaCR:', schemaCR);
 
   React.useEffect(() => {
     let index = 0;
-    if (students.length) {
+    if (group.students.length) {
       rowsInit.forEach((colObj, i) => {
         Object.keys(colObj).forEach((key) => {
           if (!colObj[key]) {
-            rowsInit[i][key] = students[index] || ' ';
+            rowsInit[i][key] = group.students[index] || ' ';
             index++;
           }
         });
       });
     }
     setRows(rowsInit);
-  }, [students]);
+  }, [group]);
 
-  React.useEffect(() => {
-    (async () => {
-      setLoad(true);
-      if (name) {
-        try {
-          const CRSchema = await getCRSchemas();
-          console.log('file-CodeReviewTable.jsx CRSchema:', CRSchema);
-          const thisGroupCRSchema = CRSchema.schema.find((groupsNdays) => groupsNdays.group.name === name);
-          setCR(thisGroupCRSchema);
-        } catch (e) {
-          console.error('Failed CodeReviewSchema', e.message);
-        } finally {
-          setLoad(false);
-        }
-      }
-    })();
-  }, [name]);
 
   const columns = React.useMemo(
     () => [
-      { header: name, key: 'col1' },
+      { header: group.name, key: 'col1' },
       ...teachers.map((tname, i) => ({ header: tname, key: `col${i + 2}` })),
     ],
     []

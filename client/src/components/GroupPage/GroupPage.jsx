@@ -7,36 +7,28 @@ import CodeReviewTable from "./CodeReviewTable"
 
 function GroupPage() {
   const {groupId} = useParams();
-  const [name, setName] = useState('');
-  const [phase, setPhase] = useState('');
-  const [students, setStudents] = useState([]);
-  const [shedule, setShedule] = useState([]);
-  const [isOnline, setOnline] = useState(false);
+  const [group, setGroup] = useState({});
 
   useEffect(() => {
     (async () => {
       try {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
-        setName(group.name);
-        setPhase(group.phase);
-        setStudents(group.students);
-        setShedule(group.shedule);
-        setOnline(group.online);
+        setGroup(group);
       } catch (e) {
         console.log('Group Page Error', e.message);
       }
     })();
   }, []);
 
-  return name ? (
+  return group.name ? (
     <>
       <div className="group-page">
         <div className="group-schedule-header">
-          <div className="group-name">{name}</div>
-          <div>{`(${isOnline ? 'Online' : 'Offline'}, Phase: ${phase})`}</div>
+          <div className="group-name">{group.name}</div>
+          <div>{`(${group.online ? 'Online' : 'Offline'}, Phase: ${group.phase})`}</div>
         </div>
-        {shedule ? <GroupShedule shedule={shedule}/> : <div/>}
-          <CodeReviewTable name={name} students={students}/>
+        {group.shedule ? <GroupShedule shedule={group.shedule}/> : <div/>}
+          <CodeReviewTable group={group}/>
       </div>
     </>
   ) : (

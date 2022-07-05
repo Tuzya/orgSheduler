@@ -27,49 +27,7 @@ export const putSchemas = async (key, schema, phase) => {
   }
 };
 
-export const getCRSchemas = async (phase = 1) => {
-  try {
-    return (await fetch('/api/schemas/crschemas/')).json();
-  } catch (err) {
-    console.log('Get schema err ', err.message);
-  }
-};
 
-export const putCRSchemas = async (schema) => {
-  try {
-    return (
-      await fetch('/api/schemas/crschemas', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          schema,
-        }),
-      })
-    ).json();
-  } catch (err) {
-    console.log('Put Code Review schema err ', err.message);
-  }
-};
 
-export const syncCRSchemas = async (schemaInit) => {
-  try {
-    return (
-      await fetch('/api/schemas/sync', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          schemaInit: schemaInit,
-        }),
-      })
-    ).json();
-  } catch (err) {
-    console.log('syncCRSchemas err ', err.message);
-  }
-};
+
 

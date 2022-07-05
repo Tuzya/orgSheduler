@@ -1,28 +1,23 @@
 import React from 'react';
 import './Schema.css';
 import { daysCR } from '../../consts';
-import { getCRSchemas, putCRSchemas } from '../../libs/reqFunct/Schemas';
+import {updAllGroups} from "../../libs/reqFunct/groups"
 
 export default function CodeReviewSchema() {
-  const [schemaCR, setCR] = React.useState([]);
+  const [groups, setGroups] = React.useState([]);
   const [isLoad, setLoad] = React.useState(false);
+  console.log('file-CodeReviewSchema.jsx groups:', groups);
   React.useEffect(() => {
     (async () => {
       setLoad(true);
       try {
         const fetchedGroups = await (await fetch('/api/groups/')).json();
-        let schemaCRInit = fetchedGroups.map((group) => ({
-          group: group,
-          isChecked: false,
-          days: { ...daysCR },
-        }));
-        const CRSchema = await getCRSchemas();
-        if (fetchedGroups.length !== CRSchema.schema.length) {
-          await putCRSchemas(schemaCRInit);
-          setCR(schemaCRInit);
-        } else {
-          setCR(CRSchema.schema);
-        }
+        let schemaCRInitGroups = fetchedGroups.map((group) => {
+          if (!group.crshedule)
+            group.crshedule = { isChecked: false, crdays: { ...daysCR } };
+          return group;
+        });
+        setGroups(schemaCRInitGroups);
       } catch (e) {
         console.error('Failed CodeReviewSchema', e.message);
       } finally {
@@ -32,24 +27,38 @@ export default function CodeReviewSchema() {
   }, []);
 
   const setDaysAndGroup = (dayName, grName, isChecked) => {
-    setCR((state) => {
-      const daysAndGr = [...state];
-      if (dayName)
-        daysAndGr.find((grNdays) => grNdays.group.name === grName).days[
-          dayName
-        ] = isChecked;
-      else
-        daysAndGr.find((grNdays) => grNdays.group.name === grName).isChecked =
-          isChecked;
-      return daysAndGr;
+    console.log(
+      'file-CodeReviewSchema.jsx dayName, grName, isChecked:',
+      dayName,
+      grName,
+      isChecked
+    );
+    setGroups((state) => {
+      let groups = [];
+      if (dayName) {
+        groups = state.map((group) => {
+          if (group.name === grName) {
+            group.crshedule.crdays[dayName] = isChecked;
+          }
+          return group;
+        });
+      } else {
+        groups = state.map((group) => {
+          if (group.name === grName) {
+            group.crshedule.isChecked = isChecked;
+          }
+          return group;
+        });
+      }
+      return groups;
     });
   };
 
-  const generateCRSchema = async (event, schema) => {
+  const setCRSchemasToGroups = async (event, groups) => {
     event.preventDefault();
     setLoad(true);
     try {
-      const res = await putCRSchemas(schema);
+      const res = await updAllGroups(groups);
       if (res?.message === 'ok') alert('Code Review Schema updated.');
       else alert(`Что то пошло не так... ${res?.err}`);
     } catch (err) {
@@ -59,49 +68,42 @@ export default function CodeReviewSchema() {
     }
   };
 
+  // return null;
   return (
     <div>
       <h4>Code Review Schema</h4>
       <div className="wrap" style={{ minWidth: 450 }}>
-        <form onSubmit={(e) => generateCRSchema(e, schemaCR)}>
-          {schemaCR.map((grNdays) => (
-            <div key={grNdays.group.name}>
+        <form>
+          {groups.map((group) => (
+            <div key={group.name}>
               <div>
                 <label>
                   <input
                     type="checkbox"
-                    checked={grNdays.isChecked}
+                    checked={group.crshedule.isChecked}
                     onChange={(e) =>
-                      setDaysAndGroup(
-                        null,
-                        grNdays.group.name,
-                        e.target.checked
-                      )
+                      setDaysAndGroup(null, group.name, e.target.checked)
                     }
                   />
                   <span style={{ marginLeft: 25 }}>
-                    {grNdays.group.phase +
+                    {group.phase +
                       'Ph ' +
-                      grNdays.group.name +
+                      group.name +
                       ' ' +
-                      grNdays.group.students.length +
+                      group.students.length +
                       'st.'}
                   </span>
                 </label>
               </div>
 
               <div style={{ marginBottom: 20, marginTop: 10 }}>
-                {Object.keys(grNdays.days).map((day) => (
+                {Object.keys(group.crshedule.crdays).map((day) => (
                   <label key={day}>
                     <input
                       type="checkbox"
-                      checked={grNdays.days[day]}
+                      checked={group.crshedule.crdays[day]}
                       onChange={(e) =>
-                        setDaysAndGroup(
-                          day,
-                          grNdays.group.name,
-                          e.target.checked
-                        )
+                        setDaysAndGroup(day, group.name, e.target.checked)
                       }
                     />
                     <span style={{ marginLeft: 25 }}>{day}</span>
@@ -115,6 +117,7 @@ export default function CodeReviewSchema() {
             type="submit"
             className="btn waves-effect waves-light"
             disabled={isLoad}
+            onClick={(e) => setCRSchemasToGroups(e, groups)}
           >
             Save CodeReview scheme
           </button>

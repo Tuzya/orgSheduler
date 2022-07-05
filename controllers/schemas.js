@@ -33,26 +33,6 @@ exports.updSchemas = async (req, res) => {
   }
 };
 
-exports.updCRSchemas = async (req, res) => {
-  const { schema } = req.body;
-  try {
-    let schemaCR = await CodeReviewSchema.findOne({});
-    if (schemaCR) schemaCR.schema = schema;
-    else schemaCR = new CodeReviewSchema({ schema });
-    const saveRes = await schemaCR.save();
-    res.status(200).json({ message: "ok" });
-  } catch (err) {
-    console.log("Error to update group CodeReview Schema", err.message);
-    res.status(500).json({ err: err.message });
-  }
-};
 
-exports.allCRSchemas = async (req, res) => {
-  try {
-    const schemas = await CodeReviewSchema.findOne({}, {}, { _id: 0 });
-    res.status(200).json(schemas);
-  } catch (err) {
-    console.log("Error to groups CodeReview Schema", err.message);
-    res.status(500).json({ err: err.message });
-  }
-};
+
+

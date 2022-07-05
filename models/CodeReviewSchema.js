@@ -6,7 +6,6 @@ const codeReviewSchema = new Schema({
   schema: [
     {
       type: Object,
-      grName: String,
       isChecked: Boolean,
       days: {
         type: Object,
