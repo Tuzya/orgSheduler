@@ -1,48 +1,79 @@
 import React from 'react';
 
-function CodeReviewTable({ group }) {
-  const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег', 'nnn', 'nnn2'];
-  const times = [
-    '14:30-14:55',
-    '15:00-15:25',
-    '16:00-16:30',
-    '16:30-17:00',
-    '17:00-17:30',
-  ];
+const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег', 'nnn', 'nnn2'];
+const times = [
+  '14:30-14:55',
+  '15:00-15:25',
+  '16:00-16:30',
+  '16:30-17:00',
+  '17:00-17:30',
+];
 
-  let rowsInit = [
+const rowsInit = () => [
+  times.reduce(function (acc, cur, i) {
+    acc[`col${i + 1}`] = cur;
+    return acc;
+  }, {}),
+  ...teachers.map(() =>
     times.reduce(function (acc, cur, i) {
-      acc[`col${i + 1}`] = cur;
+      acc[`col${i + 1}`] = '';
+      if (i === 1) acc[`col${i + 1}`] = 'Педсовет';
       return acc;
-    }, {}),
-    ...teachers.map(() =>
-      times.reduce(function (acc, cur, i) {
-        acc[`col${i + 1}`] = '';
-        if (i === 1) acc[`col${i + 1}`] = 'Педсовет';
-        return acc;
-      }, {})
-    ),
-  ];
+    }, {})
+  ),
+];
 
-  const [rows, setRows] = React.useState([rowsInit]);
+function CodeReviewTable({ group }) {
   const [isLoad, setLoad] = React.useState(false);
-
+  const [crTables, setcrTables] = React.useState([]);
 
   React.useEffect(() => {
-    let index = 0;
+    let resCRTables = [];
     if (group.students.length) {
-      rowsInit.forEach((colObj, i) => {
-        Object.keys(colObj).forEach((key) => {
-          if (!colObj[key]) {
-            rowsInit[i][key] = group.students[index] || ' ';
-            index++;
-          }
-        });
+      Object.keys(group.crshedule.crdays).forEach((day, i) => {
+        if (group.crshedule.crdays[day]) {
+          resCRTables.push({ crDay: day });
+        }
       });
+      const studentsPerDay = Math.ceil(
+        group.students.length / resCRTables.length
+      );
+      let counter = 0;
+      const crTablesN = resCRTables.map((el) => {
+        let index = 0;
+        const tableData = rowsInit();
+        const slStudents = group.students.slice(
+          counter,
+          studentsPerDay + counter
+        );
+        counter += studentsPerDay;
+        const step = Math.floor(
+          ((teachers.length * times.length) - teachers.length) / slStudents.length
+        );
+        console.log('file-CodeReviewTable.jsx step:', step);
+        let stepIndex = 0;
+        // console.log('file-CodeReviewTable.jsx tableData:', tableData);
+        tableData.forEach((colObj, i) => {
+          stepIndex = stepIndex + step;
+          Object.keys(colObj).forEach((key) => {
+            if (!colObj[key])  {
+              tableData[i][key] = slStudents[index] || ' ';
+              index++;
+              // console.log('file-CodeReviewTable.jsx stepIndex:', stepIndex);
+            }
+          });
+        });
+        return {
+          ...el,
+          tableData: tableData,
+        };
+      });
+      console.log('file-CodeReviewTable.jsx crTables:', crTablesN);
+      setcrTables(crTablesN);
     }
-    setRows(rowsInit);
-  }, [group]);
 
+    // setRows(rowsInit);
+  }, [group]);
 
   const columns = React.useMemo(
     () => [
@@ -51,7 +82,7 @@ function CodeReviewTable({ group }) {
     ],
     []
   );
-
+  // return null;
   return (
     <>
       <div>
@@ -60,27 +91,32 @@ function CodeReviewTable({ group }) {
           <div>{`14 июнь (вт) — 16 июнь (чт)`}</div>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th key={column.key}>{column.header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {times.map((time, i) => {
-            return (
-              <tr key={time}>
-                {rows.map((cell, j) => {
-                  // return <td key={cell[column.key]}>{cell[column.key]}</td>;
-                  return <td key={j}>{cell[`col${i + 1}`]}</td>;
-                })}
+      {crTables.map((group) => (
+        <div key={group.crDay} style={{ marginBottom: 50 }}>
+          <table>
+            <caption>{group.crDay}</caption>
+            <thead>
+              <tr>
+                {columns.map((column) => (
+                  <th key={column.key}>{column.header}</th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {times.map((time, i) => {
+                return (
+                  <tr key={time}>
+                    {group.tableData.map((cell, j) => {
+                      // return <td key={cell[column.key]}>{cell[column.key]}</td>;
+                      return <td key={j}>{cell[`col${i + 1}`]}</td>;
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ))}
     </>
   );
 }

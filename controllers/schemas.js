@@ -1,5 +1,4 @@
 const GroupShema = require("../models/GroupSchema");
-const CodeReviewSchema = require("../models/CodeReviewSchema");
 
 exports.allSchemas = async (req, res) => {
   const schemas = await GroupShema.find({}, {}, { _id: 0 });
