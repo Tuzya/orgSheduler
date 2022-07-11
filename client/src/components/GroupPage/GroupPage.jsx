@@ -5,7 +5,7 @@ import './GroupPage.css';
 import GroupShedule from './GroupShedule';
 import CodeReviewTable from "./CodeReviewTable"
 
-function GroupPage() {
+function GroupPage({isAuth}) {
   const {groupId} = useParams();
   const [group, setGroup] = useState({});
 
@@ -28,7 +28,7 @@ function GroupPage() {
           <div>{`(${group.online ? 'Online' : 'Offline'}, Phase: ${group.phase})`}</div>
         </div>
         {group.shedule ? <GroupShedule shedule={group.shedule}/> : <div/>}
-          <CodeReviewTable group={group}/>
+          <CodeReviewTable group={group} isAuth={isAuth}/>
       </div>
     </>
   ) : (

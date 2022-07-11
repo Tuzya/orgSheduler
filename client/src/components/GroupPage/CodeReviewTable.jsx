@@ -1,45 +1,55 @@
 import React from 'react';
+import { GenerateRandomNumbers } from '../../libs/randomNumber';
 
-const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег', 'nnn', 'nnn2'];
+const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег'];
 const times = [
   '14:30-14:55',
   '15:00-15:25',
-  '16:00-16:30',
-  '16:30-17:00',
-  '17:00-17:30',
+  '15:30-15:55',
+  '16:00-16:25',
+  '16:30-16:55',
+  '17:00-17:25',
 ];
 
 const rowsInit = () => [
   times.reduce(function (acc, cur, i) {
-    acc[`col${i + 1}`] = cur;
+    acc[`row${i + 1}`] = cur;
     return acc;
   }, {}),
   ...teachers.map(() =>
     times.reduce(function (acc, cur, i) {
-      acc[`col${i + 1}`] = '';
-      if (i === 1) acc[`col${i + 1}`] = 'Педсовет';
+      acc[`row${i + 1}`] = '';
+      if (i === 1) acc[`row${i + 1}`] = 'Педсовет';
       return acc;
     }, {})
   ),
 ];
 
-function CodeReviewTable({ group }) {
+function CodeReviewTable({ group, isAuth }) {
+  const crTablesRef = React.useRef([]);
   const [isLoad, setLoad] = React.useState(false);
   const [crTables, setcrTables] = React.useState([]);
+  const [isEdit, setEdit] = React.useState(false);
 
   React.useEffect(() => {
     let resCRTables = [];
-    if (group.students.length) {
+    console.log('file-CodeReviewTable.jsx group:', group);
+    if (group.crtables?.length) return;
+    if (group.students.length && group.crshedule) {
       Object.keys(group.crshedule.crdays).forEach((day, i) => {
         if (group.crshedule.crdays[day]) {
           resCRTables.push({ crDay: day });
         }
       });
+
       const studentsPerDay = Math.ceil(
         group.students.length / resCRTables.length
       );
       let counter = 0;
-      const crTablesN = resCRTables.map((el) => {
+      const cellsInTable = teachers.length * times.length - teachers.length;
+      if (cellsInTable * resCRTables.length < group.students.length)
+        return alert('Студенты не помещаются в таблицу!');
+      const crTablesData = resCRTables.map((el) => {
         let index = 0;
         const tableData = rowsInit();
         const slStudents = group.students.slice(
@@ -47,19 +57,12 @@ function CodeReviewTable({ group }) {
           studentsPerDay + counter
         );
         counter += studentsPerDay;
-        const step = Math.floor(
-          ((teachers.length * times.length) - teachers.length) / slStudents.length
-        );
-        console.log('file-CodeReviewTable.jsx step:', step);
-        let stepIndex = 0;
-        // console.log('file-CodeReviewTable.jsx tableData:', tableData);
-        tableData.forEach((colObj, i) => {
-          stepIndex = stepIndex + step;
-          Object.keys(colObj).forEach((key) => {
-            if (!colObj[key])  {
-              tableData[i][key] = slStudents[index] || ' ';
+        const rndArrOfNum = GenerateRandomNumbers(cellsInTable);
+        tableData.forEach((rowObj, i) => {
+          Object.keys(rowObj).forEach((key) => {
+            if (!rowObj[key]) {
+              tableData[i][key] = slStudents[rndArrOfNum[index] - 1] || ' ';
               index++;
-              // console.log('file-CodeReviewTable.jsx stepIndex:', stepIndex);
             }
           });
         });
@@ -68,32 +71,50 @@ function CodeReviewTable({ group }) {
           tableData: tableData,
         };
       });
-      console.log('file-CodeReviewTable.jsx crTables:', crTablesN);
-      setcrTables(crTablesN);
+      crTablesRef.current = JSON.parse(JSON.stringify(crTablesData));
+      setcrTables(crTablesData);
     }
-
-    // setRows(rowsInit);
   }, [group]);
 
   const columns = React.useMemo(
     () => [
-      { header: group.name, key: 'col1' },
-      ...teachers.map((tname, i) => ({ header: tname, key: `col${i + 2}` })),
+      { header: group.name, key: 'row1' },
+      ...teachers.map((tname, i) => ({ header: tname, key: `row${i + 2}` })),
     ],
     []
   );
   // return null;
+
+  const handleInputChange = (inputData, day, col, row) => {
+    crTablesRef.current = crTablesRef.current.map((table) => {
+      if (table.crDay === day) {
+        table.tableData[col][row] = inputData;
+      }
+      return table;
+    });
+  };
+
+  const handleInputSave = () => {
+    setcrTables(crTablesRef.current);
+    setEdit(false);
+  };
+
+  const handleCancel = () => {
+    crTablesRef.current = JSON.parse(JSON.stringify(crTables));
+    setEdit(false);
+  };
+
   return (
     <>
       <div>
         <div className="group-schedule-header">
           <div className="group-coderev">Код ревью</div>
-          <div>{`14 июнь (вт) — 16 июнь (чт)`}</div>
+          <div>{crTables.map((group, i) => (i ? ' - '+ group.crDay : group.crDay))}</div>
         </div>
       </div>
       {crTables.map((group) => (
         <div key={group.crDay} style={{ marginBottom: 50 }}>
-          <table>
+          <table className="striped centered">
             <caption>{group.crDay}</caption>
             <thead>
               <tr>
@@ -106,9 +127,27 @@ function CodeReviewTable({ group }) {
               {times.map((time, i) => {
                 return (
                   <tr key={time}>
-                    {group.tableData.map((cell, j) => {
+                    {group.tableData.map((cell, colNum) => {
+                      const row = `row${i + 1}`;
                       // return <td key={cell[column.key]}>{cell[column.key]}</td>;
-                      return <td key={j}>{cell[`col${i + 1}`]}</td>;
+                      return (
+                        <td key={colNum}>
+                          {!isEdit && cell[row]}
+                          {isEdit && (
+                            <input
+                              defaultValue={cell[row]}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e.target.value,
+                                  group.crDay,
+                                  colNum,
+                                  row
+                                )
+                              }
+                            />
+                          )}
+                        </td>
+                      );
                     })}
                   </tr>
                 );
@@ -117,6 +156,17 @@ function CodeReviewTable({ group }) {
           </table>
         </div>
       ))}
+      {isAuth && <div style={{ textAlign: 'center' }}>
+        <button className="btn" onClick={() => setEdit(true)}>
+          EditMode
+        </button>
+        <button className="btn" onClick={handleInputSave} disabled={!isEdit}>
+          Save
+        </button>
+        <button className="btn" onClick={handleCancel} disabled={!isEdit}>
+          Cancel
+        </button>
+      </div>}
     </>
   );
 }

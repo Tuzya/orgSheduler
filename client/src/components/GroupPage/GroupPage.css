@@ -85,3 +85,15 @@
         margin: 1em 0;
     }
 }
+
+table.striped > tbody > tr:nth-child(odd) {
+    background-color: #fff2cc;
+}
+table.striped > tbody > tr:nth-child(even) {
+    background-color: #cfe2f3
+}
+
+table {
+    font-family: 'Comfortaa', cursive;
+    font-size: 12pt;
+}

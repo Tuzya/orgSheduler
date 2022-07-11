@@ -20,6 +20,7 @@ const groupSchema = new Schema({
       fri: Boolean,
     },
   },
+  crtables: Array
 });
 
 module.exports = model("Group", groupSchema);
