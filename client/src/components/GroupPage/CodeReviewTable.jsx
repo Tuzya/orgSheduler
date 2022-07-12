@@ -45,12 +45,13 @@ function CodeReviewTable({ group, isAuth }) {
       const prevSelectedDays = Object.fromEntries(
         DAYS.map((day) => [[day], tableDays.includes(day)])
       );
-      const isScheduleSame = JSON.stringify(crdays) === JSON.stringify(prevSelectedDays)
+      const isScheduleSame =
+        JSON.stringify(crdays) === JSON.stringify(prevSelectedDays);
       if (isScheduleSame) {
         crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
         return setcrTables(group.crtables);
       }
-      if (group.students?.length && group.crshedule?.length) {
+      if (group.students?.length && group.crshedule) {
         generateStudentsToTable(group);
       }
     }
@@ -66,10 +67,6 @@ function CodeReviewTable({ group, isAuth }) {
 
   const generateStudentsToTable = async (group) => {
     let resCRTables = [];
-    if (!group.crshedule?.length) {
-      alert('Не выбраны дни кодревью для этой группы');
-      return history.push('/groups/schema');
-    }
     const crdays = group.crshedule?.crdays || {};
     Object.keys(crdays).forEach((day, i) => {
       if (crdays[day]) resCRTables.push({ crDay: day });
@@ -80,10 +77,7 @@ function CodeReviewTable({ group, isAuth }) {
     );
     let counter = 0;
     const cellsInTable = teachers.length * times.length - teachers.length;
-    if (
-      resCRTables.length &&
-      cellsInTable * resCRTables.length < group.students.length
-    )
+    if (resCRTables.length && cellsInTable * resCRTables.length < group.students.length)
       return alert('Студенты не помещаются в таблицу!');
     const crTablesData = resCRTables.map((el) => {
       let index = 0;
@@ -133,6 +127,12 @@ function CodeReviewTable({ group, isAuth }) {
     setEdit(false);
   };
   const handleGenerateTable = () => {
+    const crdays = group.crshedule.crdays;
+    const isDaysNotChecked = Object.keys(crdays).every((day) => crdays[day] === false);
+    if (!group.crshedule || isDaysNotChecked) {
+      alert('Не выбраны дни кодревью для этой группы');
+      return history.push('/groups/schema');
+    }
     generateStudentsToTable(group);
   };
 

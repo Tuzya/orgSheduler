@@ -8,7 +8,7 @@ import CodeReviewTable from './CodeReviewTable';
 function GroupPage({ isAuth }) {
   const { groupId } = useParams();
   const [group, setGroup] = useState({});
-  const [isLoad, setLoad] = useState(false);
+  const [isLoad, setLoad] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -33,7 +33,7 @@ function GroupPage({ isAuth }) {
         <div>{`(${group.online ? 'Online' : 'Offline'}, Phase: ${group.phase})`}</div>
       </div>
       {group.shedule ? <GroupShedule shedule={group.shedule} /> : <div />}
-      <CodeReviewTable group={group} isAuth={isAuth} />
+      {group.students ? <CodeReviewTable group={group} isAuth={isAuth} /> : <div />}
     </div>
   );
 }
