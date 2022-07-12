@@ -68,3 +68,21 @@ export const updAllGroups = async (groups) => {
     console.log('UpdAll group err ', err.message);
   }
 };
+
+
+export const updCRTablesGroups = async (crtables, groupId) => {
+  try {
+    return (
+      await fetch(`/api/groups/crtables/${groupId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({crtables}),
+      })
+    ).json();
+  } catch (err) {
+    console.log('Upd CRTables err ', err.message);
+  }
+};

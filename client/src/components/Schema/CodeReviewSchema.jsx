@@ -1,7 +1,7 @@
 import React from 'react';
 import './Schema.css';
 import { daysCR } from '../../consts';
-import {updAllGroups} from "../../libs/reqFunct/groups"
+import { updAllGroups } from '../../libs/reqFunct/groups';
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
@@ -13,8 +13,7 @@ export default function CodeReviewSchema() {
       try {
         const fetchedGroups = await (await fetch('/api/groups/')).json();
         let schemaCRInitGroups = fetchedGroups.map((group) => {
-          if (!group.crshedule)
-            group.crshedule = { isChecked: false, crdays: { ...daysCR } };
+          if (!group.crshedule) group.crshedule = { crdays: { ...daysCR } };
           return group;
         });
         setGroups(schemaCRInitGroups);
@@ -35,25 +34,15 @@ export default function CodeReviewSchema() {
     );
     setGroups((state) => {
       let groups = [];
-      if (dayName) {
-        groups = state.map((group) => {
-          if (group.name === grName) {
-            group.crshedule.crdays[dayName] = isChecked;
-          }
-          return group;
-        });
-      } else {
-        groups = state.map((group) => {
-          if (group.name === grName) {
-            group.crshedule.isChecked = isChecked;
-          }
-          return group;
-        });
-      }
+      groups = state.map((group) => {
+        if (group.name === grName) {
+          group.crshedule.crdays[dayName] = isChecked;
+        }
+        return group;
+      });
       return groups;
     });
   };
-
   const setCRSchemasToGroups = async (event, groups) => {
     event.preventDefault();
     setLoad(true);
@@ -77,14 +66,6 @@ export default function CodeReviewSchema() {
           {groups.map((group) => (
             <div key={group.name}>
               <div>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={group.crshedule.isChecked}
-                    onChange={(e) =>
-                      setDaysAndGroup(null, group.name, e.target.checked)
-                    }
-                  />
                   <span style={{ marginLeft: 25 }}>
                     {group.phase +
                       'Ph ' +
@@ -93,7 +74,6 @@ export default function CodeReviewSchema() {
                       group.students.length +
                       'st.'}
                   </span>
-                </label>
               </div>
 
               <div style={{ marginBottom: 20, marginTop: 10 }}>

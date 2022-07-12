@@ -10,7 +10,6 @@ const groupSchema = new Schema({
   shedule: Object,
   crshedule: {
     type: Object,
-    isChecked: Boolean,
     days: {
       type: Object,
       mon: Boolean,
@@ -20,7 +19,8 @@ const groupSchema = new Schema({
       fri: Boolean,
     },
   },
-  crtables: Array
+  crtables: [{crDay: String, tableData: [{}]}]
 });
+
 
 module.exports = model("Group", groupSchema);
