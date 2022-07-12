@@ -2,6 +2,7 @@ import React from 'react';
 import './Schema.css';
 import { daysCR } from '../../consts';
 import { updAllGroups } from '../../libs/reqFunct/groups';
+import LinearLoader from "../Loader/LinearLoader"
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
@@ -103,6 +104,7 @@ export default function CodeReviewSchema() {
           </button>
         </form>
       </div>
+      {isLoad && <LinearLoader />}
     </div>
   );
 }

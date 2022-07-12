@@ -1,6 +1,7 @@
 import React from 'react';
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
+import LinearLoader from '../Loader/LinearLoader';
 
 const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег'];
 const times = [
@@ -34,7 +35,6 @@ function CodeReviewTable({ group, isAuth }) {
   console.log('file-CodeReviewTable.jsx crTables:', crTables);
 
   React.useEffect(() => {
-    console.log('file-CodeReviewTable.jsx group:', group);
     if (group.crtables?.length) {
       crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
       return setcrTables(group.crtables); // если есть таблица с юзерами, то не генерим заново
@@ -52,7 +52,7 @@ function CodeReviewTable({ group, isAuth }) {
     []
   );
 
-  const generateStudentsToTable = (group) => {
+  const generateStudentsToTable = async (group) => {
     let resCRTables = [];
     Object.keys(group.crshedule.crdays).forEach((day, i) => {
       if (group.crshedule.crdays[day]) {
@@ -91,7 +91,9 @@ function CodeReviewTable({ group, isAuth }) {
     });
     crTablesRef.current = JSON.parse(JSON.stringify(crTablesData));
     setcrTables(crTablesData);
-    updCRTablesGroups(crTablesData, group._id);
+    setLoad(true);
+    await updCRTablesGroups(crTablesData, group._id);
+    setLoad(false);
   };
 
   const handleInputChange = (inputData, day, col, row) => {
@@ -101,13 +103,14 @@ function CodeReviewTable({ group, isAuth }) {
       }
       return table;
     });
-    console.log('file-CodeReviewTable.jsx crTablesRef.current:', crTablesRef.current);
   };
 
-  const handleInputSave = () => {
+  const handleInputSave = async () => {
     setcrTables(crTablesRef.current);
     setEdit(false);
-    updCRTablesGroups(crTablesRef.current, group._id);
+    setLoad(true);
+    await updCRTablesGroups(crTablesRef.current, group._id);
+    setLoad(false);
   };
 
   const handleCancel = () => {
@@ -116,7 +119,6 @@ function CodeReviewTable({ group, isAuth }) {
   };
   const handleGenerateTable = () => {
     generateStudentsToTable(group);
-
   };
 
   return (
@@ -177,21 +179,30 @@ function CodeReviewTable({ group, isAuth }) {
           <button className="btn" onClick={() => setEdit(true)}>
             EditMode
           </button>
-          <button className="btn" onClick={handleInputSave} disabled={!isEdit}>
+          <button
+            className="btn"
+            onClick={handleInputSave}
+            disabled={!isEdit || isLoad}
+          >
             Save
           </button>
-          <button className="btn" onClick={handleCancel} disabled={!isEdit}>
+          <button
+            className="btn"
+            onClick={handleCancel}
+            disabled={!isEdit || isLoad}
+          >
             Cancel
           </button>
           <button
             className="btn"
             onClick={handleGenerateTable}
-            disabled={isEdit}
+            disabled={isEdit || isLoad}
           >
-            Generate
+            NewGenerate
           </button>
         </div>
       )}
+      {isLoad && <LinearLoader />}
     </>
   );
 }
