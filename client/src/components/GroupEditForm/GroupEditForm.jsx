@@ -56,7 +56,7 @@ export default function GroupEditForm() {
       JSON.parse(shedule),
       groupId
     );
-    if (res?.message === 'ok') history.push(`/groups/${groupId}`);
+    if (res?.message === 'ok') return history.push(`/groups/${groupId}`);
     else alert(`Что то пошло не так... ${res.err}`);
   };
 
@@ -91,7 +91,7 @@ export default function GroupEditForm() {
           Accept: 'application/json',
         },
       });
-      if (response.status === 200) history.push('/groups');
+      if (response.status === 200) return history.push('/groups');
       else alert(`Error while delete: ${response.status}`);
     } catch (e) {
       console.log('Error while delete:', e.message);

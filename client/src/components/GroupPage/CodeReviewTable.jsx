@@ -1,7 +1,10 @@
 import React from 'react';
+import { useHistory } from 'react-router';
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
 import LinearLoader from '../Loader/LinearLoader';
+import { isObjEmpty } from '../../libs/functions';
+import { DAYS } from '../../consts';
 
 const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег'];
 const times = [
@@ -32,15 +35,24 @@ function CodeReviewTable({ group, isAuth }) {
   const [isLoad, setLoad] = React.useState(false);
   const [crTables, setcrTables] = React.useState([]);
   const [isEdit, setEdit] = React.useState(false);
-  console.log('file-CodeReviewTable.jsx crTables:', crTables);
+
+  const history = useHistory();
 
   React.useEffect(() => {
-    if (group.crtables?.length) {
-      crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
-      return setcrTables(group.crtables); // если есть таблица с юзерами, то не генерим заново
-    }
-    if (group.students?.length && group.crshedule) {
-      generateStudentsToTable(group);
+    if (!isObjEmpty(group)) {
+      const crdays = group.crshedule?.crdays || {};
+      const tableDays = group.crtables.map((table) => table.crDay);
+      const prevSelectedDays = Object.fromEntries(
+        DAYS.map((day) => [[day], tableDays.includes(day)])
+      );
+      const isScheduleSame = JSON.stringify(crdays) === JSON.stringify(prevSelectedDays)
+      if (isScheduleSame) {
+        crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
+        return setcrTables(group.crtables);
+      }
+      if (group.students?.length && group.crshedule?.length) {
+        generateStudentsToTable(group);
+      }
     }
   }, [group]);
 
@@ -54,10 +66,13 @@ function CodeReviewTable({ group, isAuth }) {
 
   const generateStudentsToTable = async (group) => {
     let resCRTables = [];
-    Object.keys(group.crshedule.crdays).forEach((day, i) => {
-      if (group.crshedule.crdays[day]) {
-        resCRTables.push({ crDay: day });
-      }
+    if (!group.crshedule?.length) {
+      alert('Не выбраны дни кодревью для этой группы');
+      return history.push('/groups/schema');
+    }
+    const crdays = group.crshedule?.crdays || {};
+    Object.keys(crdays).forEach((day, i) => {
+      if (crdays[day]) resCRTables.push({ crDay: day });
     });
 
     const studentsPerDay = Math.ceil(

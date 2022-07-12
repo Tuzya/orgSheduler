@@ -2,12 +2,15 @@ import React from 'react';
 import './Schema.css';
 import { daysCR } from '../../consts';
 import { updAllGroups } from '../../libs/reqFunct/groups';
+import { useHistory } from 'react-router';
 import LinearLoader from "../Loader/LinearLoader"
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
   const [isLoad, setLoad] = React.useState(false);
-  console.log('file-CodeReviewSchema.jsx groups:', groups);
+
+  const history = useHistory();
+
   React.useEffect(() => {
     (async () => {
       setLoad(true);
@@ -27,21 +30,13 @@ export default function CodeReviewSchema() {
   }, []);
 
   const setDaysAndGroup = (dayName, grName, isChecked) => {
-    console.log(
-      'file-CodeReviewSchema.jsx dayName, grName, isChecked:',
-      dayName,
-      grName,
-      isChecked
-    );
     setGroups((state) => {
-      let groups = [];
-      groups = state.map((group) => {
+      return state.map((group) => {
         if (group.name === grName) {
           group.crshedule.crdays[dayName] = isChecked;
         }
         return group;
       });
-      return groups;
     });
   };
   const setCRSchemasToGroups = async (event, groups) => {
@@ -49,7 +44,11 @@ export default function CodeReviewSchema() {
     setLoad(true);
     try {
       const res = await updAllGroups(groups);
-      if (res?.message === 'ok') alert('Code Review Schema updated.');
+      if (res?.message === 'ok') {
+        setLoad(false);
+        alert('Code Review Schema updated.');
+        return history.push('/');
+      }
       else alert(`Что то пошло не так... ${res?.err}`);
     } catch (err) {
       console.log('Error generateCRSchema', err.message);
@@ -68,12 +67,7 @@ export default function CodeReviewSchema() {
             <div key={group.name}>
               <div>
                   <span style={{ marginLeft: 25 }}>
-                    {group.phase +
-                      'Ph ' +
-                      group.name +
-                      ' ' +
-                      group.students.length +
-                      'st.'}
+                    {`${group.phase} Ph ${group.name} ${group.students.length} st.`}
                   </span>
               </div>
 
