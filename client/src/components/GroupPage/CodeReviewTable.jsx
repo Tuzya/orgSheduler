@@ -39,7 +39,7 @@ function CodeReviewTable({ group, isAuth }) {
       crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
       return setcrTables(group.crtables); // если есть таблица с юзерами, то не генерим заново
     }
-    if (group.students.length && group.crshedule) {
+    if (group.students?.length && group.crshedule) {
       generateStudentsToTable(group);
     }
   }, [group]);
