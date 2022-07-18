@@ -4,7 +4,7 @@ import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
 import LinearLoader from '../Loader/LinearLoader';
 import { isObjEmpty } from '../../libs/functions';
-import { DAYS } from '../../consts';
+import {DAYS, DAYTORU} from '../../consts';
 
 const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег', 'Сергей', 'Алексей'];
 const times = [
@@ -136,13 +136,13 @@ function CodeReviewTable({ group, isAuth }) {
       <div>
         <div className="group-schedule-header">
           <div className="group-coderev">Код ревью</div>
-          <div>{crTables.map((group, i) => (i ? ' - ' + group.crDay : group.crDay))}</div>
+          <div>{crTables.map((group, i) => (i ? ' - ' + DAYTORU[group.crDay] : DAYTORU[group.crDay]))}</div>
         </div>
       </div>
       {crTables.map((group) => (
         <div key={group.crDay} style={{ marginBottom: 50 }}>
           <table className="striped centered">
-            <caption>{group.crDay}</caption>
+            <caption>{DAYTORU[group.crDay]}</caption>
             <thead>
               <tr>
                 {columns.map((column) => (
