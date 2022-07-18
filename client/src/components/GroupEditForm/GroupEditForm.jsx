@@ -14,16 +14,8 @@ export default function GroupEditForm() {
 
   const { value: name, bind: bindName, setValue: setName } = useInput('');
   const { value: phase, bind: bindPhase, setValue: setPhase } = useInput('');
-  const {
-    value: students,
-    bind: bindStudents,
-    setValue: setStudents,
-  } = useInput('');
-  const {
-    value: shedule,
-    bind: bindShedule,
-    setValue: setShedule,
-  } = useInput([], 'json');
+  const { value: students, bind: bindStudents, setValue: setStudents } = useInput('');
+  const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput([], 'json');
   const { value: online, setValue: setOnline } = useInput(false);
   const [isLoad, setLoad] = React.useState(true);
 
@@ -48,7 +40,8 @@ export default function GroupEditForm() {
 
   const updateGroup = async (event) => {
     event.preventDefault();
-    const res = await putGroup( //todo try-catch
+    const res = await putGroup(
+      //todo try-catch
       name,
       phase,
       online,
@@ -67,14 +60,7 @@ export default function GroupEditForm() {
 
     const schemas = await getSchemas(phase);
     if (schemas) {
-      const generatedShedule = getShedule(
-        studentsArr,
-        undefined,
-        !!online,
-        phase,
-        schemas,
-        true
-      );
+      const generatedShedule = getShedule(studentsArr, undefined, !!online, phase, schemas, true);
       setShedule(JSON.stringify(generatedShedule, '', 4));
     }
     setLoad(false);
@@ -88,8 +74,8 @@ export default function GroupEditForm() {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+          Accept: 'application/json'
+        }
       });
       if (response.status === 200) return history.push('/groups');
       else alert(`Error while delete: ${response.status}`);
@@ -107,7 +93,10 @@ export default function GroupEditForm() {
     <div className="spinner" />
   ) : (
     <form name="editGroup" onSubmit={updateGroup}>
-      <input type="text" {...bindName} placeholder="Groupname" />
+      <div className="input-field col s12">
+        <input id="Groupname" type="text" {...bindName} placeholder="Groupname" />
+        <label htmlFor="Groupname">Groupname</label>
+      </div>
       <input
         type="number"
         {...bindPhase}
@@ -117,37 +106,17 @@ export default function GroupEditForm() {
       />
       <input type="text" {...bindStudents} placeholder="Students" />
       <label>
-        <input
-          name="online"
-          type="checkbox"
-          checked={online}
-          onChange={handleChange}
-        />
+        <input name="online" type="checkbox" checked={online} onChange={handleChange} />
         <span>Онлайн</span>
       </label>
-      <button
-        type="button"
-        className="btn"
-        disabled={isLoad}
-        onClick={regenerateSchedule}
-      >
+      <button type="button" className="btn" disabled={isLoad} onClick={regenerateSchedule}>
         generate pairs by scheme
       </button>
-      <textarea
-        name="schedule"
-        {...bindShedule}
-        disabled={isLoad}
-        placeholder="Shedule"
-      />
+      <textarea name="schedule" {...bindShedule} disabled={isLoad} placeholder="Shedule" />
       <button type="submit" className="btn" disabled={isLoad}>
         Update
       </button>
-      <button
-        type="button"
-        className="btn btn-danger"
-        disabled={isLoad}
-        onClick={deleteGroup}
-      >
+      <button type="button" className="btn btn-danger" disabled={isLoad} onClick={deleteGroup}>
         DELETE
       </button>
     </form>

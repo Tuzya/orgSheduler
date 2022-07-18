@@ -3,7 +3,7 @@ import './Schema.css';
 import { daysCR } from '../../consts';
 import { updAllGroups } from '../../libs/reqFunct/groups';
 import { useHistory } from 'react-router';
-import LinearLoader from "../Loader/LinearLoader"
+import LinearLoader from '../Loader/LinearLoader';
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
@@ -48,8 +48,7 @@ export default function CodeReviewSchema() {
         setLoad(false);
         alert('Code Review Schema updated.');
         return history.push('/');
-      }
-      else alert(`Что то пошло не так... ${res?.err}`);
+      } else alert(`Что то пошло не так... ${res?.err}`);
     } catch (err) {
       console.log('Error generateCRSchema', err.message);
     } finally {
@@ -63,12 +62,22 @@ export default function CodeReviewSchema() {
       <h4>Code Review Schema</h4>
       <div className="wrap" style={{ minWidth: 450 }}>
         <form>
+          <div className="row">
+            <div className="input-field col s12">
+              <input id="teachers" type="text" className="validate" />
+              <label htmlFor="teachers">Teachers</label>
+            </div>
+            <div className="input-field col s12">
+              <input id="timegaps" type="text" className="validate" />
+              <label htmlFor="timegaps">Time Gaps</label>
+            </div>
+          </div>
           {groups.map((group) => (
             <div key={group.name}>
               <div>
-                  <span style={{ marginLeft: 25 }}>
-                    {`${group.phase} Ph ${group.name} ${group.students.length} st.`}
-                  </span>
+                <span style={{ marginLeft: 25 }}>
+                  {`${group.phase} Ph ${group.name} ${group.students.length} st.`}
+                </span>
               </div>
 
               <div style={{ marginBottom: 20, marginTop: 10 }}>
@@ -77,9 +86,7 @@ export default function CodeReviewSchema() {
                     <input
                       type="checkbox"
                       checked={group.crshedule.crdays[day]}
-                      onChange={(e) =>
-                        setDaysAndGroup(day, group.name, e.target.checked)
-                      }
+                      onChange={(e) => setDaysAndGroup(day, group.name, e.target.checked)}
                     />
                     <span style={{ marginLeft: 25 }}>{day}</span>
                   </label>
@@ -98,6 +105,7 @@ export default function CodeReviewSchema() {
           </button>
         </form>
       </div>
+
       {isLoad && <LinearLoader />}
     </div>
   );

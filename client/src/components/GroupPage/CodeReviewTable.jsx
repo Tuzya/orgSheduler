@@ -6,14 +6,14 @@ import LinearLoader from '../Loader/LinearLoader';
 import { isObjEmpty } from '../../libs/functions';
 import { DAYS } from '../../consts';
 
-const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег'];
+const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег', 'Сергей', 'Алексей'];
 const times = [
   '14:30-14:55',
   '15:00-15:25',
   '15:30-15:55',
   '16:00-16:25',
   '16:30-16:55',
-  '17:00-17:25',
+  '17:00-17:25'
 ];
 
 const rowsInit = () => [
@@ -27,7 +27,7 @@ const rowsInit = () => [
       if (i === 1) acc[`row${i + 1}`] = 'Педсовет';
       return acc;
     }, {})
-  ),
+  )
 ];
 
 function CodeReviewTable({ group, isAuth }) {
@@ -45,8 +45,7 @@ function CodeReviewTable({ group, isAuth }) {
       const prevSelectedDays = Object.fromEntries(
         DAYS.map((day) => [[day], tableDays.includes(day)])
       );
-      const isScheduleSame =
-        JSON.stringify(crdays) === JSON.stringify(prevSelectedDays);
+      const isScheduleSame = JSON.stringify(crdays) === JSON.stringify(prevSelectedDays);
       if (isScheduleSame) {
         crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
         return setcrTables(group.crtables);
@@ -60,7 +59,7 @@ function CodeReviewTable({ group, isAuth }) {
   const columns = React.useMemo(
     () => [
       { header: group.name, key: 'row1' },
-      ...teachers.map((tname, i) => ({ header: tname, key: `row${i + 2}` })),
+      ...teachers.map((tname, i) => ({ header: tname, key: `row${i + 2}` }))
     ],
     []
   );
@@ -68,13 +67,11 @@ function CodeReviewTable({ group, isAuth }) {
   const generateStudentsToTable = async (group) => {
     let resCRTables = [];
     const crdays = group.crshedule?.crdays || {};
-    Object.keys(crdays).forEach((day, i) => {
+    Object.keys(crdays).forEach((day) => {
       if (crdays[day]) resCRTables.push({ crDay: day });
     });
 
-    const studentsPerDay = Math.ceil(
-      group.students.length / resCRTables.length
-    );
+    const studentsPerDay = Math.ceil(group.students.length / resCRTables.length);
     let counter = 0;
     const cellsInTable = teachers.length * times.length - teachers.length;
     if (resCRTables.length && cellsInTable * resCRTables.length < group.students.length)
@@ -82,10 +79,7 @@ function CodeReviewTable({ group, isAuth }) {
     const crTablesData = resCRTables.map((el) => {
       let index = 0;
       const tableData = rowsInit();
-      const slStudents = group.students.slice(
-        counter,
-        studentsPerDay + counter
-      );
+      const slStudents = group.students.slice(counter, studentsPerDay + counter);
       counter += studentsPerDay;
       const rndArrOfNum = GenerateRandomNumbers(cellsInTable);
       tableData.forEach((rowObj, i) => {
@@ -127,6 +121,7 @@ function CodeReviewTable({ group, isAuth }) {
     setEdit(false);
   };
   const handleGenerateTable = () => {
+    if (!window.confirm('Перемешать студентов в таблице?')) return;
     const crdays = group.crshedule.crdays;
     const isDaysNotChecked = Object.keys(crdays).every((day) => crdays[day] === false);
     if (!group.crshedule || isDaysNotChecked) {
@@ -141,11 +136,7 @@ function CodeReviewTable({ group, isAuth }) {
       <div>
         <div className="group-schedule-header">
           <div className="group-coderev">Код ревью</div>
-          <div>
-            {crTables.map((group, i) =>
-              i ? ' - ' + group.crDay : group.crDay
-            )}
-          </div>
+          <div>{crTables.map((group, i) => (i ? ' - ' + group.crDay : group.crDay))}</div>
         </div>
       </div>
       {crTables.map((group) => (
@@ -171,12 +162,7 @@ function CodeReviewTable({ group, isAuth }) {
                           <input
                             defaultValue={cell[row]}
                             onChange={(e) =>
-                              handleInputChange(
-                                e.target.value,
-                                group.crDay,
-                                colNum,
-                                row
-                              )
+                              handleInputChange(e.target.value, group.crDay, colNum, row)
                             }
                           />
                         )}
@@ -194,25 +180,13 @@ function CodeReviewTable({ group, isAuth }) {
           <button className="btn" onClick={() => setEdit(true)}>
             EditMode
           </button>
-          <button
-            className="btn"
-            onClick={handleInputSave}
-            disabled={!isEdit || isLoad}
-          >
+          <button className="btn" onClick={handleInputSave} disabled={!isEdit || isLoad}>
             Save
           </button>
-          <button
-            className="btn"
-            onClick={handleCancel}
-            disabled={!isEdit || isLoad}
-          >
+          <button className="btn" onClick={handleCancel} disabled={!isEdit || isLoad}>
             Cancel
           </button>
-          <button
-            className="btn"
-            onClick={handleGenerateTable}
-            disabled={isEdit || isLoad}
-          >
+          <button className="btn" onClick={handleGenerateTable} disabled={isEdit || isLoad}>
             NewGenerate
           </button>
         </div>
