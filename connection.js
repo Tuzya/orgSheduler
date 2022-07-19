@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const db = process.env.NODE_ENV === 'production' ? process.env.DB_FULL_URL : process.env.LOCAL_DB;
+const dbPath = process.env.NODE_ENV === 'production' ? process.env.DB_FULL_URL : process.env.LOCAL_DB;
 
-mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(dbPath);
 
 mongoose.connection.on('connected', function () {
-  console.log('Mongoose default connection open to ' + db);
+  console.log('Mongoose default connection open to ' + dbPath);
 });
 // If the connection throws an error
 mongoose.connection.on('error', function (err) {
@@ -23,4 +23,4 @@ process.on('SIGINT', function () {
 });
 
 
-module.exports = mongoose.connection;
+module.exports = dbPath;

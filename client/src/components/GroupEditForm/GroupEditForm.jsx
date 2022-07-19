@@ -14,15 +14,8 @@ export default function GroupEditForm() {
 
   const { value: name, bind: bindName, setValue: setName } = useInput('');
   const { value: phase, bind: bindPhase, setValue: setPhase } = useInput('');
-  const {
-    value: students,
-    bind: bindStudents,
-    setValue: setStudents,
-  } = useInput('');
-  const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput(
-    [],
-    'json'
-  );
+  const { value: students, bind: bindStudents, setValue: setStudents } = useInput('');
+  const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput([], 'json');
   const { value: online, setValue: setOnline } = useInput(false);
   const [isLoad, setLoad] = React.useState(true);
 
@@ -48,6 +41,7 @@ export default function GroupEditForm() {
   const updateGroup = async (event) => {
     event.preventDefault();
     const res = await putGroup(
+      //todo try-catch
       name,
       phase,
       online,
@@ -55,8 +49,8 @@ export default function GroupEditForm() {
       JSON.parse(shedule),
       groupId
     );
-    if (res?.ok) history.push(`/groups/${groupId}`);
-    else alert('Что то пошло не так...');
+    if (res?.message === 'ok') return history.push(`/groups/${groupId}`);
+    else alert(`Что то пошло не так... ${res.err}`);
   };
 
   const regenerateSchedule = async (event) => {
@@ -66,14 +60,7 @@ export default function GroupEditForm() {
 
     const schemas = await getSchemas(phase);
     if (schemas) {
-      const generatedShedule = getShedule(
-        studentsArr,
-        undefined,
-        !!online,
-        phase,
-        schemas,
-        true
-      );
+      const generatedShedule = getShedule(studentsArr, undefined, !!online, phase, schemas, true);
       setShedule(JSON.stringify(generatedShedule, '', 4));
     }
     setLoad(false);
@@ -81,15 +68,16 @@ export default function GroupEditForm() {
 
   const deleteGroup = async (event) => {
     event.preventDefault();
+    if (!window.confirm(`Удалить группу ${name}?`)) return;
     try {
       const response = await fetch(`/api/groups/${groupId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+          Accept: 'application/json'
+        }
       });
-      if (response.status === 200) history.push('/groups');
+      if (response.status === 200) return history.push('/groups');
       else alert(`Error while delete: ${response.status}`);
     } catch (e) {
       console.log('Error while delete:', e.message);
@@ -100,9 +88,15 @@ export default function GroupEditForm() {
   const handleChange = ({ target }) => {
     setOnline(target.checked);
   };
-  return name ? (
+
+  return isLoad ? (
+    <div className="spinner" />
+  ) : (
     <form name="editGroup" onSubmit={updateGroup}>
-      <input type="text" {...bindName} placeholder="Groupname" />
+      <div className="input-field col s12">
+        <input id="Groupname" type="text" {...bindName} placeholder="Groupname" />
+        <label htmlFor="Groupname">Groupname</label>
+      </div>
       <input
         type="number"
         {...bindPhase}
@@ -112,41 +106,19 @@ export default function GroupEditForm() {
       />
       <input type="text" {...bindStudents} placeholder="Students" />
       <label>
-        <input
-          name="online"
-          type="checkbox"
-          checked={online}
-          onChange={handleChange}
-        />
+        <input name="online" type="checkbox" checked={online} onChange={handleChange} />
         <span>Онлайн</span>
       </label>
-      <button
-        type="button"
-        className="btn"
-        disabled={isLoad}
-        onClick={regenerateSchedule}
-      >
+      <button type="button" className="btn" disabled={isLoad} onClick={regenerateSchedule}>
         generate pairs by scheme
       </button>
-      <textarea
-        name="schedule"
-        {...bindShedule}
-        disabled={isLoad}
-        placeholder="Shedule"
-      />
+      <textarea name="schedule" {...bindShedule} disabled={isLoad} placeholder="Shedule" />
       <button type="submit" className="btn" disabled={isLoad}>
         Update
       </button>
-      <button
-        type="button"
-        className="btn btn-danger"
-        disabled={isLoad}
-        onClick={deleteGroup}
-      >
+      <button type="button" className="btn btn-danger" disabled={isLoad} onClick={deleteGroup}>
         DELETE
       </button>
     </form>
-  ) : (
-    <div className="spinner" />
   );
 }

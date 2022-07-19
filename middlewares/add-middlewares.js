@@ -3,12 +3,16 @@ const createError = require('http-errors');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 
 const morgan = require('morgan');
 const bcrypt = require('bcrypt');
-const connection = require('../connection');
+const dbPath = require('../connection');
 const User = require('../models/User');
+
+const mongooseStoreOpt = {
+  mongoUrl: dbPath
+}
 
 function addMiddlewares(router) {
   router.use(express.urlencoded({ extended: true }));
@@ -49,7 +53,7 @@ function addMiddlewares(router) {
 
   router.use(session({
     key: 'elbrus_scheduler_sid',
-    store: new MongoStore({ mongooseConnection: connection }),
+    store: new MongoStore(mongooseStoreOpt),
     secret: '-N0BodyKn0wsMySecrit-',
     resave: false,
     saveUninitialized: false,

@@ -19,7 +19,7 @@ export default function SignUp() {
         body: JSON.stringify(user),
       });
       if (signUpResponse.status === 200) {
-        history.push('/login');
+        return history.push('/login');
       } else {
         console.log(signUpResponse);
         alert(signUpResponse.status);

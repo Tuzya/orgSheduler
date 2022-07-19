@@ -113,7 +113,7 @@ function App() {
               isAuth={isAuth}
               component={Schema}
             />
-            <Route exact path="/groups/:groupId" render={() => <GroupPage />} />
+            <Route exact path="/groups/:groupId" render={() => <GroupPage isAuth={isAuth}/>} />
             <PrivateRoute
               exact
               path="/groups/:groupId/edit"

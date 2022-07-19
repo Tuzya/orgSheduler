@@ -21,21 +21,21 @@ export default function GroupCreateForm() {
 
   const generateSchedule = async (event) => {
     event.preventDefault();
-
+    if(!students || !name || !phase ) return;
     const studentsArr = students.split(/ *, */g);
     // const generatedSchedule = getSchedule(studentsArr, undefined, !!online);
 
     setLoad(true);
     const schemas = await getSchemas(phase);
-    if (!schemas) {
+    if (!schemas?.[online ? 'online' : "offline"]) {
       alert(
         `Схема для фазы ${phase} ${
           online ? 'онлайн' : 'оффлайн'
         } группы не существует.\nСперва создайте эту схему.`
       );
       setLoad(false);
-      history.push('/groups/schema');
-      return;
+      return history.push('/groups/schema');
+
     }
     const generatedShedule = getShedule(
       studentsArr,
@@ -55,7 +55,7 @@ export default function GroupCreateForm() {
     setGroupId(fetchedGroupId);
     // setSchedule(generatedSchedule); // TODO: check if is is ok
     setLoad(false);
-    history.push(`/groups/${fetchedGroupId}`);
+    return history.push(`/groups/${fetchedGroupId}`);
   };
 
   const handleChange = ({ target }) => {
