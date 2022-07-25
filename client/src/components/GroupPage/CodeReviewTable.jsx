@@ -6,7 +6,7 @@ import LinearLoader from '../Loader/LinearLoader';
 import { isObjEmpty } from '../../libs/functions';
 import {DAYS, DAYTORU} from '../../consts';
 
-const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег', 'Сергей', 'Алексей'];
+const teachers = ['Тарас', 'Рома', 'Денис', 'Олег', 'Сергей', 'Алексей'];
 const times = [
   '14:30-14:55',
   '15:00-15:25',
