@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
 import LinearLoader from '../Loader/LinearLoader';
 import { isObjEmpty } from '../../libs/functions';
-import {DAYS, DAYTORU} from '../../consts';
+import { DAYS, DAYTORU } from '../../consts';
+import {getTeachersAndGaps} from "../../libs/reqFunct/teachersAndTimes"
 
-const teachers = ['Тарас', 'Рома', 'Даша', 'Денис', 'Олег', 'Сергей', 'Алексей'];
+
 const times = [
   '14:30-14:55',
   '15:00-15:25',
@@ -16,7 +17,7 @@ const times = [
   '17:00-17:25'
 ];
 
-const rowsInit = () => [
+const rowsInit = (teachers) => [
   times.reduce(function (acc, cur, i) {
     acc[`row${i + 1}`] = cur;
     return acc;
@@ -34,25 +35,30 @@ function CodeReviewTable({ group, isAuth }) {
   const crTablesRef = React.useRef([]);
   const [isLoad, setLoad] = React.useState(false);
   const [crTables, setcrTables] = React.useState([]);
+  const [teachers, setTeachers] = React.useState(['Тарас', 'Рома', 'Денис', 'Олег', 'Сергей', 'Алексей']);
   const [isEdit, setEdit] = React.useState(false);
 
   const history = useHistory();
 
   React.useEffect(() => {
     if (!isObjEmpty(group)) {
-      const crdays = group.crshedule?.crdays || {};
-      const tableDays = group.crtables.map((table) => table.crDay);
-      const prevSelectedDays = Object.fromEntries(
-        DAYS.map((day) => [[day], tableDays.includes(day)])
-      );
-      const isScheduleSame = JSON.stringify(crdays) === JSON.stringify(prevSelectedDays);
-      if (isScheduleSame) {
-        crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
-        return setcrTables(group.crtables);
-      }
-      if (group.students?.length && group.crshedule) {
-        generateStudentsToTable(group);
-      }
+      (async () => {
+
+        // const teachers = await getTeachersAndGaps(); //????????????
+        const crdays = group.crshedule?.crdays || {};
+        const tableDays = group.crtables.map((table) => table.crDay);
+        const prevSelectedDays = Object.fromEntries(
+          DAYS.map((day) => [[day], tableDays.includes(day)])
+        );
+        const isScheduleSame = JSON.stringify(crdays) === JSON.stringify(prevSelectedDays);
+        if (isScheduleSame) {
+          crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
+          return setcrTables(group.crtables);
+        }
+        if (group.students?.length && group.crshedule) {
+          generateStudentsToTable(group, teachers);
+        }
+      })();
     }
   }, [group]);
 
@@ -64,7 +70,7 @@ function CodeReviewTable({ group, isAuth }) {
     []
   );
 
-  const generateStudentsToTable = async (group) => {
+  const generateStudentsToTable = async (group, teachers) => {
     let resCRTables = [];
     const crdays = group.crshedule?.crdays || {};
     Object.keys(crdays).forEach((day) => {
@@ -78,7 +84,7 @@ function CodeReviewTable({ group, isAuth }) {
       return alert('Студенты не помещаются в таблицу!');
     const crTablesData = resCRTables.map((el) => {
       let index = 0;
-      const tableData = rowsInit();
+      const tableData = rowsInit(teachers);
       const slStudents = group.students.slice(counter, studentsPerDay + counter);
       counter += studentsPerDay;
       const rndArrOfNum = GenerateRandomNumbers(cellsInTable);
@@ -128,7 +134,7 @@ function CodeReviewTable({ group, isAuth }) {
       alert('Не выбраны дни кодревью для этой группы');
       return history.push('/groups/schema');
     }
-    generateStudentsToTable(group);
+    generateStudentsToTable(group, teachers);
   };
 
   return (
@@ -136,7 +142,9 @@ function CodeReviewTable({ group, isAuth }) {
       <div>
         <div className="group-schedule-header">
           <div className="group-coderev">Код ревью</div>
-          <div>{crTables.map((group, i) => (i ? ' - ' + DAYTORU[group.crDay] : DAYTORU[group.crDay]))}</div>
+          <div>
+            {crTables.map((group, i) => (i ? ' - ' + DAYTORU[group.crDay] : DAYTORU[group.crDay]))}
+          </div>
         </div>
       </div>
       {crTables.map((group) => (
@@ -177,7 +185,11 @@ function CodeReviewTable({ group, isAuth }) {
       ))}
       {isAuth && (
         <div style={{ textAlign: 'center' }}>
-          <button className="btn" onClick={() => setEdit(true)}>
+          <button
+            className="btn"
+            onClick={() => setEdit(true)}
+            disabled={isLoad || !crTables.length}
+          >
             EditMode
           </button>
           <button className="btn" onClick={handleInputSave} disabled={!isEdit || isLoad}>
@@ -186,7 +198,11 @@ function CodeReviewTable({ group, isAuth }) {
           <button className="btn" onClick={handleCancel} disabled={!isEdit || isLoad}>
             Cancel
           </button>
-          <button className="btn" onClick={handleGenerateTable} disabled={isEdit || isLoad}>
+          <button
+            className="btn"
+            onClick={handleGenerateTable}
+            disabled={isEdit || isLoad || !crTables.length}
+          >
             NewGenerate
           </button>
         </div>

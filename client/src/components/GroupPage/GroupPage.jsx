@@ -16,7 +16,7 @@ function GroupPage({ isAuth }) {
       try {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
         if (!group) alert('Не удалось получить группу');
-        setGroup(group);
+        if (group) setGroup(group);
       } catch (e) {
         console.log('Group Page Error', e.message);
       } finally {

@@ -1,9 +1,14 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose")
 
-const tHistorySchema = new Schema({
-  crtable: [{crDay: String, tableData: []}]
-},
+const tHistorySchema = new Schema(
+  {
+    crtable: {
+      online: [{ crDay: String, tableData: [] }],
+      offline: [{ crDay: String, tableData: [] }]
+    }
+  },
   {
     timestamps: true
-  });
-module.exports = model('TablesHistory', tHistorySchema);
+  }
+)
+module.exports = model("TablesHistory", tHistorySchema)

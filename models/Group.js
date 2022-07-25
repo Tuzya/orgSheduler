@@ -19,7 +19,8 @@ const groupSchema = new Schema({
       fri: Boolean,
     },
   },
-  crtables: [{crDay: String, tableData: [{}]}]
+  crtables: [{crDay: String, tableData: [{}]}],
+  isArchived: {type: Boolean, default: false}
 });
 
 
