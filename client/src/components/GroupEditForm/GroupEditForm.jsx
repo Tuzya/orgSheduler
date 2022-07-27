@@ -16,7 +16,7 @@ export default function GroupEditForm() {
   const { value: phase, bind: bindPhase, setValue: setPhase } = useInput('');
   const { value: students, bind: bindStudents, setValue: setStudents } = useInput('');
   const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput([], 'json');
-  const { value: groupType, setValue: setOnline } = useInput(false);
+  const { value: groupType, setValue: setGroupType } = useInput(false);
   const [isLoad, setLoad] = React.useState(true);
 
   React.useEffect(() => {
@@ -26,7 +26,7 @@ export default function GroupEditForm() {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
         setName(group.name);
         setPhase(group.phase);
-        setOnline(group.groupType);
+        setGroupType(group.groupType);
         setStudents(String(group.students));
         setShedule(JSON.stringify(group.shedule, '', 4));
       } catch (e) {
@@ -36,7 +36,7 @@ export default function GroupEditForm() {
         setLoad(false);
       }
     })();
-  }, [groupId, setName, setPhase, setShedule, setStudents, setOnline]);
+  }, [groupId, setName, setPhase, setShedule, setStudents, setGroupType]);
 
   const updateGroup = async (event) => {
     event.preventDefault();
@@ -93,7 +93,7 @@ export default function GroupEditForm() {
   };
 
   const handleChange = ({ target }) => {
-    setOnline(target.value);
+    setGroupType(target.value);
   };
 
   return isLoad ? (

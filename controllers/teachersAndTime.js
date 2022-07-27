@@ -1,8 +1,9 @@
 const TeachersTime = require('../models/TeachersTime');
 
 exports.allTeachersAndTime = async (req, res) => {
+  const groupType = req.query.groupType
   try {
-    const teachersTime = await TeachersTime.find({}, { _id: 0 }).lean();
+    const teachersTime = await TeachersTime.findOne({groupType}, { _id: 0 }).lean();
     res.status(200).json(teachersTime);
   } catch (err) {
     console.log('teachersAndTime get error', err);

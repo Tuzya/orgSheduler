@@ -4,7 +4,7 @@ import { daysCR, groupTypes } from '../../consts';
 import { updAllGroups } from '../../libs/reqFunct/groups';
 import { useHistory } from 'react-router';
 import LinearLoader from '../Loader/LinearLoader';
-import { updateTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
+import { getTeachersAndGaps, updateTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import useInput from '../../hooks/input-hook';
 
 export default function CodeReviewSchema() {
@@ -22,7 +22,7 @@ export default function CodeReviewSchema() {
       setLoad(true);
       try {
         const fetchedGroups = await (await fetch('/api/groups/')).json();
-        let schemaCRInitGroups = fetchedGroups.map((group) => {
+        let schemaCRInitGroups = fetchedGroups?.map((group) => {
           if (!group.crshedule) group.crshedule = { crdays: { ...daysCR } };
           return group;
         });
@@ -34,6 +34,23 @@ export default function CodeReviewSchema() {
       }
     })();
   }, []);
+
+  React.useEffect(() => {
+    (async () => {
+      setLoad(true);
+      try {
+        const teachersAndGaps = await getTeachersAndGaps(groupType);
+        if (teachersAndGaps) {
+          setTeachers(String(teachersAndGaps.teachers));
+          setTimegaps(String(teachersAndGaps.timegaps));
+        }
+      } catch (e) {
+        console.error('Failed to get teachers or timegaps', e.message);
+      } finally {
+        setLoad(false);
+      }
+    })();
+  }, [groupType]);
 
   const setDaysAndGroup = (dayName, grName, isChecked) => {
     setGroups((state) => {
@@ -135,10 +152,10 @@ export default function CodeReviewSchema() {
               ))}
             </select>
           </div>
-          <div style={{textAlign: 'center'}}>
-          <button type="submit" className="btn waves-effect waves-light" disabled={isLoad}>
-            Save CodeReview scheme
-          </button>
+          <div style={{ textAlign: 'center' }}>
+            <button type="submit" className="btn waves-effect waves-light" disabled={isLoad}>
+              Save CodeReview scheme
+            </button>
           </div>
         </form>
       </div>

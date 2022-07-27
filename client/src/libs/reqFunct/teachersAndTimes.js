@@ -1,6 +1,6 @@
-export const getTeachersAndGaps = async () => {
+export const getTeachersAndGaps = async (groupType) => {
   try {
-    return (await fetch('/api/teachersandtime')).json();
+    return (await fetch(`/api/teachersandtime?groupType=${groupType}`)).json();
   } catch (e) {
     console.log('Group Page Error', e.message);
   }
