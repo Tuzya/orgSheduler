@@ -30,7 +30,7 @@ function GroupPage({ isAuth }) {
     <div className="group-page">
       <div className="group-schedule-header">
         <div className="group-name">{group.name}</div>
-        <div>{`(${group.online ? 'Online' : 'Offline'}, Phase: ${group.phase})`}</div>
+        <div>{`(${group.groupType}, Phase: ${group.phase})`}</div>
       </div>
       {group.shedule ? <GroupShedule shedule={group.shedule} /> : <div />}
       {group.students ? <CodeReviewTable group={group} isAuth={isAuth} /> : <div />}

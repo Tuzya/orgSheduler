@@ -96,12 +96,12 @@ export default function CodeReviewSchema() {
             </div>
           </div>
           {groups
-            .filter((group) => group.online === (groupType === groupTypes.online))
+            .filter((group) => group.groupType === groupType)
             .map((group) => (
               <div key={group.name}>
                 <div>
                   <span style={{ marginLeft: 25 }}>
-                    {`${group.online ? 'online' : 'offline'} ${group.phase} Ph 
+                    {`${group.groupType} ${group.phase} Ph 
                     ${group.name} ${group.students.length} st.`}
                   </span>
                 </div>

@@ -39,7 +39,7 @@ function GroupsList({ isAuth }) {
           link={`/groups/${group._id}`}
           phase={group.phase}
           people={group.students}
-          groupType={group.online ? 'Онлайн' : 'Оффлайн'}
+          groupType={group.groupType}
         />
       ))}
     </div>

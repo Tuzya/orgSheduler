@@ -4,7 +4,7 @@ import { getShedule } from '../../libs/groups-splitter';
 import './GroupCreateForm.css';
 import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
-import { MAX_NUMS_PHASES } from '../../consts';
+import {groupTypes, MAX_NUMS_PHASES} from '../../consts';
 import LinearLoader from '../Loader/LinearLoader';
 import { getGroupId } from '../../libs/reqFunct/groups';
 
@@ -17,8 +17,8 @@ export default function GroupCreateForm() {
   const { value: phase, bind: bindPhase } = useInput('');
   const { value: students, bind: bindStudents } = useInput('');
   // const { setValue: setSchedule } = useInput([]);
-  const { value: online, setValue: setOnline } = useInput(false);
-
+  const { value: groupType, setValue: setOnline } = useInput(false);
+console.log('file-GroupCreateForm.jsx groupType:', groupType);
   const generateSchedule = async (event) => {
     event.preventDefault();
     if(!students || !name || !phase ) return;
@@ -27,6 +27,7 @@ export default function GroupCreateForm() {
 
     setLoad(true);
     const schemas = await getSchemas(phase);
+    const online = groupType === groupTypes.online
     if (!schemas?.[online ? 'online' : "offline"]) {
       alert(
         `Схема для фазы ${phase} ${
@@ -40,7 +41,7 @@ export default function GroupCreateForm() {
     const generatedShedule = getShedule(
       studentsArr,
       4,
-      !!online,
+      groupType === groupTypes.online,
       phase,
       schemas,
       false
@@ -48,7 +49,7 @@ export default function GroupCreateForm() {
     const { _id: fetchedGroupId } = await getGroupId(
       name,
       phase,
-      online,
+      groupType,
       studentsArr,
       generatedShedule
     );
@@ -59,7 +60,7 @@ export default function GroupCreateForm() {
   };
 
   const handleChange = ({ target }) => {
-    setOnline(target.checked);
+    setOnline(target.value);
   };
   return (
     <form name="newGroup" onSubmit={generateSchedule}>
@@ -72,10 +73,19 @@ export default function GroupCreateForm() {
         max={MAX_NUMS_PHASES.toString()}
       />
       <input type="text" {...bindStudents} placeholder="Students" />
-      <label>
-        <input type="checkbox" onChange={handleChange} />
-        <span>Онлайн</span>
-      </label>
+      <div className="input-field" style={{ minWidth: '300px' }}>
+        <select
+          className="browser-default"
+          onChange={handleChange}
+          value={groupType}
+        >
+          {Object.keys(groupTypes).map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+      </div>
       <button type="submit" className="btn" disabled={isLoad}>
         Create
       </button>

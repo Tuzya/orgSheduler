@@ -11,14 +11,14 @@ exports.groups = async (req, res) => {
 }
 
 exports.createGroup = async (req, res) => {
-  const { phase, students, shedule, name, online } = req.body
+  const { phase, students, shedule, name, groupType } = req.body
   try {
     const group = await Group.create({
       name,
       phase,
       students,
       shedule,
-      online
+      groupType
     })
     res.status(201).json(group)
   } catch (err) {
@@ -29,7 +29,7 @@ exports.createGroup = async (req, res) => {
 
 exports.updGroup = async (req, res) => {
   const { id } = req.params
-  const { phase, students, shedule, name, online } = req.body
+  const { phase, students, shedule, name, groupType } = req.body
   try {
     const group = await Group.updateOne(
       { _id: id },
@@ -38,7 +38,7 @@ exports.updGroup = async (req, res) => {
         phase,
         students,
         shedule,
-        online
+        groupType
       }
     )
     res.status(200).json({ message: 'ok', group })

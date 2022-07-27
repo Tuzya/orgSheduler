@@ -5,7 +5,7 @@ import { getShedule } from '../../libs/groups-splitter';
 import './GroupEditForm.css';
 import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
-import { MAX_NUMS_PHASES } from '../../consts';
+import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
 import { putGroup } from '../../libs/reqFunct/groups';
 
 export default function GroupEditForm() {
@@ -16,7 +16,7 @@ export default function GroupEditForm() {
   const { value: phase, bind: bindPhase, setValue: setPhase } = useInput('');
   const { value: students, bind: bindStudents, setValue: setStudents } = useInput('');
   const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput([], 'json');
-  const { value: online, setValue: setOnline } = useInput(false);
+  const { value: groupType, setValue: setOnline } = useInput(false);
   const [isLoad, setLoad] = React.useState(true);
 
   React.useEffect(() => {
@@ -26,7 +26,7 @@ export default function GroupEditForm() {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
         setName(group.name);
         setPhase(group.phase);
-        setOnline(group.online);
+        setOnline(group.groupType);
         setStudents(String(group.students));
         setShedule(JSON.stringify(group.shedule, '', 4));
       } catch (e) {
@@ -44,7 +44,7 @@ export default function GroupEditForm() {
       //todo try-catch
       name,
       phase,
-      online,
+      groupType,
       students.split(/ *, */g),
       JSON.parse(shedule),
       groupId
@@ -60,7 +60,14 @@ export default function GroupEditForm() {
 
     const schemas = await getSchemas(phase);
     if (schemas) {
-      const generatedShedule = getShedule(studentsArr, undefined, !!online, phase, schemas, true);
+      const generatedShedule = getShedule(
+        studentsArr,
+        undefined,
+        groupType === groupTypes.online,
+        phase,
+        schemas,
+        true
+      );
       setShedule(JSON.stringify(generatedShedule, '', 4));
     }
     setLoad(false);
@@ -86,7 +93,7 @@ export default function GroupEditForm() {
   };
 
   const handleChange = ({ target }) => {
-    setOnline(target.checked);
+    setOnline(target.value);
   };
 
   return isLoad ? (
@@ -105,10 +112,15 @@ export default function GroupEditForm() {
         max={MAX_NUMS_PHASES.toString()}
       />
       <input type="text" {...bindStudents} placeholder="Students" />
-      <label>
-        <input name="online" type="checkbox" checked={online} onChange={handleChange} />
-        <span>Онлайн</span>
-      </label>
+      <div className="input-field" style={{ minWidth: '300px' }}>
+        <select className="browser-default" onChange={handleChange} value={groupType}>
+          {Object.keys(groupTypes).map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+      </div>
       <button type="button" className="btn" disabled={isLoad} onClick={regenerateSchedule}>
         generate pairs by scheme
       </button>
