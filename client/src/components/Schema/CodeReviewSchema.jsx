@@ -10,7 +10,7 @@ import useInput from '../../hooks/input-hook';
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
   const [isLoad, setLoad] = React.useState(false);
-  console.log('file-CodeReviewSchema.jsx groups:', groups);
+
 
   const { value: groupType, setValue: setGrType } = useInput(groupTypes.online);
   const { value: teachers, bind: bindTeachers, setValue: setTeachers } = useInput('');
@@ -22,6 +22,10 @@ export default function CodeReviewSchema() {
       setLoad(true);
       try {
         const fetchedGroups = await (await fetch('/api/groups/')).json();
+        if(fetchedGroups.err) {
+          setLoad(false);
+          return alert(` Err to get groups: ${fetchedGroups.err}`)
+        }
         let schemaCRInitGroups = fetchedGroups?.map((group) => {
           if (!group.crshedule) group.crshedule = { crdays: { ...daysCR } };
           return group;
@@ -40,6 +44,10 @@ export default function CodeReviewSchema() {
       setLoad(true);
       try {
         const teachersAndGaps = await getTeachersAndGaps(groupType);
+        if (teachersAndGaps.err) {
+          setLoad(false);
+          return alert(`Error to get list of teachers: ${teachersAndGaps.err}`);
+        }
         if (teachersAndGaps) {
           setTeachers(String(teachersAndGaps.teachers));
           setTimegaps(String(teachersAndGaps.timegaps));

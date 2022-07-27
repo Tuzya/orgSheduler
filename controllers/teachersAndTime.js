@@ -13,7 +13,6 @@ exports.allTeachersAndTime = async (req, res) => {
 
 exports.updTeachersAndTime = async (req, res) => {
   const { teachers, timegaps, groupType } = req.body;
-  console.log('file-teachersAndTime.js groupTypes:', req.body);
   try {
     let teachersTime = await TeachersTime.findOne({ groupType });
     if (!teachersTime) {

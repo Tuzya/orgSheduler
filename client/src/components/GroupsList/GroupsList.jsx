@@ -9,12 +9,18 @@ function GroupsList({ isAuth }) {
     (async () => {
       setLoading(true);
       try {
-        const fetchedGroups = await (await fetch('/api/groups/')).json();
+        const res = await fetch('/api/groups/');
+
+        if(!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}`);
+        const fetchedGroups = await res.json();
+        if(fetchedGroups.err) throw new Error(`Err to get groups: ${fetchedGroups.err}`);
+
         // Сортировка студентов по имени, для отображения списка в badge.
         fetchedGroups.map((group) => group.students.sort());
         setGroups(fetchedGroups);
       } catch (e) {
         console.error('Failed to fetch Groups', e.message);
+        alert(e.message)
       } finally {
         setLoading(false);
       }
