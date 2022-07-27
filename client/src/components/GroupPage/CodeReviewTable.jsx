@@ -44,7 +44,9 @@ function CodeReviewTable({ group, isAuth }) {
     if (!isObjEmpty(group)) {
       (async () => {
 
-        // const teachers = await getTeachersAndGaps(); //????????????
+        const teachers_ = await getTeachersAndGaps() || []; //????????????
+        console.log('file-CodeReviewTable.jsx teachers_:', teachers_);
+
         const crdays = group.crshedule?.crdays || {};
         const tableDays = group.crtables.map((table) => table.crDay);
         const prevSelectedDays = Object.fromEntries(

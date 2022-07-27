@@ -4,6 +4,12 @@ export const GROUPS = {
   solo: 'solo'
 };
 
+export const groupTypes = {
+  online: 'online',
+  msk: 'msk',
+  spb: 'spb'
+}
+
 export const DAYS = ["mon", "tue", "wed", "thu", "fri"];
 
 export const DAYTORU = {

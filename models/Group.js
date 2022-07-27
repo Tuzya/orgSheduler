@@ -6,6 +6,7 @@ const groupSchema = new Schema({
   name: String,
   phase: { type: Number, default: 1 },
   online: { type: Boolean, default: false },
+  groupType: String,
   students: { type: [String], default: [] },
   shedule: Object,
   crshedule: {

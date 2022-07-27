@@ -2,8 +2,8 @@ const TeachersTime = require('../models/TeachersTime');
 
 exports.allTeachersAndTime = async (req, res) => {
   try {
-  const teachersTime = await TeachersTime.findOne({}, { _id: 0 });
-  res.status(200).json(teachersTime);
+    const teachersTime = await TeachersTime.find({}, { _id: 0 }).lean();
+    res.status(200).json(teachersTime);
   } catch (err) {
     console.log('teachersAndTime get error', err);
     res.status(500).json({ err: err.message });
@@ -11,13 +11,15 @@ exports.allTeachersAndTime = async (req, res) => {
 };
 
 exports.updTeachersAndTime = async (req, res) => {
-  const { teachers, timegaps, key } = req.body;
+  const { teachers, timegaps, groupType } = req.body;
+  console.log('file-teachersAndTime.js groupTypes:', req.body);
   try {
-    let teachersTime = await TeachersTime.findOne({}, { _id: 0 });
+    let teachersTime = await TeachersTime.findOne({ groupType });
     if (!teachersTime) {
-      teachersTime = new TeachersTime({ [key]: { teachers, timegaps } });
+      teachersTime = new TeachersTime({ teachers, timegaps, groupType });
     } else {
-      teachersTime[key] = { teachers, timegaps };
+      teachersTime.teachers = teachers;
+      teachersTime.timegaps = timegaps;
     }
     await teachersTime.save();
     res.status(200).json({ message: 'ok' });
