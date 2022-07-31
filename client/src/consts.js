@@ -44,4 +44,13 @@ export const PEOPLE_PER_PAIR = 2;
 export const PEOPLE_PER_GR = 3;
 export const MAX_NUMS_PHASES = 3;
 
+export const rating = [
+  {name: "5", id: "5"},
+  {name: "4", id: "4"},
+  {name: "3", id: "3"},
+  {name: "2", id: "2"},
+  {name: "1", id: "1"},
+  {name: "0", id: "0"},
+];
+
 

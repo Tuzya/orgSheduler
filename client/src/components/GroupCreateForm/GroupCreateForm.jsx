@@ -17,8 +17,7 @@ export default function GroupCreateForm() {
   const { value: phase, bind: bindPhase } = useInput('');
   const { value: students, bind: bindStudents } = useInput('');
   // const { setValue: setSchedule } = useInput([]);
-  const { value: groupType, setValue: setGroupType } = useInput(false);
-console.log('file-GroupCreateForm.jsx groupType:', groupType);
+  const { value: groupType, setValue: setGroupType } = useInput('online');
   const generateSchedule = async (event) => {
     event.preventDefault();
     if(!students || !name || !phase ) return;

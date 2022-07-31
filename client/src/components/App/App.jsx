@@ -12,6 +12,7 @@ import GroupEditForm from '../GroupEditForm/GroupEditForm';
 import Header from '../Header/Header';
 import './App.css';
 import Schema from '../Schema/Schema';
+import Students from "../../pages/Students/Students"
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -112,6 +113,12 @@ function App() {
               path="/groups/schema/"
               isAuth={isAuth}
               component={Schema}
+            />
+            <PrivateRoute
+              exact
+              path="/students/"
+              isAuth={isAuth}
+              component={Students}
             />
             <Route exact path="/groups/:groupId" render={() => <GroupPage isAuth={isAuth}/>} />
             <PrivateRoute
