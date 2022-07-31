@@ -27,7 +27,7 @@ export default function GroupEditForm() {
         setName(group.name);
         setPhase(group.phase);
         setGroupType(group.groupType);
-        setStudents(String(group.students));
+        setStudents(String(group.students.map((student) => student.name)));
         setShedule(JSON.stringify(group.shedule, '', 4));
       } catch (e) {
         console.error('Load error group', e.message);

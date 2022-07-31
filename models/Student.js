@@ -4,6 +4,7 @@ const StudentsSchema = new Schema(
   {
     name: String,
     group: String,
+    isArchived: {type: Boolean, default: false},
     history: [
       {
         phase: Number,

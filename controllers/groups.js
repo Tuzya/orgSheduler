@@ -1,8 +1,9 @@
 const Group = require('../models/Group');
+const Student = require('../models/Student');
 
 exports.allGroups = async (req, res) => {
   try {
-    const allTheGroups = await Group.find();
+    const allTheGroups = await Group.find().populate('students').lean();
     res.status(200).json(allTheGroups);
   } catch (err) {
     console.log('updGroup error', err);
@@ -11,20 +12,22 @@ exports.allGroups = async (req, res) => {
 };
 
 exports.groups = async (req, res) => {
-  const group = await Group.findById(req.params.id);
+  const group = await Group.findById(req.params.id).populate('students').lean();
+  console.log('file-groups.js group.students:', group.students);
   res.json(group);
 };
+
 
 exports.createGroup = async (req, res) => {
   const { phase, students, shedule, name, groupType } = req.body;
   try {
-    const group = await Group.create({
+    const group = await Group.createGroupAndStudents(
       name,
       phase,
       students,
       shedule,
       groupType
-    });
+    );
     res.status(201).json(group);
   } catch (err) {
     console.log('createGroup error', err);
