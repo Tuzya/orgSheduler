@@ -2,7 +2,7 @@ const Group = require('../models/Group');
 
 exports.allGroups = async (req, res) => {
   try {
-    const allTheGroups = await Group.find();
+    const allTheGroups = await Group.find().lean();
     res.status(200).json(allTheGroups);
   } catch (err) {
     console.log('updGroup error', err);
@@ -11,7 +11,7 @@ exports.allGroups = async (req, res) => {
 };
 
 exports.groups = async (req, res) => {
-  const group = await Group.findById(req.params.id);
+  const group = await Group.findById(req.params.id).lean();
   res.json(group);
 };
 

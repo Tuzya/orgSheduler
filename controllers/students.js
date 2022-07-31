@@ -2,7 +2,7 @@ const Student = require('../models/Student');
 
 exports.allStudents = async (req, res) => {
   try {
-    const students = await Student.find({}).sort({updatedAt: -1}).lean();
+    const students = await Student.find({}).sort({ createdAt: -1 }).lean();
     res.status(200).json(students);
   } catch (err) {
     console.log('teachersAndTime get error', err);
@@ -11,10 +11,19 @@ exports.allStudents = async (req, res) => {
 };
 
 exports.getComment = async (req, res) => {
-  const id = req.params.id;
+  const { name, group } = req.query;
+  const current = new Date().setHours(0, 0, 0, 0);
   try {
-    const comment = await Student.findOne({_id: id}).sort({updatedAt: -1}).lean(); // нужно найта в массиве коментов
-    res.status(200).json(comment);
+    const student = await Student.findOne(
+      { name, group, 'history.date': new Date(current) },
+      { history: 1 }
+    ).lean();
+    if (student) {
+      const lastRecord = student.history[student.history.length - 1];
+      res.status(200).json({ rating: lastRecord.rating, comment: lastRecord.comment });
+    } else {
+      res.status(200).json({ rating: null, comment: null });
+    }
   } catch (err) {
     console.log('teachersAndTime get error', err);
     res.status(500).json({ err: err.message });
@@ -23,15 +32,14 @@ exports.getComment = async (req, res) => {
 
 exports.updStudent = async (req, res) => {
   const { name, groupName, historyEl } = req.body;
-  console.log('file-students.js historyEl:', historyEl);
+
   try {
     let student = await Student.findOne({ name: name, group: groupName });
     if (!student) {
       student = new Student({ name, group: groupName, history: [historyEl] });
-
     } else {
       let index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
-      console.log('file-students.js index:', index);
+
       if (index === -1) student.history.push(historyEl);
       else student.history[index] = historyEl;
     }

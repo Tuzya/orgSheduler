@@ -4,11 +4,11 @@ import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
 import LinearLoader from '../Loader/LinearLoader';
 import { isObjEmpty } from '../../libs/functions';
-import {DAYS, DAYTORU, groupTypes, rating} from '../../consts';
+import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
 import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import { Modal } from '@daypilot/modal';
 import PropTypes from 'prop-types';
-import {updateStudentComment} from "../../libs/reqFunct/students"
+import { getComment, updateStudentComment } from '../../libs/reqFunct/students';
 
 const rowsInit = (teachers, timeGaps, groupType) => [
   timeGaps.reduce(function (acc, cur, i) {
@@ -98,7 +98,6 @@ function CodeReviewTable({ group, isAuth }) {
       return { ...el, tableData };
     });
     crTablesRef.current = JSON.parse(JSON.stringify(crTablesData));
-    console.log('file-CodeReviewTable.jsx crTablesData:', crTablesData);
     setcrTables(crTablesData);
     setLoad(true);
     await updCRTablesGroups(crTablesData, group._id);
@@ -140,33 +139,31 @@ function CodeReviewTable({ group, isAuth }) {
   const onAddComment = async (e, group, colNum) => {
     const currentDate = new Date().setHours(0, 0, 0, 0);
     const studentsName = e.target.innerText;
-    if (colNum === 0 || studentsName === '') return;
+    if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет') return;
 
-    // const lastComment = await getComment() //todo продолжить
-
+    const lastRecord = await getComment(studentsName, group.name, currentDate);
     const form = [
-      {name: "Comments Student"},
-      {name: "Comment", id: "comment"},
-      {name: "Rating", id: "rating", options: rating},
+      { name: 'Comments Student' },
+      { name: 'Comment', id: 'comment' },
+      { name: 'Rating', id: 'rating', options: rating }
     ];
-
     const data = {
-      comment: "prev comment",
-      rating: "5"
+      comment: lastRecord.comment || '',
+      rating: lastRecord.rating || '5'
     };
     const modal = await Modal.form(form, data);
-    if(modal.canceled) return;
+    if (modal.canceled) return;
     const historyEl = {
       phase: group.phase,
       groupType: group.groupType,
       teacher: teachers[colNum - 1],
       date: currentDate, // если комент в тот же самый день - то он обновиться. если в другой - запушиться. поэтому отсекаем время от даты.
+      // date: new Date(),
       rating: modal.result.rating,
       comment: modal.result.comment
     };
 
-    await updateStudentComment(studentsName, group.name, historyEl)
-
+    await updateStudentComment(studentsName, group.name, historyEl);
   };
 
   return (
@@ -197,6 +194,12 @@ function CodeReviewTable({ group, isAuth }) {
                     const row = `row${i + 1}`;
                     return (
                       <td
+                        style={{
+                          cursor:
+                            cell[row] === ' ' || cell[row] === 'Педсовет' || !colNum
+                              ? 'default'
+                              : 'pointer'
+                        }}
                         key={colNum}
                         onDoubleClick={(e) => {
                           onAddComment(e, group, colNum);

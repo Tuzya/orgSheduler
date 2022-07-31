@@ -21,13 +21,12 @@ export default function Schema() {
       setStudents(students);
     })();
   }, []);
-  console.log('file-Students.jsx students:', students);
   return (
     <>
       <ul className="collection">
         {students.map((student) => (
           <li key={student._id} className="collection-item ">
-            {`${student.name} ${student.group}`}
+            {`Студент: ${student.name}, Группа: ${student.group}`}
             <ul className="collection">
               {student.history.map((st) => (
                 <li key={st._id} className="collection-item">

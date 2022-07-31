@@ -9,7 +9,7 @@ import useInput from '../../hooks/input-hook';
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
-  const [isLoad, setLoad] = React.useState(false);
+  const [isLoad, setLoad] = React.useState(true);
 
 
   const { value: groupType, setValue: setGrType } = useInput(groupTypes.online);
@@ -92,7 +92,6 @@ export default function CodeReviewSchema() {
     }
   };
 
-  // return null;
   return (
     <div>
       <h4>Code Review Schema</h4>

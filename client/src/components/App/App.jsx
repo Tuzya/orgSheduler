@@ -15,7 +15,7 @@ import Schema from '../Schema/Schema';
 import Students from "../../pages/Students/Students"
 
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isAuth, setAuth] = useState(false);
 
   const checkAuth = async () => {
@@ -34,6 +34,7 @@ function App() {
 
   useEffect(() => {
     checkAuth();
+    return () => {console.log('App unmounted')}
   }, []);
 
   const login = async (e) => {
@@ -91,11 +92,8 @@ function App() {
       ) : (
         <main>
           <Switch>
-            <Route
-              exact
-              path="(/|/groups)"
-              render={() => <GroupsList isAuth={isAuth} />}
-            />
+            <Route exact path="(/|/groups)"> <GroupsList isAuth={isAuth} /> </Route>
+
             <Route exact path="/sign-up/" component={SignUp} />
             <Route
               exact

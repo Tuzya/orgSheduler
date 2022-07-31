@@ -5,7 +5,7 @@ const {allStudents, updStudent, getComment} = require("../controllers/students")
 const router = express.Router();
 
 router.get("/", checkAuth, allStudents);
-router.get('/history/comment/:id', checkAuth, getComment)
+router.get('/history/comment/last', checkAuth, getComment)
 
 router.put("/", checkAuth, updStudent);
 

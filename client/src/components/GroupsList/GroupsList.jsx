@@ -3,7 +3,7 @@ import GroupItem from '../GroupItem/GroupItem';
 
 function GroupsList({ isAuth }) {
   const [groups, setGroups] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
