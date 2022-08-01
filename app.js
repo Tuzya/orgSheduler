@@ -15,7 +15,6 @@ app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 addMiddlewares(app);
 
-
 app.use('/api', indexRouter);
 app.use('/api/groups', groupsRouter);
 app.use('/api/schemas', schemasRouter);
