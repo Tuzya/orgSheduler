@@ -85,3 +85,5 @@ export default function Schema() {
     </>
   );
 }
+
+//todo перенести страничные компоненты в pages
