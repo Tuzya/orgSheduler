@@ -68,7 +68,7 @@ function addMiddlewares(router) {
   });
 
   passport.deserializeUser(async (id, done) => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).select({ password: 0, __v: 0}).lean();
     done(null, user);
   });
 }
