@@ -44,7 +44,7 @@ export default function CodeReviewSchema() {
       setLoad(true);
       try {
         const teachersAndGaps = await getTeachersAndGaps(groupType);
-        if (teachersAndGaps.err) {
+        if (teachersAndGaps?.err) {
           setLoad(false);
           return alert(`Error to get list of teachers: ${teachersAndGaps.err}`);
         }
