@@ -92,7 +92,7 @@ function App() {
       ) : (
         <main>
           <Switch>
-            <Route exact path="(/|/groups)"> <GroupsList isAuth={isAuth} /> </Route>
+            <Route exact path="(/|/groups)"> <GroupsList isAuth={isAuth} /> </Route> // todo убрать зашквар render
 
             <Route exact path="/sign-up/" component={SignUp} />
             <Route
