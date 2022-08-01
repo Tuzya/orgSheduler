@@ -52,7 +52,7 @@ function CodeReviewTable({ group, isAuth }) {
         }
 
         const crdays = group.crshedule?.crdays || {};
-        const tableDays = group.crtables.map((table) => table.crDay);
+        const tableDays = group.crtables?.map((table) => table.crDay) || [];
         const prevSelectedDays = Object.fromEntries(
           DAYS.map((day) => [[day], tableDays.includes(day)])
         );
