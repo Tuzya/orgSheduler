@@ -22,7 +22,6 @@ export const getComment = async (stName, grName) => {
   }
 };
 
-// phase: Number, groupType: String, date: Date, teacher: String, comment: String
 export const updateStudentComment = async (name, groupName, historyEl) => {
   try {
     return (

@@ -10,14 +10,14 @@ import { getGroupId } from '../../libs/reqFunct/groups';
 
 export default function GroupCreateForm() {
   const history = useHistory();
-
   const [isLoad, setLoad] = React.useState(false);
   const { setValue: setGroupId } = useInput('');
-  const { value: name, bind: bindName } = useInput('');
-  const { value: phase, bind: bindPhase } = useInput('');
-  const { value: students, bind: bindStudents } = useInput('');
+  const { value: name, bind: bindName } = useInput(sessionStorage.getItem('name') ||'');
+  const { value: phase, bind: bindPhase } = useInput(sessionStorage.getItem('phase') || '');
+  const { value: students, bind: bindStudents } = useInput(sessionStorage.getItem('students') ||'');
   // const { setValue: setSchedule } = useInput([]);
   const { value: groupType, setValue: setGroupType } = useInput('online');
+
   const generateSchedule = async (event) => {
     event.preventDefault();
     if(!students || !name || !phase ) return;
@@ -34,8 +34,10 @@ export default function GroupCreateForm() {
         } группы не существует.\nСперва создайте эту схему.`
       );
       setLoad(false);
+      sessionStorage.setItem('name', name);
+      sessionStorage.setItem('phase', phase);
+      sessionStorage.setItem('students', students);
       return history.push('/groups/schema');
-
     }
     const generatedShedule = getShedule(
       studentsArr,
@@ -55,6 +57,7 @@ export default function GroupCreateForm() {
     setGroupId(fetchedGroupId);
     // setSchedule(generatedSchedule); // TODO: check if is is ok
     setLoad(false);
+    sessionStorage.clear();
     return history.push(`/groups/${fetchedGroupId}`);
   };
 
