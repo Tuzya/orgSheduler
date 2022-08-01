@@ -1,8 +1,14 @@
 const Student = require('../models/Student');
 
 exports.allStudents = async (req, res) => {
+  const { name, groupType } = req.query;
   try {
-    const students = await Student.find({}).sort({ createdAt: -1 }).lean();
+    const students = await Student.find({
+      name: { $regex: name, $options: 'i' },
+      'history.groupType': groupType
+    })
+      .sort({ createdAt: -1 })
+      .lean();
     res.status(200).json(students);
   } catch (err) {
     console.log('teachersAndTime get error', err);

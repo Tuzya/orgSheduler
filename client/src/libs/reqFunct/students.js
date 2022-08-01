@@ -1,6 +1,6 @@
-export const getStudents = async () => {
+export const getStudents = async (name = '', groupType) => {
   try {
-    return (await fetch(`/api/students`)).json();
+    return (await fetch(`/api/students?name=${name}&groupType=${groupType}`)).json();
   } catch (e) {
     console.log('Group Page Error', e.message);
   }
