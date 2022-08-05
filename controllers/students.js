@@ -18,6 +18,7 @@ exports.allStudents = async (req, res) => {
 
 exports.getComment = async (req, res) => {
   const { name, group } = req.query;
+  console.log('file-students.js name:', name);
   const current = new Date().setHours(0, 0, 0, 0);
   try {
     const student = await Student.findOne(
