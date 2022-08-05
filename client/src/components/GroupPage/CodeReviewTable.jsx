@@ -1,14 +1,16 @@
 import React from 'react';
 import { useHistory } from 'react-router';
+import PropTypes from 'prop-types';
+import { Modal } from '@daypilot/modal';
+
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
 import LinearLoader from '../Loader/LinearLoader';
 import { isObjEmpty } from '../../libs/functions';
 import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
 import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
-import { Modal } from '@daypilot/modal';
-import PropTypes from 'prop-types';
 import { getComment, updateStudentComment } from '../../libs/reqFunct/students';
+
 
 const rowsInit = (teachers, timeGaps, groupType) => [
   timeGaps.reduce(function (acc, cur, i) {
