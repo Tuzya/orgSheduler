@@ -144,6 +144,9 @@ function CodeReviewTable({ group, isAuth }) {
     if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет') return;
 
     const lastRecord = await getComment(studentsName, group.name, currentDate);
+    console.log('file-CodeReviewTable.jsx group.name:', group.name);
+    console.log('file-CodeReviewTable.jsx studentsName:', studentsName);
+    console.log('file-CodeReviewTable.jsx lastRecord:', lastRecord);
     const form = [
       { name: 'Comments Student' },
       { name: 'Comment', id: 'comment' },
