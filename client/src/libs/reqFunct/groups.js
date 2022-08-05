@@ -6,7 +6,7 @@ export const getSchemas = async (phase = 1) => {
   }
 };
 
-export const getGroupId = async (name, phase, online, students, shedule) => {
+export const getGroupId = async (name, phase, groupType, students, shedule) => {
   try {
     return (
       await fetch('/api/groups', {
@@ -18,7 +18,7 @@ export const getGroupId = async (name, phase, online, students, shedule) => {
         body: JSON.stringify({
           name,
           phase,
-          online,
+          groupType,
           students,
           shedule,
         }),
@@ -29,7 +29,7 @@ export const getGroupId = async (name, phase, online, students, shedule) => {
   }
 };
 
-export const putGroup = async (name, phase, online, students, shedule, groupId) => {
+export const putGroup = async (name, phase, groupType, students, shedule, groupId) => {
   try {
     return (
       await fetch(`/api/groups/${groupId}`, {
@@ -41,7 +41,7 @@ export const putGroup = async (name, phase, online, students, shedule, groupId) 
         body: JSON.stringify({
           name,
           phase,
-          online,
+          groupType,
           students,
           shedule
         }),

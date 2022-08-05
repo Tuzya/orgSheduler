@@ -1,70 +1,77 @@
 import React from 'react';
 import { useHistory } from 'react-router';
+import PropTypes from 'prop-types';
+import { Modal } from '@daypilot/modal';
+
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
 import LinearLoader from '../Loader/LinearLoader';
 import { isObjEmpty } from '../../libs/functions';
-import {DAYS, DAYTORU} from '../../consts';
+import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
+import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
+import { getComment, updateStudentComment } from '../../libs/reqFunct/students';
 
-const teachers = ['Тарас', 'Рома', 'Денис', 'Олег', 'Сергей', 'Алексей'];
-const times = [
-  '14:30-14:55',
-  '15:00-15:25',
-  '15:30-15:55',
-  '16:00-16:25',
-  '16:30-16:55',
-  '17:00-17:25'
-];
 
-const rowsInit = () => [
-  times.reduce(function (acc, cur, i) {
+const rowsInit = (teachers, timeGaps, groupType) => [
+  timeGaps.reduce(function (acc, cur, i) {
     acc[`row${i + 1}`] = cur;
     return acc;
   }, {}),
   ...teachers.map(() =>
-    times.reduce(function (acc, cur, i) {
+    timeGaps.reduce(function (acc, cur, i) {
       acc[`row${i + 1}`] = '';
-      if (i === 1) acc[`row${i + 1}`] = 'Педсовет';
+      if (i === 1 && groupType === groupTypes.online) acc[`row${i + 1}`] = 'Педсовет';
       return acc;
     }, {})
   )
 ];
 
+const columns = (groupName, teachers) => {
+  return [
+    { header: groupName, key: 'row1' },
+    ...teachers.map((tname, i) => ({ header: tname, key: `row${i + 2}` }))
+  ];
+};
+
 function CodeReviewTable({ group, isAuth }) {
   const crTablesRef = React.useRef([]);
   const [isLoad, setLoad] = React.useState(false);
   const [crTables, setcrTables] = React.useState([]);
+  const [timeGaps, setTimegaps] = React.useState([]);
+  const [teachers, setTeachers] = React.useState([]);
   const [isEdit, setEdit] = React.useState(false);
-
   const history = useHistory();
 
   React.useEffect(() => {
     if (!isObjEmpty(group)) {
-      const crdays = group.crshedule?.crdays || {};
-      const tableDays = group.crtables.map((table) => table.crDay);
-      const prevSelectedDays = Object.fromEntries(
-        DAYS.map((day) => [[day], tableDays.includes(day)])
-      );
-      const isScheduleSame = JSON.stringify(crdays) === JSON.stringify(prevSelectedDays);
-      if (isScheduleSame) {
-        crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
-        return setcrTables(group.crtables);
-      }
-      if (group.students?.length && group.crshedule) {
-        generateStudentsToTable(group);
-      }
+      (async () => {
+        const teachersAndGaps = await getTeachersAndGaps(group.groupType);
+        if (teachersAndGaps?.err)
+          return alert(`Error to get list of teachers: ${teachersAndGaps.err}`);
+        if (teachersAndGaps) {
+          setTeachers(teachersAndGaps.teachers);
+          setTimegaps(teachersAndGaps.timegaps);
+        }
+
+        const crdays = group.crshedule?.crdays || {};
+        const tableDays = group.crtables?.map((table) => table.crDay) || [];
+        const prevSelectedDays = Object.fromEntries(
+          DAYS.map((day) => [[day], tableDays.includes(day)])
+        );
+        const isScheduleSame = JSON.stringify(crdays) === JSON.stringify(prevSelectedDays);
+
+        if (isScheduleSame) {
+          crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
+          return setcrTables(group.crtables);
+        }
+        if (group.students?.length && group.crshedule) {
+          generateStudentsToTable(group, teachersAndGaps.teachers, teachersAndGaps.timegaps);
+        }
+      })();
     }
   }, [group]);
 
-  const columns = React.useMemo(
-    () => [
-      { header: group.name, key: 'row1' },
-      ...teachers.map((tname, i) => ({ header: tname, key: `row${i + 2}` }))
-    ],
-    []
-  );
-
-  const generateStudentsToTable = async (group) => {
+  const generateStudentsToTable = async (group, teachers, timeGaps) => {
     let resCRTables = [];
     const crdays = group.crshedule?.crdays || {};
     Object.keys(crdays).forEach((day) => {
@@ -73,12 +80,12 @@ function CodeReviewTable({ group, isAuth }) {
 
     const studentsPerDay = Math.ceil(group.students.length / resCRTables.length);
     let counter = 0;
-    const cellsInTable = teachers.length * times.length - teachers.length;
+    const cellsInTable = teachers.length * timeGaps.length - teachers.length;
     if (resCRTables.length && cellsInTable * resCRTables.length < group.students.length)
       return alert('Студенты не помещаются в таблицу!');
     const crTablesData = resCRTables.map((el) => {
       let index = 0;
-      const tableData = rowsInit();
+      const tableData = rowsInit(teachers, timeGaps, group.groupType);
       const slStudents = group.students.slice(counter, studentsPerDay + counter);
       counter += studentsPerDay;
       const rndArrOfNum = GenerateRandomNumbers(cellsInTable);
@@ -128,7 +135,37 @@ function CodeReviewTable({ group, isAuth }) {
       alert('Не выбраны дни кодревью для этой группы');
       return history.push('/groups/schema');
     }
-    generateStudentsToTable(group);
+    generateStudentsToTable(group, teachers, timeGaps);
+  };
+
+  const onAddComment = async (e, group, colNum) => {
+    const currentDate = new Date().setHours(0, 0, 0, 0);
+    const studentsName = e.target.innerText;
+    if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет') return;
+
+    const lastRecord = await getComment(studentsName, group.name, currentDate);
+    const form = [
+      { name: 'Comments Student' },
+      { name: 'Comment', id: 'comment' },
+      { name: 'Rating', id: 'rating', options: rating }
+    ];
+    const data = {
+      comment: lastRecord.comment || '',
+      rating: lastRecord.rating || '5'
+    };
+    const modal = await Modal.form(form, data);
+    if (modal.canceled) return;
+    const historyEl = {
+      phase: group.phase,
+      groupType: group.groupType,
+      teacher: teachers[colNum - 1],
+      date: currentDate, // если комент в тот же самый день - то он обновиться. если в другой - запушиться. поэтому отсекаем время от даты.
+      // date: new Date(),
+      rating: modal.result.rating,
+      comment: modal.result.comment
+    };
+
+    await updateStudentComment(studentsName, group.name, historyEl);
   };
 
   return (
@@ -136,33 +173,46 @@ function CodeReviewTable({ group, isAuth }) {
       <div>
         <div className="group-schedule-header">
           <div className="group-coderev">Код ревью</div>
-          <div>{crTables.map((group, i) => (i ? ' - ' + DAYTORU[group.crDay] : DAYTORU[group.crDay]))}</div>
+          <div>
+            {crTables.map((group, i) => (i ? ' - ' + DAYTORU[group.crDay] : DAYTORU[group.crDay]))}
+          </div>
         </div>
       </div>
-      {crTables.map((group) => (
-        <div key={group.crDay} style={{ marginBottom: 50 }}>
+      {crTables.map((crTablegroup) => (
+        <div key={crTablegroup.crDay} style={{ marginBottom: 50 }}>
           <table className="striped centered">
-            <caption>{DAYTORU[group.crDay]}</caption>
+            <caption>{DAYTORU[crTablegroup.crDay]}</caption>
             <thead>
               <tr>
-                {columns.map((column) => (
+                {columns(group.name, teachers).map((column) => (
                   <th key={column.key}>{column.header}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {times.map((time, i) => (
+              {timeGaps.map((time, i) => (
                 <tr key={time}>
-                  {group.tableData.map((cell, colNum) => {
+                  {crTablegroup.tableData.map((cell, colNum) => {
                     const row = `row${i + 1}`;
                     return (
-                      <td key={colNum}>
+                      <td
+                        style={{
+                          cursor:
+                            cell[row] === ' ' || cell[row] === 'Педсовет' || !colNum
+                              ? 'default'
+                              : 'pointer'
+                        }}
+                        key={colNum}
+                        onDoubleClick={(e) => {
+                          onAddComment(e, group, colNum);
+                        }}
+                      >
                         {!isEdit && cell[row]}
                         {isEdit && (
                           <input
                             defaultValue={cell[row]}
                             onChange={(e) =>
-                              handleInputChange(e.target.value, group.crDay, colNum, row)
+                              handleInputChange(e.target.value, crTablegroup.crDay, colNum, row)
                             }
                           />
                         )}
@@ -177,7 +227,11 @@ function CodeReviewTable({ group, isAuth }) {
       ))}
       {isAuth && (
         <div style={{ textAlign: 'center' }}>
-          <button className="btn" onClick={() => setEdit(true)}>
+          <button
+            className="btn"
+            onClick={() => setEdit(true)}
+            disabled={isLoad || !crTables.length}
+          >
             EditMode
           </button>
           <button className="btn" onClick={handleInputSave} disabled={!isEdit || isLoad}>
@@ -186,7 +240,11 @@ function CodeReviewTable({ group, isAuth }) {
           <button className="btn" onClick={handleCancel} disabled={!isEdit || isLoad}>
             Cancel
           </button>
-          <button className="btn" onClick={handleGenerateTable} disabled={isEdit || isLoad}>
+          <button
+            className="btn"
+            onClick={handleGenerateTable}
+            disabled={isEdit || isLoad || !crTables.length}
+          >
             NewGenerate
           </button>
         </div>
@@ -195,5 +253,27 @@ function CodeReviewTable({ group, isAuth }) {
     </>
   );
 }
+
+CodeReviewTable.propTypes = {
+  isAuth: PropTypes.bool.isRequired,
+  group: PropTypes.shape({
+    crshedule: PropTypes.shape({
+      crdays: PropTypes.shape({
+        mon: PropTypes.bool.isRequired,
+        thu: PropTypes.bool.isRequired,
+        tue: PropTypes.bool.isRequired,
+        wed: PropTypes.bool.isRequired,
+        fri: PropTypes.bool.isRequired
+      })
+    }),
+    crtables: PropTypes.array.isRequired,
+    groupType: PropTypes.string.isRequired,
+    isArchived: PropTypes.bool.isRequired,
+    name: PropTypes.string.isRequired,
+    phase: PropTypes.number.isRequired,
+    shedule: PropTypes.object.isRequired,
+    students: PropTypes.array.isRequired
+  })
+};
 
 export default CodeReviewTable;

@@ -12,9 +12,10 @@ import GroupEditForm from '../GroupEditForm/GroupEditForm';
 import Header from '../Header/Header';
 import './App.css';
 import Schema from '../Schema/Schema';
+import Students from "../../pages/Students/Students"
 
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isAuth, setAuth] = useState(false);
 
   const checkAuth = async () => {
@@ -33,6 +34,7 @@ function App() {
 
   useEffect(() => {
     checkAuth();
+    return () => {console.log('App unmounted')}
   }, []);
 
   const login = async (e) => {
@@ -90,11 +92,8 @@ function App() {
       ) : (
         <main>
           <Switch>
-            <Route
-              exact
-              path="(/|/groups)"
-              render={() => <GroupsList isAuth={isAuth} />}
-            />
+            <Route exact path="(/|/groups)"> <GroupsList isAuth={isAuth} /> </Route> // todo убрать зашквар render
+
             <Route exact path="/sign-up/" component={SignUp} />
             <Route
               exact
@@ -112,6 +111,12 @@ function App() {
               path="/groups/schema/"
               isAuth={isAuth}
               component={Schema}
+            />
+            <PrivateRoute
+              exact
+              path="/students/"
+              isAuth={isAuth}
+              component={Students}
             />
             <Route exact path="/groups/:groupId" render={() => <GroupPage isAuth={isAuth}/>} />
             <PrivateRoute

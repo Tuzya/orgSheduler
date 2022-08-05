@@ -1,5 +1,5 @@
 const express = require("express");
-const checkAuth = require("../middlewares/check-auth");
+const {checkAuth} = require("../middlewares/check-auth");
 
 const { allGroups, createGroup, groups, updGroup, delGroup, updAllGroups, updCRTablesGroup } = require("../controllers/groups");
 

@@ -5,7 +5,7 @@ const { Schema, model } = mongoose;
 const groupSchema = new Schema({
   name: String,
   phase: { type: Number, default: 1 },
-  online: { type: Boolean, default: false },
+  groupType: { type: String, default: 'online' },
   students: { type: [String], default: [] },
   shedule: Object,
   crshedule: {
@@ -19,7 +19,8 @@ const groupSchema = new Schema({
       fri: Boolean,
     },
   },
-  crtables: [{crDay: String, tableData: [{}]}]
+  crtables: [{crDay: String, tableData: [{}]}],
+  isArchived: {type: Boolean, default: false}
 });
 
 

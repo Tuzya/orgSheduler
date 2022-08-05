@@ -23,6 +23,7 @@ function Header({ isAuth, logout }) {
                 <>
                   <Link to="/groups/new">New Group</Link>
                   <Link to="/groups/schema">Schema</Link>
+                  <Link to="/students">Students</Link>
                   <Link to="/" onClick={logout}>Logout</Link>
                 </>
               ) : <Link to="/login">Login</Link>

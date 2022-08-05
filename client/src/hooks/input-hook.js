@@ -12,7 +12,7 @@ export default function useInput(initialValue, json) {
       onChange: (event) => {
         json === 'json'
           ? setValue(event.target.value)
-          : setValue(event.target.value.replace(/[^\wа-яА-ЯёЁ,. ]/g, ''));
+          : setValue(event.target.value.replace(/[^\wа-яА-ЯёЁ,.:\- ]/g, ''));
       },
     },
   };
