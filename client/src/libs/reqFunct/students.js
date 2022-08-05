@@ -14,9 +14,9 @@ export const getStudent = async (name, groupName) => {
   }
 };
 
-export const getComment = async (stName, grName) => {
+export const getComment = async (stName, grName, date) => {
   try {
-    return (await fetch(`/api/students/history/comment/last?name=${stName}&group=${grName}`)).json();
+    return (await fetch(`/api/students/history/comment/last?name=${stName}&group=${grName}&date=${date}`)).json();
   } catch (e) {
     console.log('Group Page Error', e.message);
   }

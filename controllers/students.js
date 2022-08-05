@@ -17,12 +17,10 @@ exports.allStudents = async (req, res) => {
 };
 
 exports.getComment = async (req, res) => {
-  const { name, group } = req.query;
-  console.log('file-students.js name:', name);
-  const current = new Date().setHours(0, 0, 0, 0);
+  const { name, group, date } = req.query;
   try {
     const student = await Student.findOne(
-      { name, group, 'history.date': new Date(current) },
+      { name, group, 'history.date': new Date(parseInt(date)) },
       { history: 1 }
     ).lean();
     if (student) {
