@@ -28,6 +28,6 @@ app.get('*', (req, res) => {
 addErrorHandlers(app);
 
 app.listen(
-  PORT,
+  3100,
   () => console.log(`Express server started on port: ${PORT}`),
 );
