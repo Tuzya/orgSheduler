@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.0d0186be.css",
+    "main.js": "/static/js/main.1528358d.js",
+    "static/media/elb-logo.svg": "/static/media/elb-logo.4d622a365a3c54e0516fbb3ff97ad848.svg",
+    "static/media/spinner.svg": "/static/media/spinner.781fcaed4da5d7106c3c.svg",
+    "index.html": "/index.html",
+    "main.0d0186be.css.map": "/static/css/main.0d0186be.css.map",
+    "main.1528358d.js.map": "/static/js/main.1528358d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0d0186be.css",
+    "static/js/main.1528358d.js"
+  ]
+}

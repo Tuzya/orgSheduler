@@ -1,0 +1,31 @@
+header {
+  display: flex;
+  justify-content: center;
+
+  text-align: center;
+  /* color: #29edff; */
+  color: #4520ab;
+}
+
+header > img {
+  margin: 1.7rem 2rem 1.68rem 0;
+}
+
+main {
+  margin: 15vh 25vw;
+  text-align: center;
+}
+
+button.btn {
+  color: #29edff;
+  background-color: #4520ab;
+  margin: 30px;
+}
+
+textarea[name="schedule"] {
+  visibility: hidden;
+  overflow-y: scroll;
+  height: 0px;
+  resize: none;
+  border: lightgrey 1px solid;
+}
