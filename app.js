@@ -21,9 +21,9 @@ app.use('/api/schemas', schemasRouter);
 app.use('/api/teachersandtime', teachersRouter);
 app.use('/api/students', studentsRouter);
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+// });
 
 addErrorHandlers(app);
 
