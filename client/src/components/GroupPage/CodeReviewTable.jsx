@@ -141,7 +141,7 @@ function CodeReviewTable({ group, isAuth }) {
   const onAddComment = async (e, group, colNum) => {
     const currentDate = new Date().setHours(0, 0, 0, 0);
     const studentsName = e.target.innerText;
-    if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет') return;
+    if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет' || !isAuth) return;
 
     const lastRecord = await getComment(studentsName, group.name, currentDate);
 
