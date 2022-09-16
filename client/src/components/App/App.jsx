@@ -34,7 +34,6 @@ function App() {
 
   useEffect(() => {
     checkAuth();
-    return () => {console.log('App unmounted')}
   }, []);
 
   const login = async (e) => {
@@ -92,14 +91,9 @@ function App() {
       ) : (
         <main>
           <Switch>
-            <Route exact path="(/|/groups)"> <GroupsList isAuth={isAuth} /> </Route> // todo убрать зашквар render
-
-            <Route exact path="/sign-up/" component={SignUp} />
-            <Route
-              exact
-              path="/login/"
-              render={() => <Login isAuth={isAuth} login={login} />}
-            />
+            <Route exact path="(/|/groups)"> <GroupsList isAuth={isAuth} /> </Route>
+            <Route exact path="/sign-up/"> <SignUp/> </Route>
+            <Route exact path="/login/"> <Login isAuth={isAuth} login={login} /> </Route>
             <PrivateRoute
               exact
               path="/groups/new/"
@@ -125,7 +119,7 @@ function App() {
               isAuth={isAuth}
               component={GroupEditForm}
             />
-            <Route path="/" render={() => '404'} />
+            <Route path="/">{'404'}</Route>
           </Switch>
         </main>
       )}
