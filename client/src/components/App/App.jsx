@@ -15,7 +15,7 @@ import Schema from '../Schema/Schema';
 import Students from "../../pages/Students/Students"
 
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isAuth, setAuth] = useState(false);
 
   const checkAuth = async () => {
@@ -91,17 +91,9 @@ function App() {
       ) : (
         <main>
           <Switch>
-            <Route
-              exact
-              path="(/|/groups)"
-              render={() => <GroupsList isAuth={isAuth} />}
-            />
-            <Route exact path="/sign-up/" component={SignUp} />
-            <Route
-              exact
-              path="/login/"
-              render={() => <Login isAuth={isAuth} login={login} />}
-            />
+            <Route exact path="(/|/groups)"> <GroupsList isAuth={isAuth} /> </Route>
+            <Route exact path="/sign-up/"> <SignUp/> </Route>
+            <Route exact path="/login/"> <Login isAuth={isAuth} login={login} /> </Route>
             <PrivateRoute
               exact
               path="/groups/new/"
@@ -127,7 +119,7 @@ function App() {
               isAuth={isAuth}
               component={GroupEditForm}
             />
-            <Route path="/" render={() => '404'} />
+            <Route path="/">{'404'}</Route>
           </Switch>
         </main>
       )}

@@ -1,19 +1,25 @@
 import React from 'react';
+import dayjs from 'dayjs';
+
 import './students.css';
 import { getStudents } from '../../libs/reqFunct/students';
-import dayjs from 'dayjs';
+import { DebounceInput } from 'react-debounce-input';
+import LinearLoader from "../../components/Loader/LinearLoader"
+import {groupTypes} from "../../consts"
 
 const ratingColor = {
   0: 'red',
-  1: 'blue',
-  2: 'yellow',
-  3: 'grey',
+  1: 'light-blue',
+  2: 'lime',
+  3: 'blue-grey lighten-3',
   4: 'light-green',
   5: 'green'
 };
 
 export default function Schema() {
   const [students, setStudents] = React.useState([]);
+  const [search, setSearch] = React.useState({name: '', groupType: groupTypes.online})
+  const [isLoad, setLoad] = React.useState(true);
 
   React.useEffect(() => {
     (async () => {

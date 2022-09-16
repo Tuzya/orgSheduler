@@ -9,7 +9,7 @@ import useInput from '../../hooks/input-hook';
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
-  const [isLoad, setLoad] = React.useState(false);
+  const [isLoad, setLoad] = React.useState(true);
 
 
   const { value: groupType, setValue: setGrType } = useInput(groupTypes.online);
@@ -44,7 +44,7 @@ export default function CodeReviewSchema() {
       setLoad(true);
       try {
         const teachersAndGaps = await getTeachersAndGaps(groupType);
-        if (teachersAndGaps.err) {
+        if (teachersAndGaps?.err) {
           setLoad(false);
           return alert(`Error to get list of teachers: ${teachersAndGaps.err}`);
         }
@@ -92,7 +92,6 @@ export default function CodeReviewSchema() {
     }
   };
 
-  // return null;
   return (
     <div>
       <h4>Code Review Schema</h4>
