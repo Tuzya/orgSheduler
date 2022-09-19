@@ -1,0 +1,14 @@
+const actionTypes = {
+  SET_GROUPS: 'SET_GROUPS',
+  SET_GROUP: 'SET_GROUP',
+
+  SET_AUTH_LOADING: 'SET_AUTH_LOADING',
+  SET_CAMP_LOADING: 'SET_CAMP_LOADING',
+
+  ERROR: 'ERROR',
+
+  SET_AUTH: 'SET_AUTH',
+  SET_USER: 'SET_USER'
+};
+
+export default actionTypes
