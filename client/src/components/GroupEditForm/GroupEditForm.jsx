@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import { getShedule } from '../../libs/groups-splitter';
 
 import './GroupEditForm.css';
