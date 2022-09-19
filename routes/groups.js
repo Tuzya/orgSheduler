@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.route("/")
   .get(allGroups)
-  .post(createGroup)
-  .patch(updAllGroups)
+  .post(checkAuth, createGroup)
+  .patch(checkAuth, updAllGroups)
 
 router.route("/:id")
   .get(groups)

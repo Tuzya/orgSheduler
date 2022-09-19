@@ -11,7 +11,7 @@ exports.allStudents = async (req, res) => {
       .lean();
     res.status(200).json(students);
   } catch (err) {
-    console.log('teachersAndTime get error', err);
+    console.log('allStudents get error', err);
     res.status(500).json({ err: err.message });
   }
 };
@@ -30,7 +30,7 @@ exports.getComment = async (req, res) => {
       res.status(200).json({ rating: null, comment: null });
     }
   } catch (err) {
-    console.log('teachersAndTime get error', err);
+    console.log('getComment error', err);
     res.status(500).json({ err: err.message });
   }
 };
@@ -51,7 +51,7 @@ exports.updStudent = async (req, res) => {
     await student.save();
     res.status(200).json({ message: 'ok' });
   } catch (err) {
-    console.log('teachersAndTime update error', err);
+    console.log('updStudent error', err);
     res.status(500).json({ err: err.message });
   }
 };
