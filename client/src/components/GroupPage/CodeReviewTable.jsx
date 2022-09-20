@@ -139,12 +139,13 @@ function CodeReviewTable({ group, isAuth }) {
   };
 
   const onAddComment = async (e, group, colNum) => {
+    if (isLoad) return;
     const currentDate = new Date().setHours(0, 0, 0, 0);
     const studentsName = e.target.innerText;
     if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет' || !isAuth) return;
-
+    setLoad(true);
     const lastRecord = await getComment(studentsName, group.name, currentDate);
-
+    setLoad(false);
     const form = [
       { name: 'Comments Student' },
       { name: 'Comment', id: 'comment' },
