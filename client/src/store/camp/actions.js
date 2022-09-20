@@ -29,8 +29,8 @@ export const getGroup = (groupId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const group = await (await fetch(`/api/groups/${groupId}`)).json();
-    if (!group) alert('Не удалось получить группу');
     if (group) dispatch(setGroup(group));
+    else alert('Не удалось получить группу');
   } catch (e) {
     console.log('Group Page Error', e.message);
   } finally {

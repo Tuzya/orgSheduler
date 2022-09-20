@@ -5,18 +5,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import './GroupPage.css';
 import GroupShedule from './GroupShedule';
 import CodeReviewTable from './CodeReviewTable';
-import { getGroup, setGroup } from '../../store/camp/actions';
-import { isObjEmpty } from '../../libs/functions';
+import {getGroup, setGroup} from '../../store/camp/actions';
 
 function GroupPage({ isAuth }) {
   const { groupId } = useParams();
   const dispatch = useDispatch();
-  const { groups, isLoading } = useSelector((state) => state.camp);
-  const group =
-    groups.find((group) => group._id === groupId) || useSelector((state) => state.camp.group);
+  const { groups, group, isLoading } = useSelector((state) => state.camp);
 
   useEffect(() => {
-    if (isObjEmpty(group)) dispatch(getGroup(groupId));
+    const group = groups.find((group) => (group._id === groupId))
+    if (group) dispatch(setGroup(group))
+    else dispatch(getGroup(groupId));
   }, [dispatch]);
 
   if (isLoading) return <div className="spinner" />;
