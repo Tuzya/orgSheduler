@@ -17,6 +17,13 @@ export const campReducer = (state = initState, action) => {
     case actionTypes.SET_GROUP:
       return { ...state, group: action.payload.group };
 
+    case actionTypes.ADD_GROUP:
+      return { ...state, groups: [...state.groups, action.payload.group] };
+
+    case actionTypes.DEL_GROUP:
+      const groups = state.groups.filter((group) => (group._id !== action.payload.id));
+      return { ...state, groups };
+
     case actionTypes.SET_CAMP_LOADING:
       return { ...state, isLoading: action.payload.isLoading };
 

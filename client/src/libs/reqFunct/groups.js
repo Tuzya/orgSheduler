@@ -6,7 +6,7 @@ export const getSchemas = async (phase = 1) => {
   }
 };
 
-export const getGroupId = async (name, phase, groupType, students, shedule) => {
+export const createGroup = async (name, phase, groupType, students, shedule) => {
   try {
     return (
       await fetch('/api/groups', {

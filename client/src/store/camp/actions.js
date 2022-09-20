@@ -3,6 +3,8 @@ import actionTypes from '../types';
 const setLoading = (isLoading) => ({ type: actionTypes.SET_CAMP_LOADING, payload: { isLoading } });
 const setGroups = (groups) => ({ type: actionTypes.SET_GROUPS, payload: { groups } });
 export const setGroup = (group) => ({ type: actionTypes.SET_GROUP, payload: { group } });
+export const addGroup = (group) => ({ type: actionTypes.ADD_GROUP, payload: { group } });
+export const delGroup = (id) => ({type: actionTypes.DEL_GROUP, payload: {id}})
 const setError = (msg) => ({ type: actionTypes.ERROR, payload: { msg } });
 
 export const getGroups = () => async (dispatch) => {

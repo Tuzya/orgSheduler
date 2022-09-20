@@ -1,12 +1,15 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { getShedule } from '../../libs/groups-splitter';
+import { useDispatch } from "react-redux";
+
 import './GroupCreateForm.css';
 import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
 import {groupTypes, MAX_NUMS_PHASES} from '../../consts';
 import LinearLoader from '../Loader/LinearLoader';
-import { getGroupId } from '../../libs/reqFunct/groups';
+import { createGroup } from '../../libs/reqFunct/groups';
+import {addGroup} from "../../store/camp/actions"
 
 export default function GroupCreateForm() {
   const history = useHistory();
@@ -17,6 +20,7 @@ export default function GroupCreateForm() {
   const { value: students, bind: bindStudents } = useInput(sessionStorage.getItem('students') ||'');
   // const { setValue: setSchedule } = useInput([]);
   const { value: groupType, setValue: setGroupType } = useInput('online');
+  const dispatch = useDispatch();
 
   const generateSchedule = async (event) => {
     event.preventDefault();
@@ -47,18 +51,21 @@ export default function GroupCreateForm() {
       schemas,
       false
     );
-    const { _id: fetchedGroupId } = await getGroupId(
+    const group = await createGroup(
       name,
       phase,
       groupType,
       studentsArr,
       generatedShedule
     );
-    setGroupId(fetchedGroupId);
+    console.log('file-GroupCreateForm.jsx group:', group);
+
+    setGroupId(group._id);
+    dispatch(addGroup(group));
     // setSchedule(generatedSchedule); // TODO: check if is is ok
     setLoad(false);
     sessionStorage.clear();
-    return history.push(`/groups/${fetchedGroupId}`);
+    return history.push(`/groups/${group._id}`);
   };
 
   const handleChange = ({ target }) => {

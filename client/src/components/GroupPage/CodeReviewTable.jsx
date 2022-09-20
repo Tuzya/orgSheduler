@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Modal } from '@daypilot/modal';
+import { useDispatch } from 'react-redux';
 
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
@@ -10,7 +11,7 @@ import { isObjEmpty } from '../../libs/functions';
 import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
 import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import { getComment, updateStudentComment } from '../../libs/reqFunct/students';
-
+import { getGroups } from '../../store/camp/actions';
 
 const rowsInit = (teachers, timeGaps, groupType) => [
   timeGaps.reduce(function (acc, cur, i) {
@@ -41,6 +42,7 @@ function CodeReviewTable({ group, isAuth }) {
   const [teachers, setTeachers] = React.useState([]);
   const [isEdit, setEdit] = React.useState(false);
   const history = useHistory();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (!isObjEmpty(group)) {
@@ -120,6 +122,7 @@ function CodeReviewTable({ group, isAuth }) {
     setEdit(false);
     setLoad(true);
     await updCRTablesGroups(crTablesRef.current, group._id);
+    await dispatch(getGroups());
     setLoad(false);
   };
 

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+
 import './Schema.css';
 import { daysCR, groupTypes } from '../../consts';
 import { updAllGroups } from '../../libs/reqFunct/groups';
@@ -6,25 +8,26 @@ import { useHistory } from 'react-router-dom';
 import LinearLoader from '../Loader/LinearLoader';
 import { getTeachersAndGaps, updateTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import useInput from '../../hooks/input-hook';
+import { getGroups } from '../../store/camp/actions';
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
   const [isLoad, setLoad] = React.useState(true);
 
-
   const { value: groupType, setValue: setGrType } = useInput(groupTypes.online);
   const { value: teachers, bind: bindTeachers, setValue: setTeachers } = useInput('');
   const { value: timegaps, bind: bindTimegaps, setValue: setTimegaps } = useInput('');
   const history = useHistory();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     (async () => {
       setLoad(true);
       try {
         const fetchedGroups = await (await fetch('/api/groups/')).json();
-        if(fetchedGroups.err) {
+        if (fetchedGroups.err) {
           setLoad(false);
-          return alert(` Err to get groups: ${fetchedGroups.err}`)
+          return alert(` Err to get groups: ${fetchedGroups.err}`);
         }
         let schemaCRInitGroups = fetchedGroups?.map((group) => {
           if (!group.crshedule) group.crshedule = { crdays: { ...daysCR } };
@@ -81,13 +84,13 @@ export default function CodeReviewSchema() {
         groupType
       );
       if (resGr?.message === 'ok' && resTG?.message === 'ok') {
+        await dispatch(getGroups());
         setLoad(false);
         alert('Code Review Schema updated.');
-        return history.push('/');
+        history.push('/');
       } else alert(`Что то пошло не так... ${resGr?.err + resTG?.err}`);
     } catch (err) {
       console.log('Error generateCRSchema', err.message);
-    } finally {
       setLoad(false);
     }
   };
