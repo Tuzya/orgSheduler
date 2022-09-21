@@ -184,7 +184,7 @@ function CodeReviewTable({ group, isAuth }) {
         </div>
       </div>
       {crTables.map((crTablegroup) => (
-        <div key={crTablegroup.crDay} style={{ marginBottom: 50 }}>
+        <div key={crTablegroup.crDay} style={{ marginBottom: 50, opacity: (isLoad ? 0.5 : 1) }}>
           <table className="striped centered">
             <caption>{DAYTORU[crTablegroup.crDay]}</caption>
             <thead>
