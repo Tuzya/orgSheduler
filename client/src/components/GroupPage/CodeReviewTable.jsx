@@ -122,7 +122,7 @@ function CodeReviewTable({ group, isAuth }) {
     setEdit(false);
     setLoad(true);
     await updCRTablesGroups(crTablesRef.current, group._id);
-    await dispatch(getGroups());
+    await dispatch(getGroups()); //todo запись в стор из базы новых данных. переделать запись в стейт напрямую
     setLoad(false);
   };
 
@@ -165,7 +165,6 @@ function CodeReviewTable({ group, isAuth }) {
       groupType: group.groupType,
       teacher: teachers[colNum - 1],
       date: currentDate, // если комент в тот же самый день - то он обновиться. если в другой - запушиться. поэтому отсекаем время от даты.
-      // date: new Date(),
       rating: modal.result.rating,
       comment: modal.result.comment
     };
