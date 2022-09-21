@@ -1,5 +1,6 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { getShedule } from '../../libs/groups-splitter';
 
 import './GroupEditForm.css';
@@ -7,10 +8,12 @@ import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
 import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
 import { putGroup } from '../../libs/reqFunct/groups';
+import {delGroup, getGroups} from '../../store/camp/actions';
 
 export default function GroupEditForm() {
   const history = useHistory();
   const { groupId } = useParams();
+  const dispatch = useDispatch();
 
   const { value: name, bind: bindName, setValue: setName } = useInput('');
   const { value: phase, bind: bindPhase, setValue: setPhase } = useInput('');
@@ -49,7 +52,10 @@ export default function GroupEditForm() {
       JSON.parse(shedule),
       groupId
     );
-    if (res?.message === 'ok') return history.push(`/groups/${groupId}`);
+    if (res?.message === 'ok') {
+      await dispatch(getGroups());
+      return history.push(`/groups/${groupId}`);
+    }
     else alert(`Что то пошло не так... ${res.err}`);
   };
 
@@ -84,8 +90,10 @@ export default function GroupEditForm() {
           Accept: 'application/json'
         }
       });
-      if (response.status === 200) return history.push('/groups');
-      else alert(`Error while delete: ${response.status}`);
+      if (response.status === 200) {
+        await dispatch(delGroup(groupId));
+        history.push('/groups');
+      } else alert(`Error while delete: ${response.status}`);
     } catch (e) {
       console.log('Error while delete:', e.message);
       alert(`Error while delete: ${e.message}`);

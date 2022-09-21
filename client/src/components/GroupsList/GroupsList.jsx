@@ -1,31 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import GroupItem from '../GroupItem/GroupItem';
+import {getGroups} from "../../store/camp/actions"
+import {useDispatch, useSelector} from "react-redux"
 
 function GroupsList({ isAuth }) {
-  const [groups, setGroups] = useState([]);
-  const [isLoading, setLoading] = useState(true);
+
+  const groups = useSelector((state) => state.camp.groups);
+  const isLoading = useSelector((state) => state.camp.isLoading);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/groups/');
-
-        if(!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}`);
-        const fetchedGroups = await res.json();
-        if(fetchedGroups.err) throw new Error(`Err to get groups: ${fetchedGroups.err}`);
-
-        // Сортировка студентов по имени, для отображения списка в badge.
-        fetchedGroups.map((group) => group.students.sort());
-        setGroups(fetchedGroups);
-      } catch (e) {
-        console.error('Failed to fetch Groups', e.message);
-        alert(e.message)
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+    if(groups.length === 0) dispatch(getGroups())
+  }, [dispatch]);
 
   if (isLoading) return <div className="spinner">Loading Groups...</div>;
   if (groups.length === 0)

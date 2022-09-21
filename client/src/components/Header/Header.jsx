@@ -3,8 +3,12 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import logo from './elb-logo.svg';
 import './Header.css';
+import {logout} from "../../store/auth/actions"
+import {useDispatch} from "react-redux"
 
-function Header({ isAuth, logout }) {
+function Header({ isAuth}) {
+  const dispatch = useDispatch();
+  const logOutHandler = (e) => dispatch(logout(e));
   return (
     <header>
       <nav>
@@ -24,7 +28,7 @@ function Header({ isAuth, logout }) {
                   <Link to="/groups/new">New Group</Link>
                   <Link to="/groups/schema">Schema</Link>
                   <Link to="/students">Students</Link>
-                  <Link to="/" onClick={logout}>Logout</Link>
+                  <Link to="/" onClick={logOutHandler}>Logout</Link>
                 </>
               ) : <Link to="/login">Login</Link>
             }
@@ -36,8 +40,7 @@ function Header({ isAuth, logout }) {
 }
 
 Header.propTypes = {
-  isAuth: PropTypes.bool.isRequired,
-  logout: PropTypes.func.isRequired,
+  isAuth: PropTypes.bool.isRequired
 };
 
 export default Header;
