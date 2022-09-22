@@ -29,5 +29,5 @@ addErrorHandlers(app);
 
 app.listen(
   PORT,
-  () => console.log(`Express server started on port: ${PORT}`),
+  () => console.log(`Server started on port: ${PORT}`),
 );
