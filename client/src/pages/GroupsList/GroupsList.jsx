@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import GroupItem from '../GroupItem/GroupItem';
+import GroupItem from '../../components/GroupItem/GroupItem';
 import {getGroups} from "../../store/camp/actions"
 import {useDispatch, useSelector} from "react-redux"
 

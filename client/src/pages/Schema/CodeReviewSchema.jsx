@@ -5,7 +5,7 @@ import './Schema.css';
 import { daysCR, groupTypes } from '../../consts';
 import { updAllGroups } from '../../libs/reqFunct/groups';
 import { useHistory } from 'react-router-dom';
-import LinearLoader from '../Loader/LinearLoader';
+import LinearLoader from '../../components/Loader/LinearLoader';
 import { getTeachersAndGaps, updateTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import useInput from '../../hooks/input-hook';
 import { getGroups } from '../../store/camp/actions';

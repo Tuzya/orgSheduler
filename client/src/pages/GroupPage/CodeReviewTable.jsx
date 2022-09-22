@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { updCRTablesGroups } from '../../libs/reqFunct/groups';
-import LinearLoader from '../Loader/LinearLoader';
+import LinearLoader from '../../components/Loader/LinearLoader';
 import { isObjEmpty } from '../../libs/functions';
 import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
 import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';

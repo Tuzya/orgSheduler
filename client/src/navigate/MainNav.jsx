@@ -1,14 +1,14 @@
 import React from 'react';
 import { Route, Switch } from 'react-router';
-import GroupsList from '../components/GroupsList/GroupsList';
-import SignUp from '../components/SignUp/SignUp';
-import Login from '../components/Login/Login';
+import GroupsList from '../pages/GroupsList/GroupsList';
+import SignUp from '../pages/SignUp/SignUp';
+import Login from '../pages/Login/Login';
 import PrivateRoute from '../components/PrivateRoute/PrivateRoute';
-import GroupCreateForm from '../components/GroupCreateForm/GroupCreateForm';
-import Schema from '../components/Schema/Schema';
+import GroupCreateForm from '../pages/GroupCreateForm/GroupCreateForm';
+import Schema from '../pages/Schema/Schema';
 import Students from '../pages/Students/Students';
-import GroupPage from '../components/GroupPage/GroupPage';
-import GroupEditForm from '../components/GroupEditForm/GroupEditForm';
+import GroupPage from '../pages/GroupPage/GroupPage';
+import GroupEditForm from '../pages/GroupEditForm/GroupEditForm';
 
 export default function MainNav({ isAuth }) {
   return (

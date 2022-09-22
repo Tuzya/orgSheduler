@@ -7,7 +7,7 @@ import './GroupCreateForm.css';
 import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
 import {groupTypes, MAX_NUMS_PHASES} from '../../consts';
-import LinearLoader from '../Loader/LinearLoader';
+import LinearLoader from '../../components/Loader/LinearLoader';
 import { createGroup } from '../../libs/reqFunct/groups';
 import {addGroup} from "../../store/camp/actions"
 
