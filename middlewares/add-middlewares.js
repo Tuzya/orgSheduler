@@ -53,7 +53,7 @@ function addMiddlewares(router) {
   router.use(session({
     key: 'elbrus_scheduler_sid',
     store: new MongoStore(mongooseStoreOpt),
-    secret: '-N0BodyKn0wsMySecrit-',
+    secret: process.env.COOKIESSECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 },
