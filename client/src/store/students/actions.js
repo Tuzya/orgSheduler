@@ -1,12 +1,25 @@
-export const getStudents = async (name = '', groupType) => {
-  try {
-    return (await fetch(`/api/students?name=${name}&groupType=${groupType}`)).json();
-  } catch (e) {
-    console.log('Group Page Error', e.message);
-  }
-};
+import actionTypes from "../types";
 
-export const getStudent = async (name, groupName) => {
+const setStudents = (students) => ({type: actionTypes.SET_STUDENTS, payload: {students}});
+const setLoading = (isLoad) => ({type: actionTypes.SET_STUD_LOADING, payload: {isLoad}})
+
+export const getStudents = ({name = '', groupType}) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+   const res = await fetch(`/api/students?name=${name}&groupType=${groupType}`);
+    if (!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}`);
+   const students = await res.json();
+    if (students.err) throw new Error(`Err to get students: ${students.err}`);
+  dispatch(setStudents(students));
+  } catch (e) {
+    console.error('Failed to fetch Students', e.message);
+    alert(e.message);
+  } finally {
+    dispatch(setLoading(false));
+  }
+}
+
+export const getStudent = (ame, groupName) => async (dispatch) => {
   try {
     return (await fetch(`/api/students`)).json();
   } catch (e) {

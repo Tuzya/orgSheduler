@@ -7,8 +7,7 @@ import './GroupEditForm.css';
 import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
 import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
-import { putGroup } from '../../libs/reqFunct/groups';
-import {delGroup, getGroups} from '../../store/camp/actions';
+import {delGroup, getGroups, putGroup} from '../../store/camp/actions';
 
 export default function GroupEditForm() {
   const history = useHistory();

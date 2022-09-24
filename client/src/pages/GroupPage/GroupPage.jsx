@@ -6,6 +6,7 @@ import './GroupPage.css';
 import GroupShedule from './GroupShedule';
 import CodeReviewTable from './CodeReviewTable';
 import {getGroup, setGroup} from '../../store/camp/actions';
+import {isObjEmpty} from "../../libs/functions"
 
 function GroupPage({ isAuth }) {
   const { groupId } = useParams();
@@ -19,6 +20,14 @@ function GroupPage({ isAuth }) {
   }, [dispatch]);
 
   if (isLoading) return <div className="spinner" />;
+  if (isObjEmpty(group))
+    return (
+      <div className="group-page">
+        <div className="group-schedule-header">
+          <div>Группа не найдена</div>
+        </div>
+      </div>
+    )
   return (
     <div className="group-page">
       <div className="group-schedule-header">

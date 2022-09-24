@@ -2,10 +2,12 @@ import React from 'react';
 import dayjs from 'dayjs';
 
 import './students.css';
-import { getStudents } from '../../libs/reqFunct/students';
+
 import { DebounceInput } from 'react-debounce-input';
-import LinearLoader from "../../components/Loader/LinearLoader"
-import {groupTypes} from "../../consts"
+import LinearLoader from '../../components/Loader/LinearLoader';
+import { groupTypes } from '../../consts';
+import { useDispatch, useSelector } from 'react-redux';
+import { getStudents } from '../../store/students/actions';
 
 const ratingColor = {
   0: 'red',
@@ -17,18 +19,15 @@ const ratingColor = {
 };
 
 export default function Schema() {
-  const [students, setStudents] = React.useState([]);
-  const [search, setSearch] = React.useState({name: '', groupType: groupTypes.online})
-  const [isLoad, setLoad] = React.useState(true);
+  const [search, setSearch] = React.useState({ name: '', groupType: groupTypes.online });
+
+  const dispatch = useDispatch();
+  const { data: students, isLoading } = useSelector((store) => store.students);
 
   React.useEffect(() => {
-    (async () => {
-      setLoad(true);
-      const students = await getStudents(search.name, search.groupType);
-      setStudents(students);
-      setLoad(false);
-    })()
+    dispatch(getStudents(search));
   }, [search]);
+
   return (
     <>
       <DebounceInput
@@ -37,7 +36,7 @@ export default function Schema() {
         minLength={2}
         debounceTimeout={600}
         onChange={(e) => {
-          setSearch((state) => ({...state, name: e.target.value}));
+          setSearch((state) => ({ ...state, name: e.target.value }));
         }}
       />
       <div>
@@ -45,7 +44,7 @@ export default function Schema() {
           <select
             className="browser-default"
             onChange={(e) => {
-              setSearch((state) => ({...state, groupType: e.target.value}));
+              setSearch((state) => ({ ...state, groupType: e.target.value }));
             }}
           >
             {Object.keys(groupTypes).map((type) => (
@@ -56,7 +55,7 @@ export default function Schema() {
           </select>
         </div>
       </div>
-      {isLoad && <LinearLoader/>}
+      {isLoading && <LinearLoader />}
       <div style={{ marginTop: 20 }}>
         <ul className="collection">
           {students.map((student) => (

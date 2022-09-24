@@ -1,37 +1,38 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { getShedule } from '../../libs/groups-splitter';
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 
 import './GroupCreateForm.css';
+import LinearLoader from '../../components/Loader/LinearLoader';
 import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
-import {groupTypes, MAX_NUMS_PHASES} from '../../consts';
-import LinearLoader from '../../components/Loader/LinearLoader';
-import { createGroup } from '../../libs/reqFunct/groups';
-import {addGroup} from "../../store/camp/actions"
+import { getShedule } from '../../libs/groups-splitter';
+import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
+import { createGroup, addGroup } from '../../store/camp/actions';
 
 export default function GroupCreateForm() {
   const history = useHistory();
   const [isLoad, setLoad] = React.useState(false);
   const { setValue: setGroupId } = useInput('');
-  const { value: name, bind: bindName } = useInput(sessionStorage.getItem('name') ||'');
+  const { value: name, bind: bindName } = useInput(sessionStorage.getItem('name') || '');
   const { value: phase, bind: bindPhase } = useInput(sessionStorage.getItem('phase') || '');
-  const { value: students, bind: bindStudents } = useInput(sessionStorage.getItem('students') ||'');
+  const { value: students, bind: bindStudents } = useInput(
+    sessionStorage.getItem('students') || ''
+  );
   // const { setValue: setSchedule } = useInput([]);
   const { value: groupType, setValue: setGroupType } = useInput('online');
   const dispatch = useDispatch();
 
   const generateSchedule = async (event) => {
     event.preventDefault();
-    if(!students || !name || !phase ) return;
+    if (!students || !name || !phase) return;
     const studentsArr = students.split(/ *, */g);
     // const generatedSchedule = getSchedule(studentsArr, undefined, !!online);
 
     setLoad(true);
     const schemas = await getSchemas(phase);
-    const online = groupType === groupTypes.online
-    if (!schemas?.[online ? 'online' : "offline"]) {
+    const online = groupType === groupTypes.online;
+    if (!schemas?.[online ? 'online' : 'offline']) {
       alert(
         `Схема для фазы ${phase} ${
           online ? 'онлайн' : 'оффлайн'
@@ -51,14 +52,7 @@ export default function GroupCreateForm() {
       schemas,
       false
     );
-    const group = await createGroup(
-      name,
-      phase,
-      groupType,
-      studentsArr,
-      generatedShedule
-    );
-    console.log('file-GroupCreateForm.jsx group:', group);
+    const group = await createGroup(name, phase, groupType, studentsArr, generatedShedule);
 
     setGroupId(group._id);
     dispatch(addGroup(group));
@@ -83,11 +77,7 @@ export default function GroupCreateForm() {
       />
       <input type="text" {...bindStudents} placeholder="Students" />
       <div className="input-field" style={{ minWidth: '300px' }}>
-        <select
-          className="browser-default"
-          onChange={handleChange}
-          value={groupType}
-        >
+        <select className="browser-default" onChange={handleChange} value={groupType}>
           {Object.keys(groupTypes).map((type) => (
             <option key={type} value={type}>
               {type}

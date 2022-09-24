@@ -4,14 +4,13 @@ import PropTypes from 'prop-types';
 import { Modal } from '@daypilot/modal';
 import { useDispatch } from 'react-redux';
 
-import { GenerateRandomNumbers } from '../../libs/randomNumber';
-import { updCRTablesGroups } from '../../libs/reqFunct/groups';
 import LinearLoader from '../../components/Loader/LinearLoader';
+import { GenerateRandomNumbers } from '../../libs/randomNumber';
+import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import { isObjEmpty } from '../../libs/functions';
 import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
-import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
-import { getComment, updateStudentComment } from '../../libs/reqFunct/students';
-import { getGroups } from '../../store/camp/actions';
+import { getComment, updateStudentComment } from '../../store/students/actions';
+import { getGroups, updCRTablesGroups } from '../../store/camp/actions';
 
 const rowsInit = (teachers, timeGaps, groupType) => [
   timeGaps.reduce(function (acc, cur, i) {

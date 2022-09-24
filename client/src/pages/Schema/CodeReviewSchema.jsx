@@ -1,14 +1,13 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import './Schema.css';
 import { daysCR, groupTypes } from '../../consts';
-import { updAllGroups } from '../../libs/reqFunct/groups';
-import { useHistory } from 'react-router-dom';
 import LinearLoader from '../../components/Loader/LinearLoader';
 import { getTeachersAndGaps, updateTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import useInput from '../../hooks/input-hook';
-import { getGroups } from '../../store/camp/actions';
+import { getGroups, updAllGroups } from '../../store/camp/actions';
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
