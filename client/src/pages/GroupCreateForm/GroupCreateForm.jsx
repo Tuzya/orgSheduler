@@ -27,7 +27,6 @@ export default function GroupCreateForm() {
     event.preventDefault();
     if (!students || !name || !phase) return;
     const studentsArr = students.split(/ *, */g);
-    // const generatedSchedule = getSchedule(studentsArr, undefined, !!online);
 
     setLoad(true);
     const schemas = await getSchemas(phase);
@@ -67,7 +66,7 @@ export default function GroupCreateForm() {
   };
   return (
     <form name="newGroup" onSubmit={generateSchedule}>
-      <input type="text" {...bindName} placeholder="Groupname" />
+      <input type="text" {...bindName} placeholder="NameYearGroupType" />
       <input
         type="number"
         {...bindPhase}

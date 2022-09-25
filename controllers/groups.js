@@ -6,7 +6,7 @@ exports.allGroups = async (req, res) => {
     const allTheGroups = await Group.find().populate('students').lean();
     res.status(200).json(allTheGroups);
   } catch (err) {
-    console.error('updGroup error', err.message);
+    console.error('allGroups error', err.message);
     res.status(500).json({ err: err.message });
   }
 };

@@ -3,10 +3,10 @@ import actionTypes from "../types";
 const setStudents = (students) => ({type: actionTypes.SET_STUDENTS, payload: {students}});
 const setLoading = (isLoad) => ({type: actionTypes.SET_STUD_LOADING, payload: {isLoad}})
 
-export const getStudents = ({name = '', groupType}) => async (dispatch) => {
+export const getStudents = (searchProps) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-   const res = await fetch(`/api/students?name=${name}&groupType=${groupType}`);
+   const res = await fetch(`/api/students?search=${JSON.stringify(searchProps)}`);
     if (!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}`);
    const students = await res.json();
     if (students.err) throw new Error(`Err to get students: ${students.err}`);

@@ -1,11 +1,12 @@
 const Student = require('../models/Student');
 
 exports.allStudents = async (req, res) => {
-  const { name, groupType } = req.query;
+  const { name = '', groupType = '', groupName = '' } = JSON.parse(req.query.search);
   try {
     const students = await Student.find({
       name: { $regex: name, $options: 'i' },
-      'history.groupType': groupType
+      groupType: groupType,
+      group: { $regex: groupName, $options: 'i' }
     })
       .sort({ createdAt: -1 })
       .lean();

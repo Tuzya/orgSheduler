@@ -8,6 +8,7 @@ import LinearLoader from '../../components/Loader/LinearLoader';
 import { groupTypes } from '../../consts';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStudents } from '../../store/students/actions';
+import { getGroups } from '../../store/camp/actions';
 
 const ratingColor = {
   0: 'red',
@@ -19,10 +20,19 @@ const ratingColor = {
 };
 
 export default function Schema() {
-  const [search, setSearch] = React.useState({ name: '', groupType: groupTypes.online });
+  const [search, setSearch] = React.useState({ name: '', groupType: groupTypes.online, groupName: '' });
 
   const dispatch = useDispatch();
   const { data: students, isLoading } = useSelector((store) => store.students);
+  const groups = useSelector((store) => store.camp.groups);
+  const groupNames = React.useMemo(
+    () => groups.filter((group) => group.groupType === search.groupType).map((group) => group.name),
+    [groups, search]
+  );
+
+  React.useEffect(() => {
+    if (groups.length === 0) dispatch(getGroups());
+  }, []);
 
   React.useEffect(() => {
     dispatch(getStudents(search));
@@ -32,7 +42,7 @@ export default function Schema() {
     <>
       <DebounceInput
         className={'px-2'}
-        placeholder={'search here...'}
+        placeholder={'search students by name here...'}
         minLength={2}
         debounceTimeout={600}
         onChange={(e) => {
@@ -50,6 +60,22 @@ export default function Schema() {
             {Object.keys(groupTypes).map((type) => (
               <option key={type} value={type}>
                 {type}
+              </option>
+            ))}
+          </select>
+          <br/>
+          <select
+            className="browser-default"
+            onChange={(e) => {
+              setSearch((state) => ({ ...state, groupName: e.target.value }));
+            }}
+          >
+            <option key={'007'} value="" selected>
+              Все группы
+            </option>
+            {groupNames.map((name) => (
+              <option key={name} value={name}>
+                {name}
               </option>
             ))}
           </select>

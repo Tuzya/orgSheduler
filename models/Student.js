@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 const StudentsSchema = new Schema(
   {
     name: String,
-    group: String,
+    group: { type: Schema.Types.ObjectId, ref: 'Group' },
     isArchived: {type: Boolean, default: false},
     history: [
       {

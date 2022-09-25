@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Student = require('../models/Student');
+const Group = require('../models/GroupSchema');
 
 const { Schema, model } = mongoose;
 
@@ -47,17 +48,21 @@ groupSchema.statics.createGroupAndStudents = async function (
   shedule,
   groupType
 ) {
-  const studentsModels = await Student.create(
-    students.map((stName) => ({ name: stName, group: name, history: [] }))
-  );
-  const studentsIds = studentsModels.map((student) => student._id);
-  return this.create({
+
+  const group = new this({
     name,
     phase,
-    students: studentsIds,
+    students: [],
     shedule,
     groupType
-  });
+  })
+
+  const studentsModels = await Student.create(
+    students.map((studentName) => ({ name: studentName, group: group._id, history: [] }))
+  );
+  group.students = studentsModels.map((student) => student._id);
+
+  return group.save();
 };
 
 groupSchema.statics.updateGroupAndStudents = async function (

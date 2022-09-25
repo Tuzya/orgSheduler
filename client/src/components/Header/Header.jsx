@@ -28,6 +28,7 @@ function Header({ isAuth}) {
                   <Link to="/groups/new">New Group</Link>
                   <Link to="/groups/schema">Schema</Link>
                   <Link to="/students">Students</Link>
+                  <Link to="/students/new">New Students</Link>
                   <Link to="/" onClick={logOutHandler}>Logout</Link>
                 </>
               ) : <Link to="/login">Login</Link>
