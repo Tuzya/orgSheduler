@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import './GroupPage.css';
 import GroupShedule from './GroupShedule';
 import CodeReviewTable from './CodeReviewTable';
+import {getGroup, setGroup} from '../../store/camp/actions';
+import {isObjEmpty} from "../../libs/functions"
 
 function GroupPage({ isAuth }) {
   const { groupId } = useParams();
-  const [group, setGroup] = useState({});
-  const [isLoad, setLoad] = useState(true);
+  const dispatch = useDispatch();
+  const { groups, group, isLoading } = useSelector((state) => state.camp);
 
   useEffect(() => {
-    (async () => {
-      setLoad(true);
-      try {
-        const group = await (await fetch(`/api/groups/${groupId}`)).json();
-        if (!group) alert('Не удалось получить группу');
-        if (group) setGroup(group);
-      } catch (e) {
-        console.log('Group Page Error', e.message);
-      } finally {
-        setLoad(false);
-      }
-    })();
-  }, []);
+    const group = groups.find((group) => (group._id === groupId))
+    if (group) dispatch(setGroup(group))
+    else dispatch(getGroup(groupId));
+  }, [dispatch]);
 
-  if (isLoad) return <div className="spinner" />;
+  if (isLoading) return <div className="spinner" />;
+  if (isObjEmpty(group))
+    return (
+      <div className="group-page">
+        <div className="group-schedule-header">
+          <div>Группа не найдена</div>
+        </div>
+      </div>
+    )
   return (
     <div className="group-page">
       <div className="group-schedule-header">

@@ -6,17 +6,21 @@ exports.allGroups = async (req, res) => {
     const allTheGroups = await Group.find().populate('students').lean();
     res.status(200).json(allTheGroups);
   } catch (err) {
-    console.log('updGroup error', err);
+    console.error('updGroup error', err.message);
     res.status(500).json({ err: err.message });
   }
 };
 
 exports.groups = async (req, res) => {
-  const group = await Group.findById(req.params.id).populate('students').lean();
-  console.log('file-groups.js group.students:', group.students);
-  res.json(group);
+  try {
+    const group = await Group.findOne({_id: req.params.id}).populate('students').lean();
+    res.status(200).json(group);
+  } catch (err) {
+    console.error('getGroup error', err.message);
+    if(err.name === 'CastError') return res.status(404).json({ err: err.message });
+    res.status(500).json({ err: err.message });
+  }
 };
-
 
 exports.createGroup = async (req, res) => {
   const { phase, students, shedule, name, groupType } = req.body;

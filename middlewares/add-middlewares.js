@@ -20,10 +20,9 @@ function addMiddlewares(router) {
 
   router.use(morgan('dev'));
 
-
   const corsMiddleware = (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '/');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Origin', '*');
+    // res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   };
   router.use(corsMiddleware);
@@ -54,7 +53,7 @@ function addMiddlewares(router) {
   router.use(session({
     key: 'elbrus_scheduler_sid',
     store: new MongoStore(mongooseStoreOpt),
-    secret: '-N0BodyKn0wsMySecrit-',
+    secret: process.env.COOKIESSECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 },
@@ -68,7 +67,7 @@ function addMiddlewares(router) {
   });
 
   passport.deserializeUser(async (id, done) => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).select({ password: 0, __v: 0}).lean();
     done(null, user);
   });
 }

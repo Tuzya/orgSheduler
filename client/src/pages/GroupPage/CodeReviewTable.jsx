@@ -1,16 +1,16 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Modal } from '@daypilot/modal';
+import { useDispatch } from 'react-redux';
 
+import LinearLoader from '../../components/Loader/LinearLoader';
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
-import { updCRTablesGroups } from '../../libs/reqFunct/groups';
-import LinearLoader from '../Loader/LinearLoader';
+import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import { isObjEmpty } from '../../libs/functions';
 import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
-import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
-import { getComment, updateStudentComment } from '../../libs/reqFunct/students';
-
+import { getComment, updateStudentComment } from '../../store/students/actions';
+import { getGroups, updCRTablesGroups } from '../../store/camp/actions';
 
 const rowsInit = (teachers, timeGaps, groupType) => [
   timeGaps.reduce(function (acc, cur, i) {
@@ -41,6 +41,7 @@ function CodeReviewTable({ group, isAuth }) {
   const [teachers, setTeachers] = React.useState([]);
   const [isEdit, setEdit] = React.useState(false);
   const history = useHistory();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (!isObjEmpty(group)) {
@@ -54,7 +55,7 @@ function CodeReviewTable({ group, isAuth }) {
         }
 
         const crdays = group.crshedule?.crdays || {};
-        const tableDays = group.crtables.map((table) => table.crDay);
+        const tableDays = group.crtables?.map((table) => table.crDay) || [];
         const prevSelectedDays = Object.fromEntries(
           DAYS.map((day) => [[day], tableDays.includes(day)])
         );
@@ -120,6 +121,7 @@ function CodeReviewTable({ group, isAuth }) {
     setEdit(false);
     setLoad(true);
     await updCRTablesGroups(crTablesRef.current, group._id);
+    await dispatch(getGroups()); //todo запись в стор из базы новых данных. переделать запись в стейт напрямую
     setLoad(false);
   };
 
@@ -139,12 +141,13 @@ function CodeReviewTable({ group, isAuth }) {
   };
 
   const onAddComment = async (e, group, colNum) => {
+    if (isLoad) return;
     const currentDate = new Date().setHours(0, 0, 0, 0);
     const studentsName = e.target.innerText;
     if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет' || !isAuth) return;
-
+    setLoad(true);
     const lastRecord = await getComment(studentsName, group.name, currentDate);
-
+    setLoad(false);
     const form = [
       { name: 'Comments Student' },
       { name: 'Comment', id: 'comment' },
@@ -179,7 +182,7 @@ function CodeReviewTable({ group, isAuth }) {
         </div>
       </div>
       {crTables.map((crTablegroup) => (
-        <div key={crTablegroup.crDay} style={{ marginBottom: 50 }}>
+        <div key={crTablegroup.crDay} style={{ marginBottom: 50, opacity: (isLoad ? 0.5 : 1) }}>
           <table className="striped centered">
             <caption>{DAYTORU[crTablegroup.crDay]}</caption>
             <thead>
