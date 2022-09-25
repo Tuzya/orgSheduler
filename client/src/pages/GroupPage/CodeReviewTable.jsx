@@ -65,6 +65,7 @@ function CodeReviewTable({ group, isAuth }) {
           crTablesRef.current = JSON.parse(JSON.stringify(group.crtables));
           return setcrTables(group.crtables);
         }
+
         if (group.students?.length && group.crshedule) {
           generateStudentsToTable(group, teachersAndGaps.teachers, teachersAndGaps.timegaps);
         }
@@ -146,7 +147,7 @@ function CodeReviewTable({ group, isAuth }) {
     const studentsName = e.target.innerText;
     if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет' || !isAuth) return;
     setLoad(true);
-    const lastRecord = await getComment(studentsName, group.name, currentDate);
+    const lastRecord = await getComment(studentsName, group._id, currentDate);
     setLoad(false);
     const form = [
       { name: 'Comments Student' },
@@ -168,7 +169,7 @@ function CodeReviewTable({ group, isAuth }) {
       comment: modal.result.comment
     };
 
-    await updateStudentComment(studentsName, group.name, historyEl);
+    await updateStudentComment(studentsName, group._id, historyEl);
   };
 
   return (
@@ -197,6 +198,7 @@ function CodeReviewTable({ group, isAuth }) {
                 <tr key={time}>
                   {crTablegroup.tableData.map((cell, colNum) => {
                     const row = `row${i + 1}`;
+
                     return (
                       <td
                         style={{
@@ -211,6 +213,7 @@ function CodeReviewTable({ group, isAuth }) {
                         }}
                       >
                         {!isEdit && cell[row]}
+
                         {isEdit && (
                           <input
                             defaultValue={cell[row]}

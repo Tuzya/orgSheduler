@@ -1,15 +1,25 @@
 const Student = require('../models/Student');
 
 exports.allStudents = async (req, res) => {
-  const { name = '', groupType = '', groupName = '' } = JSON.parse(req.query.search);
+  const { name = '', groupType = '', groupId = '' } = JSON.parse(req.query.search);
+  console.log('file-students.js JSON.parse(req.query.search):', JSON.parse(req.query.search));
+
+  const query = groupId
+    ? {
+        name: { $regex: name, $options: 'i' },
+        groupType: groupType,
+        group: groupId
+      }
+    : { name: { $regex: name, $options: 'i' }, groupType: groupType };
+
+  const populateOpt = {
+    path: 'group',
+    model: 'Group',
+    select: { _id: 1, name: 1 }
+  };
   try {
-    const students = await Student.find({
-      name: { $regex: name, $options: 'i' },
-      groupType: groupType,
-      group: { $regex: groupName, $options: 'i' }
-    })
-      .sort({ createdAt: -1 })
-      .lean();
+    const students = await Student.find(query).populate(populateOpt).sort({ createdAt: -1 }).lean();
+    console.log('file-students.js students:', students);
     res.status(200).json(students);
   } catch (err) {
     console.log('allStudents get error', err);
@@ -37,12 +47,12 @@ exports.getComment = async (req, res) => {
 };
 
 exports.updStudent = async (req, res) => {
-  const { name, groupName, historyEl } = req.body;
+  const { name, groupId, historyEl } = req.body;
 
   try {
-    let student = await Student.findOne({ name: name, group: groupName });
+    let student = await Student.findOne({ name: name, group: groupId });
     if (!student) {
-      student = new Student({ name, group: groupName, history: [historyEl] });
+      student = new Student({ name, group: groupId, history: [historyEl] });
     } else {
       let index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
 

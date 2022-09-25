@@ -20,13 +20,19 @@ const ratingColor = {
 };
 
 export default function Schema() {
-  const [search, setSearch] = React.useState({ name: '', groupType: groupTypes.online, groupName: '' });
+  const [search, setSearch] = React.useState({
+    name: '',
+    groupType: groupTypes.online,
+    groupId: ''
+  });
 
   const dispatch = useDispatch();
   const { data: students, isLoading } = useSelector((store) => store.students);
   const groups = useSelector((store) => store.camp.groups);
-  const groupNames = React.useMemo(
-    () => groups.filter((group) => group.groupType === search.groupType).map((group) => group.name),
+  const filteredGroups = React.useMemo(
+    () =>
+      groups
+        .filter((group) => group.groupType === search.groupType),
     [groups, search]
   );
 
@@ -63,19 +69,19 @@ export default function Schema() {
               </option>
             ))}
           </select>
-          <br/>
+          <br />
           <select
             className="browser-default"
             onChange={(e) => {
-              setSearch((state) => ({ ...state, groupName: e.target.value }));
+              setSearch((state) => ({ ...state, groupId: e.target.value }));
             }}
           >
             <option key={'007'} value="" selected>
               Все группы
             </option>
-            {groupNames.map((name) => (
-              <option key={name} value={name}>
-                {name}
+            {filteredGroups.map((group) => (
+              <option key={group._id} value={group._id}>
+                {group.name}
               </option>
             ))}
           </select>
@@ -86,7 +92,7 @@ export default function Schema() {
         <ul className="collection">
           {students.map((student) => (
             <li key={student._id} className="collection-item ">
-              {`${student.name}, ${student.group}`}
+              {`${student.name}, ${student.group?.name}`}
               <ul className="collection">
                 {student.history.map((st) => (
                   <li key={st._id} className="collection-item">

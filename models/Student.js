@@ -9,6 +9,7 @@ const StudentsSchema = new Schema(
       {
         phase: Number,
         groupType: String,
+        groupName: {type: String, default: ''},
         date: Date,
         teacher: String,
         rating: String,
@@ -20,4 +21,5 @@ const StudentsSchema = new Schema(
     timestamps: true
   }
 );
+
 module.exports = model('Student', StudentsSchema);

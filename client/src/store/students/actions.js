@@ -35,7 +35,7 @@ export const getComment = async (stName, grName, date) => {
   }
 };
 
-export const updateStudentComment = async (name, groupName, historyEl) => {
+export const updateStudentComment = async (name, groupId, historyEl) => {
   try {
     return (
       await fetch('/api/students', {
@@ -44,7 +44,7 @@ export const updateStudentComment = async (name, groupName, historyEl) => {
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
-        body: JSON.stringify({ name, groupName, historyEl })
+        body: JSON.stringify({ name, groupId, historyEl })
       })
     ).json();
   } catch (e) {

@@ -5,17 +5,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import './GroupPage.css';
 import GroupShedule from './GroupShedule';
 import CodeReviewTable from './CodeReviewTable';
-import {getGroup, setGroup} from '../../store/camp/actions';
-import {isObjEmpty} from "../../libs/functions"
+import { getGroup, setGroup } from '../../store/camp/actions';
+import { isObjEmpty } from '../../libs/functions';
 
 function GroupPage({ isAuth }) {
   const { groupId } = useParams();
   const dispatch = useDispatch();
   const { groups, group, isLoading } = useSelector((state) => state.camp);
 
+  const groupWithStudentsAsNames = React.useMemo(
+    () => ({ ...group, students: group.students?.map((student) => student.name) }),
+    [group]
+  );
+
   useEffect(() => {
-    const group = groups.find((group) => (group._id === groupId))
-    if (group) dispatch(setGroup(group))
+    const group = groups.find((group) => group._id === groupId);
+    if (group) dispatch(setGroup(group));
     else dispatch(getGroup(groupId));
   }, [dispatch]);
 
@@ -27,7 +32,7 @@ function GroupPage({ isAuth }) {
           <div>Группа не найдена</div>
         </div>
       </div>
-    )
+    );
   return (
     <div className="group-page">
       <div className="group-schedule-header">
@@ -35,7 +40,7 @@ function GroupPage({ isAuth }) {
         <div>{`(${group.groupType}, Phase: ${group.phase})`}</div>
       </div>
       {group.shedule ? <GroupShedule shedule={group.shedule} /> : <div />}
-      {group.students ? <CodeReviewTable group={group} isAuth={isAuth} /> : <div />}
+      {group.students ? (<CodeReviewTable group={groupWithStudentsAsNames} isAuth={isAuth}/>) : (<div />)}
     </div>
   );
 }

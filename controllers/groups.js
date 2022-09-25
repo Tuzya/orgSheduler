@@ -1,9 +1,9 @@
 const Group = require('../models/Group');
-const Student = require('../models/Student');
+// const Student = require('../models/Student');
 
 exports.allGroups = async (req, res) => {
   try {
-    const allTheGroups = await Group.find().populate('students').lean();
+    const allTheGroups = await Group.find().populate({path: 'students', select: { _id: 1, name: 1 }}).lean();
     res.status(200).json(allTheGroups);
   } catch (err) {
     console.error('allGroups error', err.message);

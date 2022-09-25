@@ -30,8 +30,10 @@ export default function CodeReviewSchema() {
         }
         let schemaCRInitGroups = fetchedGroups?.map((group) => {
           if (!group.crshedule) group.crshedule = { crdays: { ...daysCR } };
-          return group;
+          group.students = group.students.map((student) => (student.name))
+          return group
         });
+
         setGroups(schemaCRInitGroups);
       } catch (e) {
         console.error('Failed CodeReviewSchema', e.message);
