@@ -35,12 +35,12 @@ export default function GroupEditForm() {
   const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput([], 'json');
   const { value: groupType, setValue: setGroupType } = useInput(false);
   const [isLoad, setLoad] = React.useState(true);
+  console.log('file-GroupEditForm.jsx students:', students);
   React.useEffect(() => {
     (async () => {
       setLoad(true);
       try {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
-        console.log('file-GroupEditForm.jsx group.students:', group.students);
         setName(group.name);
         setPhase(group.phase);
         setGroupType(group.groupType);
@@ -209,12 +209,14 @@ export default function GroupEditForm() {
 
             <Stack spacing={3} sx={{ width: 738 }}>
               <Autocomplete
+
                 multiple
                 id="tags-outlined"
                 options={students}
                 getOptionLabel={(option) => option.name}
                 defaultValue={students}
                 filterSelectedOptions
+                onChange={(event, value) => {setStudents(value)}}
                 renderInput={(params) => (
                   <TextField
                     {...params}
