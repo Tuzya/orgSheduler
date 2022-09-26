@@ -20,7 +20,6 @@ exports.allStudents = async (req, res) => {
   };
   try {
     const students = await Student.find(query).populate(populateOpt).sort({ createdAt: -1 }).lean();
-    console.log('file-students.js students:', students);
     res.status(200).json(students);
   } catch (err) {
     console.log('allStudents get error', err);
