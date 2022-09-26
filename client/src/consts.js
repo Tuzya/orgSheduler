@@ -1,3 +1,5 @@
+import { createTheme } from "@mui/material";
+
 export const GROUPS = {
   groups: 'groups',
   pairs: 'pairs',
@@ -52,5 +54,13 @@ export const rating = [
   {name: "1", id: "1"},
   {name: "0", id: "0"},
 ];
+
+export const theme = createTheme({
+  palette: {
+    primary: { main: '#4520ab' },
+    secondary: { main: '#4db6ac' },
+    type: 'light'
+  }
+});
 
 
