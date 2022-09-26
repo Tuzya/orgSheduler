@@ -6,12 +6,12 @@ const {saltRounds} = require('../config/constants');
 exports.login = (req, res, next) => {
   passport.authenticate('local', (err, user) => {
     if (err) {
-      console.error(err);
+      console.error('Auth Error', err);
       return res.status(400).json(err);
     }
     return req.logIn(user, (err) => {
       if (err) {
-        console.error(err);
+        console.error('Login Error', err);
         return res.status(400).json(err);
       }
       return res

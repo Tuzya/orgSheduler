@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-function GroupItem({ link, name, phase, people, groupType, isAuth }) {
+function GroupItem({ link, name, phase, people = [], groupType, isAuth }) {
   return (
     <div className="collection-item">
       <Link to={link}>{name}</Link>

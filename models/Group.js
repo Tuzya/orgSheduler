@@ -48,17 +48,21 @@ groupSchema.statics.createGroupAndStudents = async function (
   shedule,
   groupType
 ) {
-
   const group = new this({
     name,
     phase,
     students: [],
     shedule,
     groupType
-  })
+  });
 
   const studentsModels = await Student.create(
-    students.map((studentName) => ({ name: studentName, group: group._id, history: [] }))
+    students.map((studentName) => ({
+      name: studentName,
+      group: group._id,
+      groupType: groupType,
+      history: []
+    }))
   );
   group.students = studentsModels.map((student) => student._id);
 
@@ -73,7 +77,6 @@ groupSchema.statics.updateGroupAndStudents = async function (
   shedule,
   groupType
 ) {
-
   const group = await this.updateOne(
     { _id: id },
     {
