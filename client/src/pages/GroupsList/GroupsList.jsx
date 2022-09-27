@@ -30,7 +30,7 @@ function GroupsList({ isAuth }) {
           name={group.name}
           link={`/groups/${group._id}`}
           phase={group.phase}
-          people={group.students}
+          people={group.students.map((student) => student.name).sort()}
           groupType={group.groupType}
         />
       ))}

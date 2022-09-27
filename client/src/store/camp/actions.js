@@ -17,8 +17,6 @@ export const getGroups = () => async (dispatch) => {
     const fetchedGroups = await res.json();
     if (fetchedGroups.err) throw new Error(`Err to get groups: ${fetchedGroups.err}`);
 
-    // Сортировка студентов по имени, для отображения списка в badge.
-    fetchedGroups.map((group) => group.students.sort());
     dispatch(setGroups(fetchedGroups));
   } catch (e) {
     console.error('Failed to fetch Groups', e.message);

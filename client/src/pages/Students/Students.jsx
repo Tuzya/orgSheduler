@@ -76,7 +76,7 @@ export default function Schema() {
               setSearch((state) => ({ ...state, groupId: e.target.value }));
             }}
           >
-            <option key={'007'} value="" selected>
+            <option key={'fff007'} value="">
               Все группы
             </option>
             {filteredGroups.map((group) => (

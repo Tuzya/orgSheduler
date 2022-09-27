@@ -1,28 +1,33 @@
 const Student = require('../models/Student');
 
 exports.allStudents = async (req, res) => {
-  const { name = '', groupType = '', groupId = '' } = JSON.parse(req.query.search);
-  const query = groupId
-    ? {
-        name: { $regex: name, $options: 'i' },
-        group: groupId,
-        groupType: { $regex: groupType, $options: 'i' }
-      }
-    : {
-        name: { $regex: name, $options: 'i' },
-        groupType: { $regex: groupType, $options: 'i' }
-      };
-
-  const populateOpt = {
-    path: 'group',
-    model: 'Group',
-    select: { _id: 1, name: 1, groupType: 1 }
-  };
   try {
+    const {
+      name = '',
+      groupType = '',
+      groupId = ''
+    } = req.query.search ? JSON.parse(req.query.search) : {};
+    const query = groupId
+      ? {
+          name: { $regex: name, $options: 'i' },
+          group: groupId,
+          groupType: { $regex: groupType, $options: 'i' }
+        }
+      : {
+          name: { $regex: name, $options: 'i' },
+          groupType: { $regex: groupType, $options: 'i' }
+        };
+
+    const populateOpt = {
+      path: 'group',
+      model: 'Group',
+      select: { _id: 1, name: 1, groupType: 1 }
+    };
+
     const students = await Student.find(query).populate(populateOpt).sort({ createdAt: -1 }).lean();
     res.status(200).json(students);
   } catch (err) {
-    console.log('allStudents get error', err);
+    console.log('allStudents get error', err.message);
     res.status(500).json({ err: err.message });
   }
 };

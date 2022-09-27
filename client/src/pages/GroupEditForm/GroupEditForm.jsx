@@ -15,6 +15,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import Autocomplete from '@mui/material/Autocomplete/Autocomplete';
 
 import { getShedule } from '../../libs/groups-splitter';
 import './GroupEditForm.css';
@@ -22,7 +23,6 @@ import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
 import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
 import { delGroup, getGroups, putGroup } from '../../store/camp/actions';
-import Autocomplete from "@mui/material/Autocomplete/Autocomplete"
 
 export default function GroupEditForm() {
   const history = useHistory();
@@ -31,21 +31,33 @@ export default function GroupEditForm() {
 
   const { value: name, bind: bindName, setValue: setName } = useInput('');
   const { value: phase, bind: bindPhase, setValue: setPhase } = useInput('');
-  const { value: students, bind: bindStudents, setValue: setStudents } = useInput('');
+  const { value: students, bind: bindStudents, setValue: setStudents } = useInput([]);
   const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput([], 'json');
   const { value: groupType, setValue: setGroupType } = useInput(false);
+
+  const [defaultStudents, setDefaultStudents] = React.useState([]);
+  const [allStudents, setAllStudents] = React.useState([]);
   const [isLoad, setLoad] = React.useState(true);
-  console.log('file-GroupEditForm.jsx students:', students);
+
+
   React.useEffect(() => {
     (async () => {
       setLoad(true);
       try {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
+        const allStudents = await (
+          await fetch(`/api/students?search=${JSON.stringify({ groupType: group.groupType })}`)
+        ).json();
+
+        const defaultStudents = group.students.map((student1) =>
+          allStudents.find((student2) => student1._id === student2._id)
+        );
+        setAllStudents(allStudents)
         setName(group.name);
         setPhase(group.phase);
         setGroupType(group.groupType);
-        // setStudents(String(group.students.map((student) => student.name)));
         setStudents(group.students);
+        setDefaultStudents(defaultStudents);
         setShedule(JSON.stringify(group.shedule, '', 4));
       } catch (e) {
         console.error('Load error group', e.message);
@@ -64,15 +76,15 @@ export default function GroupEditForm() {
       password: data.get('password')
     });
   };
-
   const updateGroup = async (event) => {
     event.preventDefault();
+    if (!students.length || parseInt(phase) > 3 || parseInt(phase) < 1 || !name) return;
     const res = await putGroup(
       //todo try-catch
       name,
       phase,
       groupType,
-      students.split(/ *, */g),
+      students.map((student) => student._id),
       JSON.parse(shedule),
       groupId
     );
@@ -85,7 +97,7 @@ export default function GroupEditForm() {
   const regenerateSchedule = async (event) => {
     setLoad(true);
     event.preventDefault();
-    const studentsArr = students.split(/ *, */g);
+    const studentsArr = students.map((student) => student.name);
 
     const schemas = await getSchemas(phase);
     if (schemas) {
@@ -131,45 +143,9 @@ export default function GroupEditForm() {
 
   return (
     <>
-      <form name="editGroup" onSubmit={updateGroup}>
-        <div className="input-field col s12">
-          <input id="Groupname" type="text" {...bindName} placeholder="Groupname" />
-          <label htmlFor="Groupname">Groupname</label>
-        </div>
-        <input
-          type="number"
-          {...bindPhase}
-          placeholder="Phase"
-          min="1"
-          max={MAX_NUMS_PHASES.toString()}
-        />
-        <input type="text" {...bindStudents} placeholder="Students" />
-        <div className="input-field" style={{ minWidth: '300px' }}>
-          <select className="browser-default" onChange={handleChange} value={groupType}>
-            {Object.keys(groupTypes).map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="button" className="btn" disabled={isLoad} onClick={regenerateSchedule}>
-          generate pairs by scheme
-        </button>
-        <textarea name="schedule" {...bindShedule} disabled={isLoad} placeholder="Shedule" />
-        <button type="submit" className="btn" disabled={isLoad}>
-          Update
-        </button>
-        <button type="button" className="btn btn-danger" disabled={isLoad} onClick={deleteGroup}>
-          DELETE
-        </button>
-      </form>
-
-      <Container component="main" maxWidth='xl'>
+      <Container component="main" maxWidth="xl" sx={{mt: 0}}>
         <CssBaseline />
-        <Box
-          sx={styles.formbox}
-        >
+        <Box sx={styles.formbox}>
           <Avatar sx={{ m: 1, width: 60, height: 60, bgcolor: 'secondary.main' }}>
             <BorderColorIcon />
           </Avatar>
@@ -196,37 +172,6 @@ export default function GroupEditForm() {
               id="phase"
               InputProps={{ inputProps: { min: 1, max: MAX_NUMS_PHASES } }}
             />
-            {console.log('file-GroupEditForm.jsx bindStudents:', bindStudents)}
-            <TextField
-              {...bindStudents}
-              margin="normal"
-              required
-              fullWidth
-              label="Students"
-              type="text"
-              id="students"
-            />
-
-            <Stack spacing={3} sx={{ width: 738 }}>
-              <Autocomplete
-
-                multiple
-                id="tags-outlined"
-                options={students}
-                getOptionLabel={(option) => option.name}
-                defaultValue={students}
-                filterSelectedOptions
-                onChange={(event, value) => {setStudents(value)}}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-
-                    label="Students"
-                    placeholder="Добавить "
-                  />
-                )}
-              />
-            </Stack>
 
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel id="group-type-label">Group Type</InputLabel>
@@ -238,12 +183,31 @@ export default function GroupEditForm() {
                 value={groupType}
               >
                 {Object.keys(groupTypes).map((type) => (
-                  <MenuItem key={type} value={type}>
+                  <MenuItem disabled={true} key={type} value={type}>
                     {type}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
+
+            <Stack spacing={3} sx={{ mt: 2, width: 738 }}>
+              <Autocomplete
+                multiple
+                id="tags-outlined"
+                options={allStudents}
+                getOptionLabel={(option) => option.name}
+                defaultValue={defaultStudents}
+                filterSelectedOptions
+                onChange={(event, value) => {
+                  setStudents(value);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Students" placeholder="Добавить " />
+                )}
+              />
+            </Stack>
+
+
 
             <Stack sx={{ pt: 2 }} direction="row" spacing={2} justifyContent="center">
               <Button variant="contained" disabled={isLoad} onClick={regenerateSchedule}>
@@ -285,9 +249,8 @@ const styles = {
     mt: 2
   },
   formbox: {
-    marginTop: 8,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center'
   }
-}
+};
