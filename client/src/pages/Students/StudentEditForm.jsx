@@ -18,7 +18,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Autocomplete from '@mui/material/Autocomplete/Autocomplete';
 
 import { getShedule } from '../../libs/groups-splitter';
-import './GroupEditForm.css';
 import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
 import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
@@ -78,7 +77,7 @@ export default function GroupEditForm() {
   };
   const updateGroup = async (event) => {
     event.preventDefault();
-    if (!students.length || parseInt(phase) > MAX_NUMS_PHASES || parseInt(phase) < 1 || !name) return;
+    if (!students.length || parseInt(phase) > 3 || parseInt(phase) < 1 || !name) return;
     const res = await putGroup(
       //todo try-catch
       name,

@@ -7,6 +7,8 @@ import { DebounceInput } from 'react-debounce-input';
 import LinearLoader from '../../components/Loader/LinearLoader';
 import { groupTypes } from '../../consts';
 import { useDispatch, useSelector } from 'react-redux';
+import {Link} from "react-router-dom"
+
 import { getStudents } from '../../store/students/actions';
 import { getGroups } from '../../store/camp/actions';
 
@@ -92,7 +94,8 @@ export default function Schema() {
         <ul className="collection">
           {students.map((student) => (
             <li key={student._id} className="collection-item ">
-              {`${student.name}, ${student.group?.name}`}
+
+              <Link to={`/students/${student._id}`}>{student.name}</Link>, ${student.group?.name}
               <ul className="collection">
                 {student.history.map((st) => (
                   <li key={st._id} className="collection-item">
