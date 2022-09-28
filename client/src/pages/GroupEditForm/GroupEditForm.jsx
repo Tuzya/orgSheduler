@@ -80,7 +80,6 @@ export default function GroupEditForm() {
     event.preventDefault();
     if (!students.length || parseInt(phase) > MAX_NUMS_PHASES || parseInt(phase) < 1 || !name) return;
     const res = await putGroup(
-      //todo try-catch
       name,
       phase,
       groupType,
