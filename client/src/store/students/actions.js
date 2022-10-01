@@ -19,11 +19,11 @@ export const getStudents = (searchProps) => async (dispatch) => {
   }
 }
 
-export const getStudent = (ame, groupName) => async (dispatch) => {
+export const getStudent = async (id)  => {
   try {
-    return (await fetch(`/api/students`)).json();
+    return (await fetch(`/api/students/${id}`)).json();
   } catch (e) {
-    console.log('Group Page Error', e.message);
+    console.log('Failed to fetch Student', e.message);
   }
 };
 

@@ -24,10 +24,30 @@ exports.allStudents = async (req, res) => {
       select: { _id: 1, name: 1, groupType: 1 }
     };
 
-    const students = await Student.find(query).populate(populateOpt).sort({ createdAt: -1 }).lean();
+    const students = await Student.find(query).populate(populateOpt).sort({ name: 1 }).lean();
     res.status(200).json(students);
   } catch (err) {
     console.log('allStudents get error', err.message);
+    res.status(500).json({ err: err.message });
+  }
+};
+
+exports.getStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const populateOpt = {
+      path: 'group',
+      model: 'Group',
+      select: { _id: 1, name: 1, phase: 1, groupType: 1 }
+    };
+
+    const student = await Student.findById(id, { createdAt: 0, updatedAt: 0, __v: 0 })
+      .populate(populateOpt)
+      .lean();
+    res.status(200).json(student);
+  } catch (err) {
+    console.log('Student get error', err.message);
     res.status(500).json({ err: err.message });
   }
 };

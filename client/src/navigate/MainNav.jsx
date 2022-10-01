@@ -9,7 +9,7 @@ import Schema from '../pages/Schema/Schema';
 import Students from '../pages/Students/Students';
 import GroupPage from '../pages/GroupPage/GroupPage';
 import GroupEditForm from '../pages/GroupEditForm/GroupEditForm';
-import StudentEditForm from "../pages/Students/StudentEditForm"
+import StudentEditForm from "../pages/Students/StudentProfile"
 
 export default function MainNav({ isAuth }) {
   return (
@@ -27,6 +27,7 @@ export default function MainNav({ isAuth }) {
         <PrivateRoute exact path="/groups/new/" isAuth={isAuth} component={GroupCreateForm} />
         <PrivateRoute exact path="/groups/schema/" isAuth={isAuth} component={Schema} />
         <PrivateRoute exact path="/students/" isAuth={isAuth} component={Students} />
+        <PrivateRoute exact path="/students/new" isAuth={isAuth} component={Students} />
         <PrivateRoute exact path="/students/:studentId" isAuth={isAuth} component={StudentEditForm} />
         <Route exact path="/groups/:groupId"><GroupPage isAuth={isAuth} /></Route>
         <PrivateRoute
