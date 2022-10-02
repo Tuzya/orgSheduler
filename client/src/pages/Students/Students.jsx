@@ -37,6 +37,8 @@ export default function Schema() {
     groupType: groupTypes.online,
     groupId: ''
   });
+  const [rowsPerPage, setRowsPerPage] = React.useState(25)
+  const [page, setPage] = React.useState(0)
   const dispatch = useDispatch();
   const { data: students, isLoading } = useSelector((store) => store.students);
   const groups = useSelector((store) => store.camp.groups);
@@ -53,6 +55,15 @@ export default function Schema() {
   React.useEffect(() => {
     dispatch(getStudents(search));
   }, [search]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <>
@@ -170,15 +181,15 @@ export default function Schema() {
             </TableBody>
           </Table>
         </TableContainer>
-        {/*<TablePagination*/}
-        {/*  rowsPerPageOptions={[5, 10, 25]}*/}
-        {/*  component="div"*/}
-        {/*  count={rows.length}*/}
-        {/*  rowsPerPage={rowsPerPage}*/}
-        {/*  page={page}*/}
-        {/*  onChangePage={handleChangePage}*/}
-        {/*  onChangeRowsPerPage={handleChangeRowsPerPage}*/}
-        {/*/>*/}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={students.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </>
     </>
   );
