@@ -4,13 +4,13 @@ import { getStudent } from '../../store/students/actions';
 
 export default function StudentProfile() {
   const { studentId } = useParams();
-
+const [student, setStudent] = React.useState({});
   React.useEffect(() => {
     (async () => {
       const student = await getStudent(studentId);
       if(student.err) return alert(student.err)
-      console.log('file-StudentProfile.jsx student:', student);
+      setStudent(student);
     })();
   }, []);
-  return <p>StudentsProfilePage</p>;
+  return <span>{JSON.stringify(student, null, ' ')}</span>;
 }

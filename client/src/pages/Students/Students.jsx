@@ -8,45 +8,42 @@ import LinearLoader from '../../components/Loader/LinearLoader';
 import { groupTypes } from '../../consts';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import {
-  TableContainer,
-  Table,
-  TableBody,
-  TablePagination,
-  TableCell,
-} from '@mui/material';
+import { TableContainer, Table, TableBody, TablePagination, TableCell } from '@mui/material';
 
 import { getStudents } from '../../store/students/actions';
 import { getGroups } from '../../store/camp/actions';
-import TableRow from "@mui/material/TableRow"
-import BgLetterAvatars from "../../components/BgLettersAvatar/BgLettersAvatar"
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
 
+import BgLetterAvatars from '../../components/BgLettersAvatar/BgLettersAvatar';
 
-const ratingColor = {
-  0: 'red',
-  1: 'light-blue',
-  2: 'lime',
-  3: 'blue-grey lighten-3',
-  4: 'light-green',
-  5: 'green'
-};
+// const ratingColor = {
+//   0: 'red',
+//   1: 'light-blue',
+//   2: 'lime',
+//   3: 'blue-grey lighten-3',
+//   4: 'light-green',
+//   5: 'green'
+// };
 
 export default function Schema() {
+  const history = useHistory();
+  const dispatch = useDispatch();
+
   const [search, setSearch] = React.useState({
     name: '',
     groupType: groupTypes.online,
-    groupId: ''
+    groupId: '',
+    page: 0,
+    limit: 25
   });
-  const [rowsPerPage, setRowsPerPage] = React.useState(25)
-  const [page, setPage] = React.useState(0)
-  const dispatch = useDispatch();
   const { data: students, isLoading } = useSelector((store) => store.students);
   const groups = useSelector((store) => store.camp.groups);
+
   const filteredGroups = React.useMemo(
     () => groups.filter((group) => group.groupType === search.groupType),
-    [groups, search]
+    [groups, search.groupType]
   );
-  const history = useHistory();
 
   React.useEffect(() => {
     if (groups.length === 0) dispatch(getGroups());
@@ -56,13 +53,24 @@ export default function Schema() {
     dispatch(getStudents(search));
   }, [search]);
 
+  const totalStudents = React.useMemo(
+    () =>
+      groups
+        .filter((group) => group.groupType === search.groupType)
+        .reduce((total, group) => {
+          return total + group.students.length;
+        }, 0),
+    [groups, search.groupType]
+  );
+  console.log('file-Students.jsx totalStudents:', totalStudents);
+  console.log('file-Students.jsx groups:', groups);
+
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+    setSearch({ ...search, page: newPage });
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setSearch({ ...search, page: 0, limit: parseInt(event.target.value, 10) });
   };
 
   return (
@@ -81,7 +89,7 @@ export default function Schema() {
           <select
             className="browser-default"
             onChange={(e) => {
-              setSearch((state) => ({ ...state, groupType: e.target.value, groupId: '' }));
+              setSearch((state) => ({ ...state, groupType: e.target.value, groupId: '', page: 0 }));
             }}
           >
             {Object.keys(groupTypes).map((type) => (
@@ -94,7 +102,7 @@ export default function Schema() {
           <select
             className="browser-default"
             onChange={(e) => {
-              setSearch((state) => ({ ...state, groupId: e.target.value }));
+              setSearch((state) => ({ ...state, groupId: e.target.value, page: 0 }));
             }}
           >
             <option key={'fff007'} value={''}>
@@ -108,7 +116,7 @@ export default function Schema() {
           </select>
         </div>
       </div>
-      {isLoading ? <LinearLoader /> : <div style={{height: 20}}/>}
+      {isLoading ? <LinearLoader /> : <div style={{ height: 20 }} />}
       {/*<div style={{ marginTop: 20 }}>*/}
       {/*  <ul className="collection">*/}
       {/*    {students.map((student) => (*/}
@@ -139,57 +147,61 @@ export default function Schema() {
         <TableContainer>
           <Table
             // className={classes.table}
+            sx={{ minWidth: 650 }}
             aria-labelledby="tableTitle"
             size={'small'}
-            aria-label="enhanced table"
+            aria-label="simple table"
           >
-            {/*<EnhancedTableHead*/}
-            {/*  classes={classes}*/}
-            {/*  numSelected={selected.length}*/}
-            {/*  order={order}*/}
-            {/*  orderBy={orderBy}*/}
-            {/*  onSelectAllClick={handleSelectAllClick}*/}
-            {/*  onRequestSort={handleRequestSort}*/}
-            {/*  rowCount={rows.length}*/}
-            {/*/>*/}
+            <TableHead>
+              <TableRow component="tr">
+                <TableCell />
+                <TableCell>Name</TableCell>
+                <TableCell>Group</TableCell>
+                <TableCell align="right">{'Rating'}</TableCell>
+              </TableRow>
+            </TableHead>
             <TableBody>
-              {students.map((student, index) => {
-                return <TableRow
-                  hover
-                  // aria-checked={isItemSelected}
-                  tabIndex={-1}
-                  onClick={(e) => {
-                    history.push(`/students/${student._id}`);
-                  }}
-                  key={student._id}
-                  // selected={isItemSelected}
-                  style={{ cursor: 'pointer' }}
-                >
-
-                  <TableCell>
-                    <BgLetterAvatars name={student.name}/>
-                  </TableCell>
-                  <TableCell component="th" scope="row" padding="none">
-                    {student.name}
-                  </TableCell>
-                  <TableCell>{student.group.name}</TableCell>
-                  <TableCell align="right">{'some comments'}</TableCell>
-                </TableRow>
+              {students.map((student) => {
+                return (
+                  <TableRow
+                    hover
+                    tabIndex={-1}
+                    onClick={() => {
+                      history.push(`/students/${student._id}`);
+                    }}
+                    key={student._id}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <TableCell>
+                      <BgLetterAvatars name={student.name} />
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {student.name}
+                    </TableCell>
+                    <TableCell>{student.group.name}</TableCell>
+                    <TableCell align="right">
+                      {student.history.length
+                        ? student.history.reduce((totalRt, el) => totalRt + Number(el.rating), 0) /
+                          student.history.length
+                        : '-'}
+                    </TableCell>
+                  </TableRow>
+                );
               })}
-
-
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={students.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {!search.name && !search.groupId && (
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={totalStudents}
+            rowsPerPage={search.limit}
+            page={search.page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </>
     </>
   );

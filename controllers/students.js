@@ -5,7 +5,9 @@ exports.allStudents = async (req, res) => {
     const {
       name = '',
       groupType = '',
-      groupId = ''
+      groupId = '',
+      page = 0,
+      limit = 0
     } = req.query.search ? JSON.parse(req.query.search) : {};
     const query = groupId
       ? {
@@ -24,7 +26,12 @@ exports.allStudents = async (req, res) => {
       select: { _id: 1, name: 1, groupType: 1 }
     };
 
-    const students = await Student.find(query).populate(populateOpt).sort({ name: 1 }).lean();
+    const students = await Student.find(query)
+      .populate(populateOpt)
+      .limit(limit)
+      .skip(page * limit)
+      .sort({ name: 1, updatedAt: 1 })
+      .lean();
     res.status(200).json(students);
   } catch (err) {
     console.log('allStudents get error', err.message);
@@ -91,7 +98,3 @@ exports.updStudent = async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 };
-
-// name: String,
-//   group: String,
-//   history: [{type: Object, phase: Number, groupType: String, date: Date, teacher: String, comment: String}]
