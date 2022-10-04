@@ -52,7 +52,10 @@ export default function GroupCreateForm() {
       false
     );
     const group = await createGroup(name, phase, groupType, studentsArr, generatedShedule);
-
+    if (group.err) {
+      setLoad(false);
+      return alert(group.err);
+    }
     setGroupId(group._id);
     dispatch(addGroup(group));
     // setSchedule(generatedSchedule); // TODO: check if is is ok

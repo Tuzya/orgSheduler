@@ -26,7 +26,7 @@ exports.allStudents = async (req, res) => {
       select: { _id: 1, name: 1, groupType: 1 }
     };
 
-    const students = await Student.find(query)
+    const students = await Student.findActive(query)
       .populate(populateOpt)
       .limit(limit)
       .skip(page * limit)

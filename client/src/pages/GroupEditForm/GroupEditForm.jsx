@@ -39,7 +39,6 @@ export default function GroupEditForm() {
   const [allStudents, setAllStudents] = React.useState([]);
   const [isLoad, setLoad] = React.useState(true);
 
-
   React.useEffect(() => {
     (async () => {
       setLoad(true);
@@ -51,7 +50,7 @@ export default function GroupEditForm() {
 
         const defaultStudents = group.students.map((student1) =>
           allStudents.find((student2) => student1._id === student2._id)
-        );
+        ).sort((a, b) => a.name.localeCompare(b.name));
         setAllStudents(allStudents)
         setName(group.name);
         setPhase(group.phase);
@@ -68,14 +67,6 @@ export default function GroupEditForm() {
     })();
   }, [groupId, setName, setPhase, setShedule, setStudents, setGroupType]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password')
-    });
-  };
   const updateGroup = async (event) => {
     event.preventDefault();
     if (!students.length || parseInt(phase) > MAX_NUMS_PHASES || parseInt(phase) < 1 || !name) return;
@@ -97,7 +88,7 @@ export default function GroupEditForm() {
     setLoad(true);
     event.preventDefault();
     const studentsArr = students.map((student) => student.name);
-
+    setDefaultStudents(students)
     const schemas = await getSchemas(phase);
     if (schemas) {
       const generatedShedule = getShedule(

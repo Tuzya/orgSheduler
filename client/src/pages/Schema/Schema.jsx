@@ -6,8 +6,8 @@ import CodeReviewSchema from "./CodeReviewSchema"
 export default function Schema() {
   return (
     <>
-      <PairsSchema/>
       <CodeReviewSchema/>
+      <PairsSchema/>
     </>
   );
 }

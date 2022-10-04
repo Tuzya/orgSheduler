@@ -63,6 +63,7 @@ export const createGroup = async (name, phase, groupType, students, shedule) => 
     ).json();
   } catch (err) {
     console.log('Req GroupId err ', err.message);
+    return err.message;
   }
 };
 
@@ -86,6 +87,7 @@ export const putGroup = async (name, phase, groupType, students, shedule, groupI
     ).json();
   } catch (err) {
     console.log('Put group err ', err.message);
+    return err.message;
   }
 };
 

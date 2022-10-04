@@ -8,7 +8,14 @@ import LinearLoader from '../../components/Loader/LinearLoader';
 import { groupTypes } from '../../consts';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { TableContainer, Table, TableBody, TablePagination, TableCell } from '@mui/material';
+import {
+  TableContainer,
+  Table,
+  TableBody,
+  TablePagination,
+  TableCell,
+  createTheme
+} from '@mui/material';
 
 import { getStudents } from '../../store/students/actions';
 import { getGroups } from '../../store/camp/actions';
@@ -16,6 +23,7 @@ import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
 
 import BgLetterAvatars from '../../components/BgLettersAvatar/BgLettersAvatar';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
 
 // const ratingColor = {
 //   0: 'red',
@@ -143,7 +151,7 @@ export default function Schema() {
       {/*  </ul>*/}
       {/*</div>*/}
 
-      <>
+      <ThemeProvider theme={createTheme({ typography: { fontSize: 16 } })}>
         <TableContainer>
           <Table
             // className={classes.table}
@@ -178,7 +186,7 @@ export default function Schema() {
                     <TableCell component="th" scope="row">
                       {student.name}
                     </TableCell>
-                    <TableCell>{student.group.name}</TableCell>
+                    <TableCell>{student.group?.name}</TableCell>
                     <TableCell align="right">
                       {student.history.length
                         ? student.history.reduce((totalRt, el) => totalRt + Number(el.rating), 0) /
@@ -202,7 +210,7 @@ export default function Schema() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         )}
-      </>
+      </ThemeProvider>
     </>
   );
 }

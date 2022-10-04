@@ -5,7 +5,7 @@ const Group = require('../models/GroupSchema');
 const { Schema, model } = mongoose;
 
 const groupSchema = new Schema({
-  name: String,
+  name: {type: String, unique: true},
   phase: { type: Number, default: 1 },
   groupType: { type: String, default: 'online' },
   students: [{ type: Schema.Types.ObjectId, ref: 'Student' }],
@@ -35,11 +35,16 @@ groupSchema.pre('updateOne', function (next) {
   if (modifiedField.isArchived === false)
     Student.updateOne({ _id: { $in: modifiedField.students } }, { isArchived: false }).then(
       (res) => {
-        console.log(res);
+        console.log('res', res);
       }
     );
   next();
 });
+
+groupSchema.pre('deleteOne', function (next) {
+console.log('file-Group.js remove:');
+next()
+}) //todo удаление
 
 groupSchema.statics.createGroupAndStudents = async function (
   name,
@@ -48,6 +53,15 @@ groupSchema.statics.createGroupAndStudents = async function (
   shedule,
   groupType
 ) {
+
+  const studentsInDb = await Student.find({name: {$in: students}});
+  if (studentsInDb.length !== 0) {
+    const err = new Error(`Student(s) ${studentsInDb.map((student) => student.name)} already exist`)
+    err.code = 11000;
+    err.keyValue = studentsInDb.map((student) => student.name)
+    throw err
+  }
+
   const group = new this({
     name,
     phase,
@@ -64,6 +78,7 @@ groupSchema.statics.createGroupAndStudents = async function (
       history: []
     }))
   );
+
   group.students = studentsModels.map((student) => student._id);
 
   return group.save();
@@ -77,6 +92,7 @@ groupSchema.statics.updateGroupAndStudents = async function (
   shedule,
   groupType
 ) {
+
   const group = await this.updateOne(
     { _id: id },
     {
