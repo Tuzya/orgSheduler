@@ -5,3 +5,6 @@ React, Redux, NodeJS, Express, PostgreSQL, MaterialUI
 
 ##  Сайт
 https://pairs-generator.onrender.com/
+
+- при удалении студента из группы он попадает в группу Inactive
+- для добавления студента в какую либо группу - перейлите в его профиль, нажмите кнопку Edit

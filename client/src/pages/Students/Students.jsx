@@ -70,8 +70,6 @@ export default function Schema() {
         }, 0),
     [groups, search.groupType]
   );
-  console.log('file-Students.jsx totalStudents:', totalStudents);
-  console.log('file-Students.jsx groups:', groups);
 
   const handleChangePage = (event, newPage) => {
     setSearch({ ...search, page: newPage });

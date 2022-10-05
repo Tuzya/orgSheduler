@@ -22,5 +22,8 @@ process.on('SIGINT', function () {
   });
 });
 
+const mongooseStoreOpt = {
+  mongoUrl: dbPath
+}
 
-module.exports = dbPath;
+module.exports = mongooseStoreOpt;

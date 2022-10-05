@@ -78,19 +78,14 @@ exports.getComment = async (req, res) => {
   }
 };
 
-exports.updStudent = async (req, res) => {
+exports.updComment = async (req, res) => {
   const { name, groupId, historyEl } = req.body;
 
   try {
-    let student = await Student.findOne({ name: name, group: groupId });
-    if (!student) {
-      student = new Student({ name, group: groupId, history: [historyEl] });
-    } else {
-      let index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
-
-      if (index === -1) student.history.push(historyEl);
-      else student.history[index] = historyEl;
-    }
+    const student = await Student.findOne({ name: name, group: groupId });
+    const index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
+    if (index === -1) student.history.push(historyEl);
+    else student.history[index] = historyEl;
     await student.save();
     res.status(200).json({ message: 'ok' });
   } catch (err) {

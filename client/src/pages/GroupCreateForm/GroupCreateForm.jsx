@@ -26,7 +26,7 @@ export default function GroupCreateForm() {
   const generateSchedule = async (event) => {
     event.preventDefault();
     if (!students || !name || !phase) return;
-    const studentsArr = students.split(/ *, */g);
+    const studentsArr = [...new Set(students.split(/ *, */g))];
 
     setLoad(true);
     const schemas = await getSchemas(phase);

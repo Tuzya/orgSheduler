@@ -1,5 +1,4 @@
 const Group = require('../models/Group');
-// const Student = require('../models/Student');
 
 exports.allGroups = async (req, res) => {
   try {
@@ -45,16 +44,7 @@ exports.updGroup = async (req, res) => {
   const { id } = req.params;
   const { phase, students, shedule, name, groupType } = req.body;
   try {
-    const group = await Group.updateOne(
-      { _id: id },
-      {
-        name,
-        phase,
-        students,
-        shedule,
-        groupType
-      }
-    );
+    const group = await Group.updateGroupAndStudents(id, name, phase, students, shedule, groupType);
     res.status(200).json({ message: 'ok', group });
   } catch (err) {
     console.log('updGroup error', err);
@@ -77,9 +67,11 @@ exports.updCRTablesGroup = async (req, res) => {
 exports.delGroup = async (req, res) => {
   const { id } = req.params;
   try {
-    res.json(await Group.findByIdAndDelete(id));
+    const delRes = await Group.deleteGroupAndStudents(id);
+    res.json(delRes);
   } catch (err) {
-    res.status(500).json(err);
+    console.error('Delete group Error', err.message);
+    res.status(500).json({ err: err.message });
   }
 };
 

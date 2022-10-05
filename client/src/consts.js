@@ -9,7 +9,9 @@ export const GROUPS = {
 export const groupTypes = {
   online: 'online',
   msk: 'msk',
-  spb: 'spb'
+  spb: 'spb',
+  inactive: 'inactive',
+  waitlist: 'waitlist'
 }
 
 export const DAYS = ["mon", "tue", "wed", "thu", "fri"];

@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
 const Student = require('../models/Student');
-const Group = require('../models/GroupSchema');
 
 const { Schema, model } = mongoose;
 
 const groupSchema = new Schema({
-  name: {type: String, unique: true},
+  name: { type: String, unique: true },
   phase: { type: Number, default: 1 },
-  groupType: { type: String, default: 'online' },
+  groupType: { type: String, default: 'waitlist' },
   students: [{ type: Schema.Types.ObjectId, ref: 'Student' }],
   shedule: Object,
   crshedule: {
@@ -41,11 +40,6 @@ groupSchema.pre('updateOne', function (next) {
   next();
 });
 
-groupSchema.pre('deleteOne', function (next) {
-console.log('file-Group.js remove:');
-next()
-}) //todo удаление
-
 groupSchema.statics.createGroupAndStudents = async function (
   name,
   phase,
@@ -53,13 +47,15 @@ groupSchema.statics.createGroupAndStudents = async function (
   shedule,
   groupType
 ) {
-
-  const studentsInDb = await Student.find({name: {$in: students}});
+  const uniqStudents = [...new Set(students)]
+  const studentsInDb = await Student.find({ name: { $in: uniqStudents } });
   if (studentsInDb.length !== 0) {
-    const err = new Error(`Student(s) ${studentsInDb.map((student) => student.name)} already exist`)
+    const err = new Error(
+      `Student(s) ${studentsInDb.map((student) => student.name)} already exist`
+    );
     err.code = 11000;
-    err.keyValue = studentsInDb.map((student) => student.name)
-    throw err
+    err.keyValue = studentsInDb.map((student) => student.name);
+    throw err;
   }
 
   const group = new this({
@@ -71,16 +67,14 @@ groupSchema.statics.createGroupAndStudents = async function (
   });
 
   const studentsModels = await Student.create(
-    students.map((studentName) => ({
+    uniqStudents.map((studentName) => ({
       name: studentName,
       group: group._id,
       groupType: groupType,
       history: []
     }))
   );
-
   group.students = studentsModels.map((student) => student._id);
-
   return group.save();
 };
 
@@ -92,6 +86,9 @@ groupSchema.statics.updateGroupAndStudents = async function (
   shedule,
   groupType
 ) {
+  //find current students in other group
+  const res = await Student.updateMany({ _id: { $in: students } }, { group: id });
+
 
   const group = await this.updateOne(
     { _id: id },
@@ -103,6 +100,32 @@ groupSchema.statics.updateGroupAndStudents = async function (
       groupType
     }
   );
+};
+
+groupSchema.statics.deleteGroupAndStudents = async function (id) {
+  const populateOpt = {
+    path: 'students',
+    model: 'Student',
+    select: { _id: 1 }
+  };
+  const group = await this.findById(id).populate(populateOpt);
+  let inactiveGroup = await this.findOne({ name: 'Inactive' });
+  const studentsIds = group.students.map((student) => student._id);
+  if (!inactiveGroup)
+    inactiveGroup = this.new({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
+  //перемещаем студентов в гр. inactive
+  const updatedStudents = await Student.updateMany({ _id: { $in: studentsIds } }, [
+    {
+      $set: {
+        name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
+        group: inactiveGroup._id,
+        groupType: 'inactive'
+      }
+    }
+  ]);
+  inactiveGroup.students = studentsIds;
+  await inactiveGroup.save();
+  return this.findByIdAndDelete(id);
 };
 
 module.exports = model('Group', groupSchema);

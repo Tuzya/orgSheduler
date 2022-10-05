@@ -7,12 +7,8 @@ const MongoStore = require('connect-mongo');
 
 const morgan = require('morgan');
 const bcrypt = require('bcrypt');
-const dbPath = require('../connection');
+const mongooseStoreOpt = require('../connection');
 const User = require('../models/User');
-
-const mongooseStoreOpt = {
-  mongoUrl: dbPath
-}
 
 function addMiddlewares(router) {
   router.use(express.urlencoded({ extended: true }));

@@ -5,7 +5,7 @@ const studentsSchema = new Schema(
     name: { type: String, required: true, unique: true },
     group: { type: Schema.Types.ObjectId, ref: 'Group' },
     groupType: String,
-    isArchived: { type: Boolean, default: false },
+    photoUrl: String,
     history: [
       {
         phase: Number,
@@ -31,10 +31,15 @@ const studentsSchema = new Schema(
 //   // next();
 // });
 
-studentsSchema.statics.findActive = function(query) { // ищем студентов у которых isArchive === false
-  if (!query) { query = {} }
-  query.isArchived = (query.isArchived !== undefined);
+studentsSchema.statics.findActive = function (query) {
+  if (!query) {
+    query = {};
+  }
+  query.groupType =
+    query.groupType === undefined
+      ? { $regex: /\b(?!inactive\b)\w+/, $options: 'i' } // ищем студентов у которых groupType не inactive
+      : query.groupType;
   return this.find(query);
-}
+};
 
 module.exports = model('Student', studentsSchema);

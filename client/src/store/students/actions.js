@@ -38,7 +38,7 @@ export const getComment = async (stName, grName, date) => {
 export const updateStudentComment = async (name, groupId, historyEl) => {
   try {
     return (
-      await fetch('/api/students', {
+      await fetch('/api/students/history/comment', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
