@@ -67,7 +67,7 @@ export const createGroup = async (name, phase, groupType, students, shedule) => 
   }
 };
 
-export const putGroup = async (name, phase, groupType, students, shedule, groupId) => {
+export const putGroup = async (name, phase, groupType, students, deletedStudents, shedule, groupId) => {
   try {
     return (
       await fetch(`/api/groups/${groupId}`, {
@@ -81,6 +81,7 @@ export const putGroup = async (name, phase, groupType, students, shedule, groupI
           phase,
           groupType,
           students,
+          deletedStudents,
           shedule
         }),
       })

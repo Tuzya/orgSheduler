@@ -1,8 +1,9 @@
 const Group = require('../models/Group');
 
 exports.allGroups = async (req, res) => {
+  const { name = '' } = req.query;
   try {
-    const allTheGroups = await Group.find()
+    const allTheGroups = await Group.find({ name: { $regex: name, $options: 'i' } })
       .populate({ path: 'students', select: { _id: 1, name: 1 } })
       .lean();
     res.status(200).json(allTheGroups);
@@ -42,9 +43,17 @@ exports.createGroup = async (req, res) => {
 
 exports.updGroup = async (req, res) => {
   const { id } = req.params;
-  const { phase, students, shedule, name, groupType } = req.body;
+  const { phase, students, deletedStudents, shedule, name, groupType } = req.body;
   try {
-    const group = await Group.updateGroupAndStudents(id, name, phase, students, shedule, groupType);
+    const group = await Group.updateGroupAndStudents(
+      id,
+      name,
+      phase,
+      students,
+      deletedStudents,
+      shedule,
+      groupType
+    );
     res.status(200).json({ message: 'ok', group });
   } catch (err) {
     console.log('updGroup error', err);

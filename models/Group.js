@@ -6,7 +6,7 @@ const { Schema, model } = mongoose;
 const groupSchema = new Schema({
   name: { type: String, unique: true },
   phase: { type: Number, default: 1 },
-  groupType: { type: String, default: 'waitlist' },
+  groupType: { type: String, default: 'inactive' },
   students: [{ type: Schema.Types.ObjectId, ref: 'Student' }],
   shedule: Object,
   crshedule: {
@@ -47,7 +47,7 @@ groupSchema.statics.createGroupAndStudents = async function (
   shedule,
   groupType
 ) {
-  const uniqStudents = [...new Set(students)]
+  const uniqStudents = [...new Set(students)];
   const studentsInDb = await Student.find({ name: { $in: uniqStudents } });
   if (studentsInDb.length !== 0) {
     const err = new Error(
@@ -83,12 +83,25 @@ groupSchema.statics.updateGroupAndStudents = async function (
   name,
   phase,
   students,
+  deletedStudents,
   shedule,
   groupType
 ) {
   //find current students in other group
-  const res = await Student.updateMany({ _id: { $in: students } }, { group: id });
-
+  const inactiveGr = await this.findOne({ name: 'Inactive' }, { _id: 1, groupType: 1 }).lean();
+  await Student.updateMany({ _id: { $in: students } }, { group: id, groupType: groupType });
+  await Student.updateMany(
+    { _id: { $in: deletedStudents } },
+    [
+      {
+        $set: {
+          name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
+          group: inactiveGr._id,
+          groupType: inactiveGr.groupType
+        }
+      }
+    ]
+  );
 
   const group = await this.updateOne(
     { _id: id },

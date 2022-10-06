@@ -37,14 +37,14 @@ export default function GroupEditForm() {
 
   const [defaultStudents, setDefaultStudents] = React.useState([]);
   const [allStudents, setAllStudents] = React.useState([]);
+  const [deletedStudents, setDeletedStudents] = React.useState([]);
   const [isLoad, setLoad] = React.useState(true);
-
   React.useEffect(() => {
     (async () => {
       setLoad(true);
       try {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
-        const allStudents = await (
+        let allStudents = await (
           await fetch(`/api/students?search=${JSON.stringify({ groupType: group.groupType })}`)
         ).json();
 
@@ -76,6 +76,7 @@ export default function GroupEditForm() {
       phase,
       groupType,
       students.map((student) => student._id),
+      deletedStudents,
       JSON.parse(shedule),
       groupId
     );
@@ -128,6 +129,21 @@ export default function GroupEditForm() {
 
   const handleChange = ({ target }) => {
     setGroupType(target.value);
+  };
+
+  const onInputStudentsHandler = (students, reason, student) => {
+    if (reason === 'removeOption') {
+      setDeletedStudents((prevSt) => [...new Set([...prevSt, student.option._id])]);
+      setStudents(students);
+    }
+    if (reason === 'selectOption') {
+      setStudents(students);
+      setDeletedStudents((prevSt) =>
+        prevSt.filter(
+          (deletedStudent) => !students.map((student) => student._id).includes(deletedStudent)
+        )
+      );
+    }
   };
 
   if (isLoad) return <div className="spinner" />;
@@ -189,9 +205,9 @@ export default function GroupEditForm() {
                 getOptionLabel={(option) => option?.name}
                 defaultValue={defaultStudents}
                 filterSelectedOptions
-                onChange={(event, value) => {
-console.log('file-GroupEditForm.jsx value:', value);
-                  setStudents(value);
+                disableClearable
+                onChange={(event, value, reason, details) => {
+                  onInputStudentsHandler(value, reason, details);
                 }}
                 renderInput={(params) => (
                   <TextField {...params} label="Students" placeholder="Добавить " />
