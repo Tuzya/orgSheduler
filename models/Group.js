@@ -89,19 +89,24 @@ groupSchema.statics.updateGroupAndStudents = async function (
 ) {
   //find current students in other group
   const inactiveGr = await this.findOne({ name: 'Inactive' }, { _id: 1, groupType: 1 }).lean();
-  await Student.updateMany({ _id: { $in: students } }, { group: id, groupType: groupType });
-  await Student.updateMany(
-    { _id: { $in: deletedStudents } },
-    [
-      {
-        $set: {
-          name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
-          group: inactiveGr._id,
-          groupType: inactiveGr.groupType
-        }
-      }
-    ]
+  await this.updateMany(
+    { students: { $in: students } },
+    {
+      groupType: groupType,
+      $pullAll: { students: students }
+    }
   );
+
+  await Student.updateMany({ _id: { $in: students } }, { group: id, groupType: groupType });
+  await Student.updateMany({ _id: { $in: deletedStudents } }, [
+    {
+      $set: {
+        name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
+        group: inactiveGr._id,
+        groupType: inactiveGr.groupType
+      }
+    }
+  ]);
 
   const group = await this.updateOne(
     { _id: id },
