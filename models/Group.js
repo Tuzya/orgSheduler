@@ -7,7 +7,6 @@ const groupSchema = new Schema({
   name: { type: String, unique: true },
   phase: { type: Number, default: 1 },
   groupType: { type: String, default: 'inactive' },
-  students: [{ type: Schema.Types.ObjectId, ref: 'Student' }],
   shedule: Object,
   crshedule: {
     type: Object,
@@ -61,7 +60,6 @@ groupSchema.statics.createGroupAndStudents = async function (
   const group = new this({
     name,
     phase,
-    students: [],
     shedule,
     groupType
   });
@@ -74,7 +72,7 @@ groupSchema.statics.createGroupAndStudents = async function (
       history: []
     }))
   );
-  group.students = studentsModels.map((student) => student._id);
+
   return group.save();
 };
 
@@ -89,6 +87,7 @@ groupSchema.statics.updateGroupAndStudents = async function (
 ) {
   //find current students in other group
   const inactiveGr = await this.findOne({ name: 'Inactive' }, { _id: 1, groupType: 1 }).lean();
+
   await this.updateMany(
     { students: { $in: students } },
     {
@@ -98,6 +97,7 @@ groupSchema.statics.updateGroupAndStudents = async function (
   );
 
   await Student.updateMany({ _id: { $in: students } }, { group: id, groupType: groupType });
+
   await Student.updateMany({ _id: { $in: deletedStudents } }, [
     {
       $set: {
@@ -113,7 +113,6 @@ groupSchema.statics.updateGroupAndStudents = async function (
     {
       name,
       phase,
-      students,
       shedule,
       groupType
     }
@@ -126,9 +125,10 @@ groupSchema.statics.deleteGroupAndStudents = async function (id) {
     model: 'Student',
     select: { _id: 1 }
   };
-  const group = await this.findById(id).populate(populateOpt);
+  const group = await this.findById(id);
+  const students = await Student.find({group: group.id}, {_id: 1})
   let inactiveGroup = await this.findOne({ name: 'Inactive' });
-  const studentsIds = group.students.map((student) => student._id);
+  const studentsIds = students.map((student) => student._id);
   if (!inactiveGroup)
     inactiveGroup = this.new({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
   //перемещаем студентов в гр. inactive

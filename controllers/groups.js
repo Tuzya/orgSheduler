@@ -1,11 +1,13 @@
 const Group = require('../models/Group');
+const Student = require('../models/Student');
 
 exports.allGroups = async (req, res) => {
   const { name = '' } = req.query;
   try {
-    const allTheGroups = await Group.find({ name: { $regex: name, $options: 'i' } })
-      .populate({ path: 'students', select: { _id: 1, name: 1 } })
-      .lean();
+    const allTheGroups = await Group.find({ name: { $regex: name, $options: 'i' } }).lean();
+    const stidentsPr = allTheGroups.map((group) => Student.find({ group: group._id }, {_id: 1, name: 1}).lean());
+    const students = await Promise.all(stidentsPr);
+    allTheGroups.forEach((group, i) => {group.students = students[i]})
     res.status(200).json(allTheGroups);
   } catch (err) {
     console.error('allGroups error', err.message);
@@ -15,7 +17,8 @@ exports.allGroups = async (req, res) => {
 
 exports.groups = async (req, res) => {
   try {
-    const group = await Group.findOne({ _id: req.params.id }).populate('students').lean();
+    const group = await Group.findOne({ _id: req.params.id }).lean();
+    if (group) group.students = await Student.find({group: group._id}).lean();
     res.status(200).json(group);
   } catch (err) {
     console.error('getGroup error', err.message);
