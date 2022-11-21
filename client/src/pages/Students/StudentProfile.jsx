@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import { getStudent, updateStudent } from '../../store/students/actions';
 import { getGroups } from '../../store/camp/actions';
 import { useSelector, useDispatch } from 'react-redux';
@@ -75,6 +75,8 @@ export default function StudentProfile() {
     );
   return (
     <div style={{ marginTop: 20 }}>
+      <Link to='/students'>to students list</Link>
+      <br/>
       <button onClick={() => setEdit(true)}>EDIT</button>
       <ul className="collection">
         <li key={student._id} className="collection-item ">

@@ -114,11 +114,6 @@ groupSchema.statics.updateGroupAndStudents = async function (
 };
 
 groupSchema.statics.deleteGroupAndStudents = async function (id) {
-  const populateOpt = {
-    path: 'students',
-    model: 'Student',
-    select: { _id: 1 }
-  };
   const group = await this.findById(id);
   const students = await Student.find({ group: group.id }, { _id: 1 });
   let inactiveGroup = await this.findOne({ name: 'Inactive' });
@@ -130,7 +125,7 @@ groupSchema.statics.deleteGroupAndStudents = async function (id) {
     {
       $set: {
         name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
-        group: inactiveGroup._id,
+        group: inactiveGroup._id
       }
     }
   ]);

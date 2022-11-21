@@ -15,7 +15,7 @@ const groups = [
 ];
 Group.create(groups)
   .then((res) => {
-    console.log(res);
+    console.log('Created:', res);
     mongoose.disconnect();
   })
   .catch((err) => {
