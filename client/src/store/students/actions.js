@@ -51,3 +51,20 @@ export const updateStudentComment = async (name, groupId, historyEl) => {
     console.log('Group Page Error', e.message);
   }
 };
+
+export const updateStudent = async (id, name, group_id, photoUrl) => {
+  try {
+    return (
+      await fetch(`/api/students/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({ name, group_id, photoUrl })
+      })
+    ).json();
+  } catch (e) {
+    console.log('Group Page Error', e.message);
+  }
+};

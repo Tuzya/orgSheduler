@@ -57,12 +57,14 @@ groupSchema.statics.createGroupAndStudents = async function (
     throw err;
   }
 
-  const group = new this({
-    name,
-    phase,
-    shedule,
-    groupType
-  });
+  const group = (
+    await this.create({
+      name,
+      phase,
+      shedule,
+      groupType
+    })
+  ).toObject({ getters: true });
 
   const studentsModels = await Student.create(
     uniqStudents.map((studentName) => ({
@@ -72,8 +74,8 @@ groupSchema.statics.createGroupAndStudents = async function (
       history: []
     }))
   );
-
-  return group.save();
+  group.students = studentsModels.map((student) => ({ _id: student.id, name: student.name }));
+  return group;
 };
 
 groupSchema.statics.updateGroupAndStudents = async function (
@@ -86,15 +88,9 @@ groupSchema.statics.updateGroupAndStudents = async function (
   groupType
 ) {
   //find current students in other group
-  const inactiveGr = await this.findOne({ name: 'Inactive' }, { _id: 1, groupType: 1 }).lean();
-
-  await this.updateMany(
-    { students: { $in: students } },
-    {
-      groupType: groupType,
-      $pullAll: { students: students }
-    }
-  );
+  let inactiveGr = await this.findOne({ name: 'Inactive' }, { _id: 1, groupType: 1 }).lean();
+  if (!inactiveGr)
+    inactiveGr = this.create({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
 
   await Student.updateMany({ _id: { $in: students } }, { group: id, groupType: groupType });
 
@@ -126,11 +122,11 @@ groupSchema.statics.deleteGroupAndStudents = async function (id) {
     select: { _id: 1 }
   };
   const group = await this.findById(id);
-  const students = await Student.find({group: group.id}, {_id: 1})
+  const students = await Student.find({ group: group.id }, { _id: 1 });
   let inactiveGroup = await this.findOne({ name: 'Inactive' });
   const studentsIds = students.map((student) => student._id);
   if (!inactiveGroup)
-    inactiveGroup = this.new({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
+    inactiveGroup = new this({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
   //перемещаем студентов в гр. inactive
   const updatedStudents = await Student.updateMany({ _id: { $in: studentsIds } }, [
     {

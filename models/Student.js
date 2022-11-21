@@ -4,8 +4,8 @@ const studentsSchema = new Schema(
   {
     name: { type: String, required: true, unique: true },
     group: { type: Schema.Types.ObjectId, ref: 'Group' },
-    groupType: String,
-    photoUrl: String,
+    // groupType: String,
+    photoUrl: {type: String, default: ''},
     history: [
       {
         phase: Number,
@@ -36,7 +36,7 @@ studentsSchema.statics.findActive = function (query) {
     query = {};
   }
   query.groupType =
-    query.groupType === undefined
+    (query.groupType === undefined || query.groupType === '')
       ? { $regex: /\b(?!inactive\b)\w+/, $options: 'i' } // ищем студентов у которых groupType не inactive
       : query.groupType;
   return this.find(query);

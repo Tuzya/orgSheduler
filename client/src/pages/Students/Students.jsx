@@ -45,9 +45,10 @@ export default function Schema() {
     page: 0,
     limit: 25
   });
+  // console.log('file-Students.jsx search:', search);
   const { data: students, isLoading } = useSelector((store) => store.students);
   const groups = useSelector((store) => store.camp.groups);
-
+console.log('file-Students.jsx students:', students);
   const filteredGroups = React.useMemo(
     () => groups.filter((group) => group.groupType === search.groupType),
     [groups, search.groupType]

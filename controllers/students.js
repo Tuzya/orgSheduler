@@ -4,8 +4,8 @@ exports.allStudents = async (req, res) => {
   try {
     const {
       name = '',
-      groupType = '',
       groupId = '',
+      groupType = '',
       page = 0,
       limit = 0
     } = req.query.search ? JSON.parse(req.query.search) : {};
@@ -13,25 +13,25 @@ exports.allStudents = async (req, res) => {
       ? {
           name: { $regex: name, $options: 'i' },
           group: groupId,
-          groupType: { $regex: groupType, $options: 'i' }
         }
       : {
           name: { $regex: name, $options: 'i' },
-          groupType: { $regex: groupType, $options: 'i' }
         };
 
     const populateOpt = {
       path: 'group',
       model: 'Group',
-      select: { _id: 1, name: 1, groupType: 1 }
+      select: { _id: 1, name: 1, groupType: 1 },
+      match: { groupType: { $regex: groupType, $options: 'i' }}
     };
 
-    const students = await Student.findActive(query)
+    const students = (await Student.findActive(query)
       .populate(populateOpt)
       .limit(limit)
       .skip(page * limit)
       .sort({ name: 1, updatedAt: 1 })
-      .lean();
+      .lean())
+      .filter((student) => (student.group))
     res.status(200).json(students);
   } catch (err) {
     console.log('allStudents get error', err.message);
@@ -90,6 +90,22 @@ exports.updComment = async (req, res) => {
     res.status(200).json({ message: 'ok' });
   } catch (err) {
     console.log('updStudent error', err);
+    res.status(500).json({ err: err.message });
+  }
+};
+
+// exports.updStudent = async (req, res) => {res.end()}
+
+exports.updStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {name, group_id, photoUrl} = req.body;
+console.log('file-students.js req.body:', req.body);
+    const result = await Student.updateOne({_id: id}, {name: name, group: group_id, photoUrl: photoUrl})
+    console.log('file-students.js res:', result);
+    res.status(200).json({ message: 'ok' });
+  } catch (err) {
+    console.log('Student update error', err.message);
     res.status(500).json({ err: err.message });
   }
 };
