@@ -5,7 +5,7 @@ import { groupTypes } from '../../consts';
 import { getGroups } from '../../store/camp/actions';
 import { useSelector, useDispatch } from 'react-redux';
 
-export default function StudentProfile() {
+export default function StudentEdit() {
   const dispatch = useDispatch();
   const { studentId } = useParams();
   const groups = useSelector((state) => state.camp.groups);

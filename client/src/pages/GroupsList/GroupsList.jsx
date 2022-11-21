@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import GroupItem from '../../components/GroupItem/GroupItem';
 import {getGroups} from "../../store/camp/actions"
 import {useDispatch, useSelector} from "react-redux"
+import {GROUPS, groupTypes} from "../../consts"
 
 function GroupsList({ isAuth }) {
 
@@ -23,7 +24,7 @@ function GroupsList({ isAuth }) {
 
   return (
     <div className="collection">
-      {groups.map((group) => (
+      {groups.filter((group) => (group.groupType !== groupTypes.inactive)).map((group) => (
         <GroupItem
           key={group._id}
           isAuth={isAuth}
