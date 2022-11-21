@@ -6,7 +6,7 @@ const { Schema, model } = mongoose;
 const groupSchema = new Schema({
   name: { type: String, unique: true },
   phase: { type: Number, default: 1 },
-  groupType: { type: String, default: 'inactive' },
+  groupType: { type: String, default: 'waitlist' },
   shedule: Object,
   crshedule: {
     type: Object,
@@ -70,7 +70,6 @@ groupSchema.statics.createGroupAndStudents = async function (
     uniqStudents.map((studentName) => ({
       name: studentName,
       group: group._id,
-      groupType: groupType,
       history: []
     }))
   );
@@ -92,14 +91,13 @@ groupSchema.statics.updateGroupAndStudents = async function (
   if (!inactiveGr)
     inactiveGr = this.create({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
 
-  await Student.updateMany({ _id: { $in: students } }, { group: id, groupType: groupType });
+  await Student.updateMany({ _id: { $in: students } }, { group: id });
 
   await Student.updateMany({ _id: { $in: deletedStudents } }, [
     {
       $set: {
         name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
-        group: inactiveGr._id,
-        groupType: inactiveGr.groupType
+        group: inactiveGr._id
       }
     }
   ]);
@@ -133,7 +131,6 @@ groupSchema.statics.deleteGroupAndStudents = async function (id) {
       $set: {
         name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
         group: inactiveGroup._id,
-        groupType: 'inactive'
       }
     }
   ]);

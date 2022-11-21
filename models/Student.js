@@ -4,7 +4,6 @@ const studentsSchema = new Schema(
   {
     name: { type: String, required: true, unique: true },
     group: { type: Schema.Types.ObjectId, ref: 'Group' },
-    // groupType: String,
     photoUrl: {type: String, default: ''},
     history: [
       {

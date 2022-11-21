@@ -82,7 +82,7 @@ export default function StudentProfile() {
           <ul className="collection">
             {student.history.map((st) => (
               <li key={st._id} className="collection-item">
-                {`ph${st.phase}, ${st.groupType}, ${dayjs(st.date).format('DD-MM-YY')}, Проверял: ${
+                {`ph${st.phase}, ${st.groupType}, ${dayjs(st.date).format('DD-MM-YY')}, Проверял: ${ //todo st.groupType исправить на group.groupType 
                   st.teacher
                 }`}
                 <div>

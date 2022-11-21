@@ -1,9 +1,4 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
-import { getStudent, updateStudent } from '../../store/students/actions';
-import { groupTypes } from '../../consts';
-import { getGroups } from '../../store/camp/actions';
-import { useSelector, useDispatch } from 'react-redux';
 
 export default function StudentEdit({ groups, student, submitHandlerStudent, onChangeHandler }) {
 
