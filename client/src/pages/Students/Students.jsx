@@ -25,15 +25,6 @@ import TableHead from '@mui/material/TableHead';
 import BgLetterAvatars from '../../components/BgLettersAvatar/BgLettersAvatar';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 
-// const ratingColor = {
-//   0: 'red',
-//   1: 'light-blue',
-//   2: 'lime',
-//   3: 'blue-grey lighten-3',
-//   4: 'light-green',
-//   5: 'green'
-// };
-
 export default function Schema() {
   const history = useHistory();
   const dispatch = useDispatch();

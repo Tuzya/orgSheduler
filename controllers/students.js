@@ -52,6 +52,7 @@ exports.getStudent = async (req, res) => {
     const student = await Student.findById(id, { createdAt: 0, updatedAt: 0, __v: 0 })
       .populate(populateOpt)
       .lean();
+
     res.status(200).json(student);
   } catch (err) {
     console.log('Student get error', err.message);
