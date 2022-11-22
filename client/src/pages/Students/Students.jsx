@@ -1,6 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
-
 import './students.css';
 
 import { DebounceInput } from 'react-debounce-input';
@@ -25,7 +23,7 @@ import TableHead from '@mui/material/TableHead';
 import BgLetterAvatars from '../../components/BgLettersAvatar/BgLettersAvatar';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 
-export default function Schema() {
+export default function Students() {
   const history = useHistory();
   const dispatch = useDispatch();
 

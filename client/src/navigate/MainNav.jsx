@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+
 import GroupsList from '../pages/GroupsList/GroupsList';
 import SignUp from '../pages/SignUp/SignUp';
 import Login from '../pages/Login/Login';
@@ -10,6 +11,7 @@ import Students from '../pages/Students/Students';
 import GroupPage from '../pages/GroupPage/GroupPage';
 import GroupEditForm from '../pages/GroupEditForm/GroupEditForm';
 import StudentProfile from "../pages/Students/StudentProfile"
+import StudentsCreate from "../pages/Students/StudentsCreate"
 
 export default function MainNav({ isAuth }) {
   return (
@@ -27,7 +29,7 @@ export default function MainNav({ isAuth }) {
         <PrivateRoute exact path="/groups/new/" isAuth={isAuth} component={GroupCreateForm} />
         <PrivateRoute exact path="/groups/schema/" isAuth={isAuth} component={Schema} />
         <PrivateRoute exact path="/students/" isAuth={isAuth} component={Students} />
-        <PrivateRoute exact path="/students/new" isAuth={isAuth} component={Students} />
+        <PrivateRoute exact path="/students/new" isAuth={isAuth} component={StudentsCreate} />
         <PrivateRoute exact path="/students/:studentId" isAuth={isAuth} component={StudentProfile} />
         <Route exact path="/groups/:groupId"><GroupPage isAuth={isAuth} /></Route>
         <PrivateRoute

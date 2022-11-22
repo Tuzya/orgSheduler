@@ -22,7 +22,7 @@
     "prettier": "^2.7.1"
   },
   "scripts": {
-    "dev": "npm-run-all --parallel dev-back dev-front",
+
     "dev-back": "nodemon app.js",
     "dev-front": "cd client && (COLOR=1 npm run start | cat)",
     "start": "node app.js",
