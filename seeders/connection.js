@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const dbPath = process.env.NODE_ENV === 'production' ? process.env.DB_FULL_URL : process.env.LOCAL_DB;
+const dbPath = 'mongodb://localhost:27017/org-scheduler-temp'
 
 mongoose.connect(dbPath);
 

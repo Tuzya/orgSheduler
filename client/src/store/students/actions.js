@@ -19,11 +19,11 @@ export const getStudents = (searchProps) => async (dispatch) => {
   }
 }
 
-export const getStudent = (ame, groupName) => async (dispatch) => {
+export const getStudent = async (id)  => {
   try {
-    return (await fetch(`/api/students`)).json();
+    return (await fetch(`/api/students/${id}`)).json();
   } catch (e) {
-    console.log('Group Page Error', e.message);
+    console.log('Failed to fetch Student', e.message);
   }
 };
 
@@ -38,13 +38,30 @@ export const getComment = async (stName, grName, date) => {
 export const updateStudentComment = async (name, groupId, historyEl) => {
   try {
     return (
-      await fetch('/api/students', {
+      await fetch('/api/students/history/comment', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
         body: JSON.stringify({ name, groupId, historyEl })
+      })
+    ).json();
+  } catch (e) {
+    console.log('Group Page Error', e.message);
+  }
+};
+
+export const updateStudent = async (id, name, group_id, photoUrl) => {
+  try {
+    return (
+      await fetch(`/api/students/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({ name, group_id, photoUrl })
       })
     ).json();
   } catch (e) {

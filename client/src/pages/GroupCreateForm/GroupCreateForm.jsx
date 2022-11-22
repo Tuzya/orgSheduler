@@ -26,7 +26,7 @@ export default function GroupCreateForm() {
   const generateSchedule = async (event) => {
     event.preventDefault();
     if (!students || !name || !phase) return;
-    const studentsArr = students.split(/ *, */g);
+    const studentsArr = [...new Set(students.split(/ *, */g))];
 
     setLoad(true);
     const schemas = await getSchemas(phase);
@@ -52,7 +52,10 @@ export default function GroupCreateForm() {
       false
     );
     const group = await createGroup(name, phase, groupType, studentsArr, generatedShedule);
-
+    if (group.err) {
+      setLoad(false);
+      return alert(group.err);
+    }
     setGroupId(group._id);
     dispatch(addGroup(group));
     // setSchedule(generatedSchedule); // TODO: check if is is ok

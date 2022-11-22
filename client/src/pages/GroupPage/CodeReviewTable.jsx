@@ -163,6 +163,7 @@ function CodeReviewTable({ group, isAuth }) {
     const historyEl = {
       phase: group.phase,
       groupType: group.groupType,
+      groupName: group.name,
       teacher: teachers[colNum - 1],
       date: currentDate, // если комент в тот же самый день - то он обновиться. если в другой - запушиться. поэтому отсекаем время от даты.
       rating: modal.result.rating,

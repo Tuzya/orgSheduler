@@ -31,28 +31,27 @@ export default function GroupEditForm() {
 
   const { value: name, bind: bindName, setValue: setName } = useInput('');
   const { value: phase, bind: bindPhase, setValue: setPhase } = useInput('');
-  const { value: students, bind: bindStudents, setValue: setStudents } = useInput([]);
+  const { value: students, setValue: setStudents } = useInput([]);
   const { value: shedule, bind: bindShedule, setValue: setShedule } = useInput([], 'json');
   const { value: groupType, setValue: setGroupType } = useInput(false);
 
   const [defaultStudents, setDefaultStudents] = React.useState([]);
   const [allStudents, setAllStudents] = React.useState([]);
+  const [deletedStudents, setDeletedStudents] = React.useState([]);
   const [isLoad, setLoad] = React.useState(true);
-
-
   React.useEffect(() => {
     (async () => {
       setLoad(true);
       try {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
-        const allStudents = await (
+        let allStudents = await (
           await fetch(`/api/students?search=${JSON.stringify({ groupType: group.groupType })}`)
         ).json();
 
-        const defaultStudents = group.students.map((student1) =>
-          allStudents.find((student2) => student1._id === student2._id)
-        );
-        setAllStudents(allStudents)
+        const defaultStudents = group.students
+          .map((student1) => allStudents.find((student2) => student1._id === student2._id))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setAllStudents(allStudents);
         setName(group.name);
         setPhase(group.phase);
         setGroupType(group.groupType);
@@ -68,23 +67,16 @@ export default function GroupEditForm() {
     })();
   }, [groupId, setName, setPhase, setShedule, setStudents, setGroupType]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password')
-    });
-  };
   const updateGroup = async (event) => {
     event.preventDefault();
-    if (!students.length || parseInt(phase) > 3 || parseInt(phase) < 1 || !name) return;
+    if (!students.length || parseInt(phase) > MAX_NUMS_PHASES || parseInt(phase) < 1 || !name)
+      return;
     const res = await putGroup(
-      //todo try-catch
       name,
       phase,
       groupType,
       students.map((student) => student._id),
+      deletedStudents,
       JSON.parse(shedule),
       groupId
     );
@@ -98,7 +90,7 @@ export default function GroupEditForm() {
     setLoad(true);
     event.preventDefault();
     const studentsArr = students.map((student) => student.name);
-
+    setDefaultStudents(students);
     const schemas = await getSchemas(phase);
     if (schemas) {
       const generatedShedule = getShedule(
@@ -125,13 +117,13 @@ export default function GroupEditForm() {
           Accept: 'application/json'
         }
       });
-      if (response.status === 200) {
-        await dispatch(delGroup(groupId));
-        history.push('/groups');
-      } else alert(`Error while delete: ${response.status}`);
-    } catch (e) {
-      console.log('Error while delete:', e.message);
-      alert(`Error while delete: ${e.message}`);
+      const delData = await response.json();
+      if (delData.err) throw new Error(`Error while delete: ${delData.err}`);
+      await dispatch(delGroup(groupId));
+      history.push('/groups');
+    } catch (err) {
+      console.log('Error while delete:', err.message);
+      alert(`Error while delete: ${err.message}`);
     }
   };
 
@@ -139,11 +131,26 @@ export default function GroupEditForm() {
     setGroupType(target.value);
   };
 
+  const onInputStudentsHandler = (students, reason, student) => {
+    if (reason === 'removeOption') {
+      setDeletedStudents((prevSt) => [...new Set([...prevSt, student.option._id])]);
+      setStudents(students);
+    }
+    if (reason === 'selectOption') {
+      setStudents(students);
+      setDeletedStudents((prevSt) =>
+        prevSt.filter(
+          (deletedStudent) => !students.map((student) => student._id).includes(deletedStudent)
+        )
+      );
+    }
+  };
+
   if (isLoad) return <div className="spinner" />;
 
   return (
     <>
-      <Container component="main" maxWidth="xl" sx={{mt: 0}}>
+      <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>
         <CssBaseline />
         <Box sx={styles.formbox}>
           <Avatar sx={{ m: 1, width: 60, height: 60, bgcolor: 'secondary.main' }}>
@@ -195,19 +202,18 @@ export default function GroupEditForm() {
                 multiple
                 id="tags-outlined"
                 options={allStudents}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => option?.name}
                 defaultValue={defaultStudents}
                 filterSelectedOptions
-                onChange={(event, value) => {
-                  setStudents(value);
+                disableClearable
+                onChange={(event, value, reason, details) => {
+                  onInputStudentsHandler(value, reason, details);
                 }}
                 renderInput={(params) => (
                   <TextField {...params} label="Students" placeholder="Добавить " />
                 )}
               />
             </Stack>
-
-
 
             <Stack sx={{ pt: 2 }} direction="row" spacing={2} justifyContent="center">
               <Button variant="contained" disabled={isLoad} onClick={regenerateSchedule}>

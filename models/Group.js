@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 const Student = require('../models/Student');
-const Group = require('../models/GroupSchema');
 
 const { Schema, model } = mongoose;
 
 const groupSchema = new Schema({
-  name: String,
+  name: { type: String, unique: true },
   phase: { type: Number, default: 1 },
-  groupType: { type: String, default: 'online' },
-  students: [{ type: Schema.Types.ObjectId, ref: 'Student' }],
+  groupType: { type: String, default: 'waitlist' },
   shedule: Object,
   crshedule: {
     type: Object,
@@ -22,7 +20,7 @@ const groupSchema = new Schema({
     }
   },
   crtables: [{ crDay: String, tableData: [{}] }],
-  isArchived: { type: Boolean, default: false }
+  isArchived: { type: Boolean, default: false },
 });
 
 groupSchema.pre('updateOne', function (next) {
@@ -35,7 +33,7 @@ groupSchema.pre('updateOne', function (next) {
   if (modifiedField.isArchived === false)
     Student.updateOne({ _id: { $in: modifiedField.students } }, { isArchived: false }).then(
       (res) => {
-        console.log(res);
+        console.log('res', res);
       }
     );
   next();
@@ -48,25 +46,35 @@ groupSchema.statics.createGroupAndStudents = async function (
   shedule,
   groupType
 ) {
-  const group = new this({
-    name,
-    phase,
-    students: [],
-    shedule,
-    groupType
-  });
+  const uniqStudents = [...new Set(students)];
+  const studentsInDb = await Student.find({ name: { $in: uniqStudents } });
+  if (studentsInDb.length !== 0) {
+    const err = new Error(
+      `Student(s) ${studentsInDb.map((student) => student.name)} already exist`
+    );
+    err.code = 11000;
+    err.keyValue = studentsInDb.map((student) => student.name);
+    throw err;
+  }
+
+  const group = (
+    await this.create({
+      name,
+      phase,
+      shedule,
+      groupType
+    })
+  ).toObject({ getters: true });
 
   const studentsModels = await Student.create(
-    students.map((studentName) => ({
+    uniqStudents.map((studentName) => ({
       name: studentName,
       group: group._id,
-      groupType: groupType,
       history: []
     }))
   );
-  group.students = studentsModels.map((student) => student._id);
-
-  return group.save();
+  group.students = studentsModels.map((student) => ({ _id: student.id, name: student.name }));
+  return group;
 };
 
 groupSchema.statics.updateGroupAndStudents = async function (
@@ -74,19 +82,56 @@ groupSchema.statics.updateGroupAndStudents = async function (
   name,
   phase,
   students,
+  deletedStudents,
   shedule,
   groupType
 ) {
+  //find current students in other group
+  let inactiveGr = await this.findOne({ name: 'Inactive' }, { _id: 1, groupType: 1 }).lean();
+  if (!inactiveGr)
+    inactiveGr = this.create({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
+
+  await Student.updateMany({ _id: { $in: students } }, { group: id });
+
+  await Student.updateMany({ _id: { $in: deletedStudents } }, [
+    {
+      $set: {
+        name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
+        group: inactiveGr._id
+      }
+    }
+  ]);
+
   const group = await this.updateOne(
     { _id: id },
     {
       name,
       phase,
-      students,
       shedule,
       groupType
     }
   );
+};
+
+groupSchema.statics.deleteGroupAndStudents = async function (id) {
+  const group = await this.findById(id);
+  const students = await Student.find({ group: group.id }, { _id: 1 });
+  let inactiveGroup = await this.findOne({ name: 'Inactive' });
+  const studentsIds = students.map((student) => student._id);
+  if (!inactiveGroup)
+    inactiveGroup = new this({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
+  //перемещаем студентов в гр. inactive
+  const updatedStudents = await Student.updateMany({ _id: { $in: studentsIds } }, [
+    {
+      $set: {
+        name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
+        group: inactiveGroup._id
+      }
+    }
+  ]);
+  inactiveGroup.students = studentsIds;
+  await inactiveGroup.save();
+  return this.findByIdAndDelete(id);
 };
 
 module.exports = model('Group', groupSchema);

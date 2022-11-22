@@ -104,23 +104,23 @@ export default function CodeReviewSchema() {
           <div className="row">
             <div className="input-field col s12">
               <input
+                {...bindTeachers}
                 id="teachers"
                 type="text"
-                {...bindTeachers}
                 className="validate"
                 value={teachers}
+                placeholder="Teachers"
               />
-              <label htmlFor="teachers">Teachers</label>
             </div>
             <div className="input-field col s12">
               <input
+                {...bindTimegaps}
                 id="timegaps"
                 type="text"
-                {...bindTimegaps}
                 className="validate"
                 value={timegaps}
+                placeholder="Time Gaps"
               />
-              <label htmlFor="timegaps">Time Gaps</label>
             </div>
           </div>
           {groups

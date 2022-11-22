@@ -1,16 +1,15 @@
 const { Schema, model } = require('mongoose');
 
-const StudentsSchema = new Schema(
+const studentsSchema = new Schema(
   {
-    name: String,
+    name: { type: String, required: true, unique: true },
     group: { type: Schema.Types.ObjectId, ref: 'Group' },
-    groupType: String,
-    isArchived: {type: Boolean, default: false},
+    photoUrl: {type: String, default: ''},
     history: [
       {
         phase: Number,
         groupType: String,
-        groupName: {type: String, default: ''},
+        groupName: { type: String, default: '' },
         date: Date,
         teacher: String,
         rating: String,
@@ -23,10 +22,23 @@ const StudentsSchema = new Schema(
   }
 );
 
+// studentsSchema.index({ name: 1, group: 1}, { unique: true });
+
 // StudentsSchema.pre('save', async function(next) {
 //   console.log('file-Student.js this:', this);
 //   console.log('file-Student.js:', await this.populate('group'));
 //   // next();
 // });
 
-module.exports = model('Student', StudentsSchema);
+studentsSchema.statics.findActive = function (query) {
+  if (!query) {
+    query = {};
+  }
+  query.groupType =
+    (query.groupType === undefined || query.groupType === '')
+      ? { $regex: /\b(?!inactive\b)\w+/, $options: 'i' } // ищем студентов у которых groupType не inactive
+      : query.groupType;
+  return this.find(query);
+};
+
+module.exports = model('Student', studentsSchema);

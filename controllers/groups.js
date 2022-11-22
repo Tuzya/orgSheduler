@@ -1,9 +1,13 @@
 const Group = require('../models/Group');
-// const Student = require('../models/Student');
+const Student = require('../models/Student');
 
 exports.allGroups = async (req, res) => {
+  const { name = '' } = req.query;
   try {
-    const allTheGroups = await Group.find().populate({path: 'students', select: { _id: 1, name: 1 }}).lean();
+    const allTheGroups = await Group.find({ name: { $regex: name, $options: 'i' } }).lean();
+    const stidentsPr = allTheGroups.map((group) => Student.find({ group: group._id }, {_id: 1, name: 1}).lean());
+    const students = await Promise.all(stidentsPr);
+    allTheGroups.forEach((group, i) => {group.students = students[i]})
     res.status(200).json(allTheGroups);
   } catch (err) {
     console.error('allGroups error', err.message);
@@ -13,11 +17,12 @@ exports.allGroups = async (req, res) => {
 
 exports.groups = async (req, res) => {
   try {
-    const group = await Group.findOne({_id: req.params.id}).populate('students').lean();
+    const group = await Group.findOne({ _id: req.params.id }).lean();
+    if (group) group.students = await Student.find({group: group._id}).lean();
     res.status(200).json(group);
   } catch (err) {
     console.error('getGroup error', err.message);
-    if(err.name === 'CastError') return res.status(404).json({ err: err.message });
+    if (err.name === 'CastError') return res.status(404).json({ err: err.message });
     res.status(500).json({ err: err.message });
   }
 };
@@ -25,33 +30,32 @@ exports.groups = async (req, res) => {
 exports.createGroup = async (req, res) => {
   const { phase, students, shedule, name, groupType } = req.body;
   try {
-    const group = await Group.createGroupAndStudents(
-      name,
-      phase,
-      students,
-      shedule,
-      groupType
-    );
+    const group = await Group.createGroupAndStudents(name, phase, students, shedule, groupType);
     res.status(201).json(group);
   } catch (err) {
-    console.log('createGroup error', err);
-    res.status(500).send(err);
+    // console.log('createGroup error', err.name);
+    // console.log('createGroup error', err.code);
+    // console.log('createGroup error', err.keyValue);
+    if (err.code === 11000)
+      return res
+        .status(400)
+        .json({ err: `This record already exist ${JSON.stringify(err.keyValue)}` });
+    res.status(500).json({ err: err.message });
   }
 };
 
 exports.updGroup = async (req, res) => {
   const { id } = req.params;
-  const { phase, students, shedule, name, groupType } = req.body;
+  const { phase, students, deletedStudents, shedule, name, groupType } = req.body;
   try {
-    const group = await Group.updateOne(
-      { _id: id },
-      {
-        name,
-        phase,
-        students,
-        shedule,
-        groupType
-      }
+    const group = await Group.updateGroupAndStudents(
+      id,
+      name,
+      phase,
+      students,
+      deletedStudents,
+      shedule,
+      groupType
     );
     res.status(200).json({ message: 'ok', group });
   } catch (err) {
@@ -75,9 +79,11 @@ exports.updCRTablesGroup = async (req, res) => {
 exports.delGroup = async (req, res) => {
   const { id } = req.params;
   try {
-    res.json(await Group.findByIdAndDelete(id));
+    const delRes = await Group.deleteGroupAndStudents(id);
+    res.json(delRes);
   } catch (err) {
-    res.status(500).json(err);
+    console.error('Delete group Error', err.message);
+    res.status(500).json({ err: err.message });
   }
 };
 

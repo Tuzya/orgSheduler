@@ -8,7 +8,7 @@ export default function PairsSchema() {
   const [isLoad, setLoad] = React.useState(false);
   const [schemas, setSchemas] = React.useState(schemaInit);
 
-  const { value: online, setValue: setOnline } = useInput(false);
+  const { value: online, setValue: setOnline } = useInput(true);
   const { value: phase, setValue: setPhase } = useInput('1');
 
   React.useEffect(() => {
@@ -105,9 +105,10 @@ export default function PairsSchema() {
           <label>
             <input
               type="checkbox"
+              checked={online}
               onChange={(e) => setOnline(e.target.checked)}
             />
-            <span>Онлайн</span>
+            <span>Online</span>
           </label>
           <button
             type="submit"
