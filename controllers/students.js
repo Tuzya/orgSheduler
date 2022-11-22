@@ -1,4 +1,5 @@
 const Student = require('../models/Student');
+const Group = require('../models/Group');
 
 exports.allStudents = async (req, res) => {
   try {
@@ -9,29 +10,33 @@ exports.allStudents = async (req, res) => {
       page = 0,
       limit = 0
     } = req.query.search ? JSON.parse(req.query.search) : {};
-    const query = groupId
-      ? {
+
+    let groupIds = [];
+    if (groupId) groupIds = [groupId];
+    else
+      groupIds = await Group.find(
+        { groupType: { $regex: groupType, $options: 'i' } },
+        { _id: 1, groupType: 1 }
+      ).lean();
+
+    const query = {
           name: { $regex: name, $options: 'i' },
-          group: groupId,
+          group: { $in: groupIds }
         }
-      : {
-          name: { $regex: name, $options: 'i' },
-        };
 
     const populateOpt = {
       path: 'group',
       model: 'Group',
-      select: { _id: 1, name: 1, groupType: 1 },
-      match: { groupType: { $regex: groupType, $options: 'i' }}
+      select: { _id: 1, name: 1, groupType: 1 }
     };
 
-    const students = (await Student.findActive(query)
+    const students = await Student.findActive(query)
       .populate(populateOpt)
       .limit(limit)
       .skip(page * limit)
       .sort({ name: 1, updatedAt: 1 })
-      .lean())
-      .filter((student) => (student.group))
+      .lean();
+
     res.status(200).json(students);
   } catch (err) {
     console.log('allStudents get error', err.message);
@@ -100,9 +105,12 @@ exports.updComment = async (req, res) => {
 exports.updStudent = async (req, res) => {
   try {
     const { id } = req.params;
-    const {name, group_id, photoUrl} = req.body;
-console.log('file-students.js req.body:', req.body);
-    const result = await Student.updateOne({_id: id}, {name: name, group: group_id, photoUrl: photoUrl})
+    const { name, group_id, photoUrl } = req.body;
+    console.log('file-students.js req.body:', req.body);
+    const result = await Student.updateOne(
+      { _id: id },
+      { name: name, group: group_id, photoUrl: photoUrl }
+    );
     console.log('file-students.js res:', result);
     res.status(200).json({ message: 'ok' });
   } catch (err) {
