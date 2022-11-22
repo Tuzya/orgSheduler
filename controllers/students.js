@@ -16,7 +16,7 @@ exports.allStudents = async (req, res) => {
     else
       groupIds = await Group.find(
         { groupType: { $regex: groupType, $options: 'i' } },
-        { _id: 1, groupType: 1 }
+        { _id: 1 }
       ).lean();
 
     const query = {

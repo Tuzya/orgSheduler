@@ -51,9 +51,10 @@ export default function StudentProfile() {
     const name = event.target.name;
     const value = event.target.value;
     if (name === 'select') {
+      const groupName = event.target.options[event.target.selectedIndex].text;
       setStudent((state) => ({
         ...state,
-        group: { ...state.group, _id: value }
+        group: { ...state.group, _id: value, name: groupName }
       }));
     } else
       setStudent((state) => ({

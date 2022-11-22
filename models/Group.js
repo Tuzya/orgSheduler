@@ -20,7 +20,7 @@ const groupSchema = new Schema({
     }
   },
   crtables: [{ crDay: String, tableData: [{}] }],
-  isArchived: { type: Boolean, default: false }
+  isArchived: { type: Boolean, default: false },
 });
 
 groupSchema.pre('updateOne', function (next) {
