@@ -34,8 +34,7 @@ exports.allStudents = async (req, res) => {
       .populate(populateOpt)
       .limit(limit)
       .skip(page * limit)
-      .sort({ name: 1, updatedAt: 1 })
-      .lean();
+      .sort({ updatedAt: -1, name: 1 })
 
     res.status(200).json(students);
   } catch (err) {
