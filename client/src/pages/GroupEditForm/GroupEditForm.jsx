@@ -2,19 +2,20 @@ import * as React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
+import {
+  Avatar,
+  Button,
+  TextField,
+  Box,
+  Typography,
+  Container,
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import Autocomplete from '@mui/material/Autocomplete/Autocomplete';
 
 import { getShedule } from '../../libs/groups-splitter';
@@ -151,7 +152,7 @@ export default function GroupEditForm() {
   return (
     <>
       <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>
-        <CssBaseline />
+
         <Box sx={styles.formbox}>
           <Avatar sx={{ m: 1, width: 60, height: 60, bgcolor: 'secondary.main' }}>
             <BorderColorIcon />
