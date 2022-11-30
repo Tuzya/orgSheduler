@@ -3,6 +3,8 @@ import GroupItem from '../../components/GroupItem/GroupItem';
 import { getGroups } from '../../store/camp/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { groupTypes } from '../../consts';
+import Grid from '@mui/material/Grid';
+import List from '@mui/material/List';
 
 function GroupsList({ isAuth }) {
   const groups = useSelector((state) => state.camp.groups);
@@ -21,14 +23,14 @@ function GroupsList({ isAuth }) {
       </div>
     );
 
+  const filteredGroups = groups.filter(
+    (group) => group.groupType !== groupTypes.inactive && group.groupType !== groupTypes.waitlist
+  );
+
   return (
-    <div className="collection">
-      {groups
-        .filter(
-          (group) =>
-            group.groupType !== groupTypes.inactive && group.groupType !== groupTypes.waitlist
-        )
-        .map((group) => (
+    <Grid item xs={12} md={6} sx={{minWidth: 300}}>
+      <List>
+        {filteredGroups.map((group) => (
           <GroupItem
             key={group._id}
             isAuth={isAuth}
@@ -39,7 +41,8 @@ function GroupsList({ isAuth }) {
             groupType={group.groupType}
           />
         ))}
-    </div>
+      </List>
+    </Grid>
   );
 }
 
