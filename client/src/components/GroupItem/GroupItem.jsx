@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import EditIcon from '@mui/icons-material/Edit';
 import PetsIcon from '@mui/icons-material/Pets';
+import InfoIcon from '@mui/icons-material/Info';
 
 function GroupItem({ link, name, phase, people = [], groupType, isAuth }) {
   return (
@@ -27,13 +28,19 @@ function GroupItem({ link, name, phase, people = [], groupType, isAuth }) {
         />
       </Link>
       <ListItemSecondaryAction>
-        {isAuth && (
+        {isAuth ? (
           <Link to={`${link}/edit`}>
           <IconButton edge="end" aria-label="edit" >
             <EditIcon />
           </IconButton>
           </Link>
-        )}
+        ) : (
+          <Link to={link}>
+          <IconButton edge="end" aria-label="edit" >
+          <InfoIcon />
+          </IconButton>
+          </Link>
+          )}
       </ListItemSecondaryAction>
     </ListItem>
   );

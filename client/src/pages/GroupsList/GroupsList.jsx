@@ -28,8 +28,8 @@ function GroupsList({ isAuth }) {
   );
 
   return (
-    <Grid item xs={12} md={6} sx={{minWidth: 300}}>
-      <List>
+    <Grid item xs={12} md={6} >
+      <List sx={{ width: '100%', minWidth: 300, bgcolor: 'background.paper' }}>
         {filteredGroups.map((group) => (
           <GroupItem
             key={group._id}
