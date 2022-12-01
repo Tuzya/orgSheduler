@@ -1,31 +1,44 @@
-header {
-  display: flex;
-  justify-content: center;
-
-  text-align: center;
-  /* color: #29edff; */
-  color: #4520ab;
+a {
+  color: #039be5;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-header > img {
-  margin: 1.7rem 2rem 1.68rem 0;
+html {
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.87);
 }
 
-main {
-  margin: 15vh 25vw;
-  text-align: center;
-}
+/*header {*/
+/*  display: flex;*/
+/*  justify-content: center;*/
 
-button.btn {
-  color: #29edff;
-  background-color: #4520ab;
-  margin: 30px;
-}
+/*  text-align: center;*/
+/*  !* color: #29edff; *!*/
+/*  color: #4520ab;*/
+/*}*/
 
-textarea[name="schedule"] {
-  visibility: hidden;
-  overflow-y: scroll;
-  height: 0px;
-  resize: none;
-  border: lightgrey 1px solid;
-}
+/*header > img {*/
+/*  margin: 1.7rem 2rem 1.68rem 0;*/
+/*}*/
+
+/*main {*/
+/*  margin: 15vh 25vw;*/
+/*  text-align: center;*/
+/*}*/
+
+/*button.btn {*/
+/*  color: #29edff;*/
+/*  background-color: #4520ab;*/
+/*  margin: 30px;*/
+/*}*/
+
+/*textarea[name="schedule"] {*/
+/*  visibility: hidden;*/
+/*  overflow-y: scroll;*/
+/*  height: 0px;*/
+/*  resize: none;*/
+/*  border: lightgrey 1px solid;*/
+/*}*/
