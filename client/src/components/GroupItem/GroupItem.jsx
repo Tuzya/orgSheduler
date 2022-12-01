@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PetsIcon from '@mui/icons-material/Pets';
 import InfoIcon from '@mui/icons-material/Info';
 
-function GroupItem({ link, name, phase, people = [], groupType, isAuth }) {
+function GroupItem({ link, name, phase, people = [], groupType, isAuth, codeReviewDays }) {
   return (
     <ListItem divider={true}>
       {' '}
@@ -22,25 +22,29 @@ function GroupItem({ link, name, phase, people = [], groupType, isAuth }) {
       </ListItemAvatar>
       <Link to={link}>
         <ListItemText
+          primaryTypographyProps={{ style: {  fontSize: '1.2rem' } }}
           primary={name}
-          secondary={`${groupType}. Фаза: ${phase}. Студентов: ${people.length}.`}
-          title={people.join("\n")}
+          secondaryTypographyProps={{ style: { fontSize: '1rem' } }}
+          secondary={`${groupType}. Фаза: ${phase}. Студентов: ${people.length}. ${
+            codeReviewDays.length ? 'Дни\u00A0кодревью:' + codeReviewDays : ''
+          }`}
+          title={people.join('\n')}
         />
       </Link>
       <ListItemSecondaryAction>
         {isAuth ? (
           <Link to={`${link}/edit`}>
-          <IconButton edge="end" aria-label="edit" >
-            <EditIcon />
-          </IconButton>
+            <IconButton edge="end" aria-label="edit">
+              <EditIcon />
+            </IconButton>
           </Link>
         ) : (
           <Link to={link}>
-          <IconButton edge="end" aria-label="edit" >
-          <InfoIcon />
-          </IconButton>
+            <IconButton edge="end" aria-label="edit">
+              <InfoIcon sx={{ color: '#1ba5e7', fontSize: '33px' }}/>
+            </IconButton>
           </Link>
-          )}
+        )}
       </ListItemSecondaryAction>
     </ListItem>
   );

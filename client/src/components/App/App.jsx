@@ -2,11 +2,11 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import createTheme from '@mui/material/styles/createTheme';
 import { ThemeProvider } from '@mui/material';
-import CssBaseline from "@mui/material/CssBaseline/CssBaseline"
+import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 
 import './App.css';
 import MainNav from '../../navigate/MainNav';
-import Navbar from "../../navigate/Navbar"
+import Navbar from '../../navigate/Navbar';
 import { createThemeOptions } from '../../consts';
 
 function App() {
@@ -17,9 +17,9 @@ function App() {
   const theme = createTheme(createThemeOptions);
   return (
     <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <CssBaseline />
       <div className="App">
-        <Navbar isAuth={isAuth}/>
+        <Navbar isAuth={isAuth} />
         {isLoading ? <div className="spinner" /> : <MainNav isAuth={isAuth} />}
       </div>
     </ThemeProvider>

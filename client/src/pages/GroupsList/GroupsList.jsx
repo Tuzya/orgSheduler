@@ -2,7 +2,7 @@ import React from 'react';
 import GroupItem from '../../components/GroupItem/GroupItem';
 import { getGroups } from '../../store/camp/actions';
 import { useDispatch, useSelector } from 'react-redux';
-import { groupTypes } from '../../consts';
+import { DAYTORU, groupTypes } from '../../consts';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 
@@ -27,8 +27,10 @@ function GroupsList({ isAuth }) {
     (group) => group.groupType !== groupTypes.inactive && group.groupType !== groupTypes.waitlist
   );
 
+  // console.log(filteredGroups.map((group) => (group.crtables?.map(crdays => crdays.crDay))));
+
   return (
-    <Grid item xs={12} md={6} >
+    <Grid item xs={12} md={6}>
       <List sx={{ width: '100%', minWidth: 300, bgcolor: 'background.paper' }}>
         {filteredGroups.map((group) => (
           <GroupItem
@@ -39,6 +41,7 @@ function GroupsList({ isAuth }) {
             phase={group.phase}
             people={group.students?.map((student) => student.name).sort()}
             groupType={group.groupType}
+            codeReviewDays={group?.crtables?.map((crDays) => ` ${DAYTORU[crDays.crDay]}`)}
           />
         ))}
       </List>
