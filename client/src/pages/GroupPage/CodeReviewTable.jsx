@@ -198,9 +198,10 @@ function CodeReviewTable({ group, isAuth }) {
         <TableContainer
           key={crTablegroup.crDay}
           component={Paper}
-          sx={{ marginBottom: 10, opacity: isLoad ? 0.5 : 1 }}
+
+          sx={{ marginBottom: 10, opacity: isLoad ? 0.5 : 1,  }}
         >
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table className="stripped" sx={{ minWidth: 650 }} aria-label="simple table">
             <caption>{DAYTORU[crTablegroup.crDay]}</caption>
             <TableHead>
               <TableRow>

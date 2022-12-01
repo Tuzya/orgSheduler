@@ -86,10 +86,10 @@
     }
 }
 
-table > tbody > tr:nth-child(odd) {
+table.stripped > tbody > tr:nth-child(odd) {
     background-color: #fff2cc;
 }
-table > tbody > tr:nth-child(even) {
+table.stripped > tbody > tr:nth-child(even) {
     background-color: #cfe2f3
 }
 
