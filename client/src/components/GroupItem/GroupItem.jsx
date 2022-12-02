@@ -41,7 +41,7 @@ function GroupItem({ link, name, phase, people = [], groupType, isAuth, codeRevi
         ) : (
           <Link to={link}>
             <IconButton edge="end" aria-label="edit">
-              <InfoIcon sx={{ color: '#1ba5e7', fontSize: '33px' }}/>
+              <InfoIcon sx={{  fontSize: '33px' }}/>
             </IconButton>
           </Link>
         )}

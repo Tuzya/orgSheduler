@@ -12,6 +12,18 @@ import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
 import { getComment, updateStudentComment } from '../../store/students/actions';
 import { getGroups, updCRTablesGroups } from '../../store/camp/actions';
 
+import styled from "@mui/material/styles/styled";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Input from '@mui/material/Input';
+
 const rowsInit = (teachers, timeGaps, groupType) => [
   timeGaps.reduce(function (acc, cur, i) {
     acc[`row${i + 1}`] = cur;
@@ -184,82 +196,106 @@ function CodeReviewTable({ group, isAuth }) {
         </div>
       </div>
       {crTables.map((crTablegroup) => (
-        <div key={crTablegroup.crDay} style={{ marginBottom: 50, opacity: (isLoad ? 0.5 : 1) }}>
-          <table className="striped centered">
+        <TableContainer
+          key={crTablegroup.crDay}
+          component={Paper}
+
+          sx={{ marginBottom: 10, opacity: isLoad ? 0.5 : 1,  }}
+        >
+          <Table className="stripped" sx={{ minWidth: 650 }} aria-label="simple table">
             <caption>{DAYTORU[crTablegroup.crDay]}</caption>
-            <thead>
-              <tr>
-                {columns(group.name, teachers).map((column) => (
-                  <th key={column.key}>{column.header}</th>
+            <TableHead>
+              <TableRow>
+                {columns(group.name, teachers).map((column, i) => (
+                  <TableCell key={column.key} align={i ? 'right' : 'left'}>
+                    {' '}
+                    {column.header}
+                  </TableCell>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {timeGaps.map((time, i) => (
-                <tr key={time}>
+                <TableRow key={time}>
                   {crTablegroup.tableData.map((cell, colNum) => {
                     const row = `row${i + 1}`;
-
                     return (
-                      <td
-                        style={{
+                      <TableCell
+                        key={colNum}
+                        align={colNum ? 'right' : 'left'}
+                        component="th"
+                        scope="row"
+                        sx={{
                           cursor:
                             cell[row] === ' ' || cell[row] === 'Педсовет' || !colNum
                               ? 'default'
                               : 'pointer'
                         }}
-                        key={colNum}
                         onDoubleClick={(e) => {
                           onAddComment(e, group, colNum);
                         }}
                       >
-                        {!isEdit && cell[row]}
-
-                        {isEdit && (
-                          <input
+                        {!isEdit ? (
+                          cell[row]
+                        ) : (
+                          <Input
+                            type="text"
                             defaultValue={cell[row]}
                             onChange={(e) =>
                               handleInputChange(e.target.value, crTablegroup.crDay, colNum, row)
                             }
                           />
                         )}
-                      </td>
+                      </TableCell>
                     );
                   })}
-                </tr>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </TableContainer>
       ))}
       {isAuth && (
-        <div style={{ textAlign: 'center' }}>
-          <button
-            className="btn"
+        <Stack sx={{ pt: 4 }} direction="row" spacing={2} justifyContent="center">
+          <Button
+            variant="contained"
             onClick={() => setEdit(true)}
             disabled={isLoad || !crTables.length}
           >
             EditMode
-          </button>
-          <button className="btn" onClick={handleInputSave} disabled={!isEdit || isLoad}>
+          </Button>
+          <Button variant="contained" onClick={handleInputSave} disabled={!isEdit || isLoad}>
             Save
-          </button>
-          <button className="btn" onClick={handleCancel} disabled={!isEdit || isLoad}>
+          </Button>
+          <Button variant="contained" onClick={handleCancel} disabled={!isEdit || isLoad}>
             Cancel
-          </button>
-          <button
-            className="btn"
+          </Button>
+          <Button
+            variant="contained"
             onClick={handleGenerateTable}
             disabled={isEdit || isLoad || !crTables.length}
           >
             NewGenerate
-          </button>
-        </div>
+          </Button>
+        </Stack>
       )}
       {isLoad && <LinearLoader />}
     </>
   );
 }
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: '#fff2cc',
+  },
+  '&:nth-of-type(even)': {
+    backgroundColor: '#cfe2f3',
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
 
 CodeReviewTable.propTypes = {
   isAuth: PropTypes.bool.isRequired,

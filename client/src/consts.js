@@ -59,7 +59,13 @@ export const createThemeOptions = {
   palette: {
     primary: { main: '#4520ab' },
     secondary: { main: '#4db6ac' },
-    mode: 'light'
+    mode: 'light',
+  },
+  typography: {
+    table: {
+      fontFamily: '"Comfortaa", cursive;',
+    }
   }
 }
+
 

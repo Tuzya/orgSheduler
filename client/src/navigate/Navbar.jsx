@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import styled from "@mui/material/styles/styled";
 import {
   AppBar,
   Toolbar,
@@ -32,8 +32,8 @@ function Navbar({ isAuth }) {
             </UserBox>
           </Link>
         </Logo>
-        {(isMobile && isAuth) ? (
-          <MobileDrawer logOutHandler={logOutHandler}/>
+        {isMobile && isAuth ? (
+          <MobileDrawer logOutHandler={logOutHandler} />
         ) : (
           <div>
             {isAuth ? (
@@ -78,6 +78,9 @@ const UserBox = styled(Box)(({ theme }) => ({
 const StyledLink = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
   color: 'white',
-  fontSize: '20px',
-  marginLeft: theme.spacing(2)
+  marginLeft: theme.spacing(2),
+  transition: '0.2s',
+  '&:hover': {
+    opacity: '0.7'
+  }
 }));
