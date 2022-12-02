@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const isProd = process.env.NODE_ENV === 'production';
-const dbPath = isProd ? process.env.DB_FULL_URL : process.env.LOCAL_DB;
+const isTestMode = process.env.NODE_ENV === 'prodtest';
+const dbPath = isProd ? process.env.DB_FULL_URL : isTestMode ? process.env.DB_FULL_URL_TEST : process.env.LOCAL_DB;
 
 mongoose.connect(dbPath);
 
 mongoose.connection.on('connected', function () {
-  console.log('Mongoose default connection open to %s DB', isProd ? 'Prod' : 'Local');
+  console.log('Mongoose default connection open to %s DB', isProd ? 'Prod' : isTestMode ? 'Test-DEV Remote' : 'Local');
 });
 // If the connection throws an error
 mongoose.connection.on('error', function (err) {
