@@ -12,6 +12,7 @@ import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
 import { getComment, updateStudentComment } from '../../store/students/actions';
 import { getGroups, updCRTablesGroups } from '../../store/camp/actions';
 
+import styled from "@mui/material/styles/styled";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -282,6 +283,19 @@ function CodeReviewTable({ group, isAuth }) {
     </>
   );
 }
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: '#fff2cc',
+  },
+  '&:nth-of-type(even)': {
+    backgroundColor: '#cfe2f3',
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
 
 CodeReviewTable.propTypes = {
   isAuth: PropTypes.bool.isRequired,
