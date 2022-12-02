@@ -6,12 +6,6 @@ React, Redux, NodeJS, Express, MongoDB, MaterialUI
 ##  Сайт
 https://pairs-generator.onrender.com/
 
-##  Запуск (production)
-npm install  
-npm run seed  
-npm run build  
-npm start
-
 ##  Запуск (dev c локальной БД)
 npm install      - в корневой папке
 npm install      - в ./client папке
@@ -25,6 +19,12 @@ npm install                          - в ./client папке
 npm run seed  
 NODE_ENV=prodtest npm run dev-back   - из корневой папки
 npm start                            - из ./client папки
+
+##  Запуск (production)
+npm install  
+npm run seed  
+npm run build  
+NODE_ENV=production npm start
 
 ### Редактирование группы
 - при удалении студента из группы он попадает в группу inactive
