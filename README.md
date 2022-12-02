@@ -1,16 +1,23 @@
 ##  Приложения для организации пар студентов во время обучения
 
 ##  Технологии
-React, Redux, NodeJS, Express, PostgreSQL, MaterialUI
+React, Redux, NodeJS, Express, MongoDB, MaterialUI
 
 ##  Сайт
 https://pairs-generator.onrender.com/
 
-##  Запуск
+##  Запуск (production)
 npm install  
 npm run seed  
 npm run build  
 npm start
+
+##  Запуск (dev)
+npm install  - в корневой папке
+npm install  - в ./client папке
+npm run seed  
+npm run dev-back - из корневой папки
+npm start        - из ./client папки
 
 ### Редактирование группы
 - при удалении студента из группы он попадает в группу inactive
