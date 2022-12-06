@@ -9,7 +9,6 @@ const main = async () => {
   const studentsArr = await fs.readFile('students');
   const students = JSON.parse(studentsArr);
   const groups = await Group.find().lean();
-
   for (let i = 0; i < groups.length; i++) {
     const group = await Group.findOne({name: groups[i].name})
     for (let j = 0; j < groups[i].students.length; j++) {
@@ -28,11 +27,11 @@ const main = async () => {
     const stName = students[i].name;
 
     for (let j = 0; j < students[i].history.length; j++) {
-      students[i].history[j].date = new Date();
+      students[i].history[j].date = new Date(students[i].history[j].date["$date"]);
       delete students[i].history[j]._id
     }
     const res = await Student.updateOne({name: stName}, {history: students[i].history})
-    console.log('file-porta.js res:', res);
+    console.log('file-porta.js res:', i, res);
   }
     mongoose.disconnect();
 }

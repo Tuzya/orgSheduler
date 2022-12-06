@@ -177,8 +177,8 @@ export default function Students() {
                     <TableCell>{student.group?.name}</TableCell>
                     <TableCell align="right">
                       {student.history.length
-                        ? student.history.reduce((totalRt, el) => totalRt + Number(el.rating), 0) /
-                          student.history.length
+                        ? (student.history.reduce((totalRt, el) => totalRt + Number(el.rating), 0) /
+                          student.history.length).toFixed(1)
                         : '-'}
                     </TableCell>
                   </TableRow>

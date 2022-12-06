@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const dbPath = 'mongodb://localhost:27017/org-scheduler-temp'
+const dbPath = '';
+
 
 mongoose.connect(dbPath);
 
