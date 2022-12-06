@@ -3,12 +3,27 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import './GroupCreateForm.css';
-import LinearLoader from '../../components/Loader/LinearLoader';
 import useInput from '../../hooks/input-hook';
 import { getSchemas } from '../../libs/reqFunct/Schemas';
 import { getShedule } from '../../libs/groups-splitter';
 import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
 import { createGroup, addGroup } from '../../store/camp/actions';
+import {
+  Avatar,
+  Button,
+  TextField,
+  Box,
+  Typography,
+  Container,
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@mui/material';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import LinearIndeterminate from "../../components/Loader/LinearIndeterminate"
+
 
 export default function GroupCreateForm() {
   const history = useHistory();
@@ -25,7 +40,9 @@ export default function GroupCreateForm() {
 
   const generateSchedule = async (event) => {
     event.preventDefault();
-    if (!students || !name || !phase) return;
+    if (!students.length || parseInt(phase) > MAX_NUMS_PHASES || parseInt(phase) < 1 || !name)
+
+      return alert('Ошибка валидации формы');
     const studentsArr = [...new Set(students.split(/ *, */g))];
 
     setLoad(true);
@@ -68,29 +85,108 @@ export default function GroupCreateForm() {
     setGroupType(target.value);
   };
   return (
-    <form name="newGroup" onSubmit={generateSchedule}>
-      <input type="text" {...bindName} placeholder="NameYearGroupType" />
-      <input
-        type="number"
-        {...bindPhase}
-        placeholder="Phase"
-        min="1"
-        max={MAX_NUMS_PHASES.toString()}
-      />
-      <input type="text" {...bindStudents} placeholder="Students" />
-      <div className="input-field" style={{ minWidth: '300px' }}>
-        <select className="browser-default" onChange={handleChange} value={groupType}>
-          {Object.keys(groupTypes).map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-      </div>
-      <button type="submit" className="btn" disabled={isLoad}>
-        Create
-      </button>
-      {isLoad && <LinearLoader prColor={'#3594DA'} indColor={'#4b22d4'} />}
-    </form>
+    <>
+      <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>
+        <Box sx={styles.formbox}>
+          <Avatar sx={{ m: 1, width: 60, height: 60, bgcolor: 'secondary.main' }}>
+            <BorderColorIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Group create
+          </Typography>
+          <Box component="form" noValidate sx={{ mt: 1 }}>
+            <TextField
+              {...bindName}
+              type="text"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Group Name"
+            />
+            <TextField
+              {...bindStudents}
+              type="text"
+              margin="normal"
+              required
+              fullWidth
+              id="Students"
+              label="Students"
+            />
+            <TextField
+              {...bindPhase}
+              margin="normal"
+              required
+              fullWidth
+              label="Phase"
+              type="number"
+              id="phase"
+              InputProps={{ inputProps: { min: 1, max: MAX_NUMS_PHASES } }}
+            />
+
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel id="group-type-label">Group Type</InputLabel>
+              <Select
+                labelId="group-type-label"
+                id="group-type"
+                label="Group Type"
+                onChange={handleChange}
+                value={groupType}
+              >
+                {Object.keys(groupTypes).map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+
+            <Stack sx={{ p: 4 }} direction="row" spacing={2} justifyContent="center">
+              <Button variant="contained" disabled={isLoad} onClick={generateSchedule}>
+                Create
+              </Button>
+            </Stack>
+        {isLoad && <LinearIndeterminate/>}
+          </Box>
+        </Box>
+      </Container>
+    </>
   );
 }
+
+const styles = {
+  formbox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  }
+};
+
+// return (
+//   <form name="newGroup" onSubmit={generateSchedule}>
+//     <input type="text" {...bindName} placeholder="NameYearGroupType" />
+//     <input
+//       type="number"
+//       {...bindPhase}
+//       placeholder="Phase"
+//       min="1"
+//       max={MAX_NUMS_PHASES.toString()}
+//     />
+//     <input type="text" {...bindStudents} placeholder="Students" />
+//     <div className="input-field" style={{ minWidth: '300px' }}>
+//       <select className="browser-default" onChange={handleChange} value={groupType}>
+//         {Object.keys(groupTypes).map((type) => (
+//           <option key={type} value={type}>
+//             {type}
+//           </option>
+//         ))}
+//       </select>
+//     </div>
+//     <button type="submit" className="btn" disabled={isLoad}>
+//       Create
+//     </button>
+//     {isLoad && <LinearLoader prColor={'#3594DA'} indColor={'#4b22d4'} />}
+//   </form>
+// );
+

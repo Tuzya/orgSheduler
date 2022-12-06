@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Link} from "react-router-dom"
+import Button from "@mui/material/Button"
 
 export default function StudentEdit({ groups, student, submitHandlerStudent, onChangeHandler }) {
 
@@ -7,6 +7,7 @@ export default function StudentEdit({ groups, student, submitHandlerStudent, onC
     <div className="input-field" style={{ minWidth: '300px' }}>
       <form onSubmit={submitHandlerStudent}>
         <input name="name" value={student.name} placeholder="name" onChange={onChangeHandler} />
+        <br/>
         <select
           name="select"
           className="browser-default"
@@ -19,13 +20,16 @@ export default function StudentEdit({ groups, student, submitHandlerStudent, onC
             </option>
           ))}
         </select>
+        <br/>
         <input
           name="photoUrl"
           value={student.photoUrl}
           placeholder="photoUrl"
           onChange={onChangeHandler}
         />
-        <button type="submit">SAVE</button>
+        <br/>
+        <Button type="submit">SAVE</Button>
+        <Button type="button">DELETE</Button>
       </form>
     </div>
   );

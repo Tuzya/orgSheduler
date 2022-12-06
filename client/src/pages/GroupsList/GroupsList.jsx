@@ -15,7 +15,7 @@ function GroupsList({ isAuth }) {
     if (groups.length === 0) dispatch(getGroups());
   }, [dispatch]);
 
-  if (isLoading) return <div className="spinner">Loading Groups...</div>;
+  if (isLoading) return <div className="spinner"/>;
   if (groups.length === 0)
     return (
       <div className="collection" style={{ textAlign: 'center' }}>
