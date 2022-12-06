@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+
 import ListItemAvatar from '@mui/material/ListItemAvatar/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText/ListItemText';
@@ -11,7 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PetsIcon from '@mui/icons-material/Pets';
 import InfoIcon from '@mui/icons-material/Info';
 
-function GroupItem({ link, name, phase, people = [], groupType, isAuth, codeReviewDays }) {
+function GroupItem({ groupPage, name, phase, people = [], groupType, isAuth, codeReviewDays }) {
   return (
     <ListItem divider={true}>
       {' '}
@@ -20,7 +21,7 @@ function GroupItem({ link, name, phase, people = [], groupType, isAuth, codeRevi
           <PetsIcon />
         </Avatar>
       </ListItemAvatar>
-      <Link to={link}>
+      <Link to={groupPage}>
         <ListItemText
           primaryTypographyProps={{ style: {  fontSize: '1.2rem' } }}
           primary={name}
@@ -33,13 +34,13 @@ function GroupItem({ link, name, phase, people = [], groupType, isAuth, codeRevi
       </Link>
       <ListItemSecondaryAction>
         {isAuth ? (
-          <Link to={`${link}/edit`}>
+          <Link to={`${groupPage}/edit`}>
             <IconButton edge="end" aria-label="edit">
               <EditIcon />
             </IconButton>
           </Link>
         ) : (
-          <Link to={link}>
+          <Link to={groupPage}>
             <IconButton edge="end" aria-label="edit">
               <InfoIcon sx={{  fontSize: '33px' }}/>
             </IconButton>
@@ -51,7 +52,7 @@ function GroupItem({ link, name, phase, people = [], groupType, isAuth, codeRevi
 }
 
 GroupItem.propTypes = {
-  link: PropTypes.string.isRequired,
+  groupPage: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   phase: PropTypes.number.isRequired,
   people: PropTypes.arrayOf(PropTypes.string).isRequired

@@ -38,23 +38,22 @@ export default function Students() {
   const { data: students, isLoading } = useSelector((store) => store.students);
   const groups = useSelector((store) => store.camp.groups);
 
+  React.useEffect(() => {
+    if (groups.length === 0) dispatch(getGroups());
+  }, []);
+
+  React.useEffect(() => { // todo перевести на поиск из стора
+    dispatch(getStudents(search));
+  }, [search]);
+
   const filteredGroups = React.useMemo(
     () => groups.filter((group) => group.groupType === search.groupType),
     [groups, search.groupType]
   );
 
-  React.useEffect(() => {
-    if (groups.length === 0) dispatch(getGroups());
-  }, []);
-
-  React.useEffect(() => {
-    dispatch(getStudents(search));
-  }, [search]);
-
   const totalStudents = React.useMemo(
     () =>
-      groups
-        .filter((group) => group.groupType === search.groupType)
+      filteredGroups
         .reduce((total, group) => {
           return total + group.students.length;
         }, 0),
@@ -113,31 +112,6 @@ export default function Students() {
         </div>
       </div>
       {isLoading ? <LinearLoader /> : <div style={{ height: 20 }} />}
-      {/*<div style={{ marginTop: 20 }}>*/}
-      {/*  <ul className="collection">*/}
-      {/*    {students.map((student) => (*/}
-      {/*      <li key={student._id} className="collection-item ">*/}
-      {/*        <Link to={`/students/${student._id}`}>{student.name}</Link>, {student.group?.name}*/}
-      {/*        <ul className="collection">*/}
-      {/*          {student.history.map((st) => (*/}
-      {/*            <li key={st._id} className="collection-item">*/}
-      {/*              {`ph${st.phase}, ${st.groupType}, ${dayjs(st.date).format(*/}
-      {/*                'DD-MM-YY'*/}
-      {/*              )}, Проверял: ${st.teacher}`}*/}
-      {/*              <div>*/}
-      {/*                {`Комент: ${st.comment}`}*/}
-      {/*                <span*/}
-      {/*                  className={`new badge ${ratingColor[st.rating]}`}*/}
-      {/*                  data-badge-caption={st.rating ? st.rating : '-'}*/}
-      {/*                />*/}
-      {/*              </div>*/}
-      {/*            </li>*/}
-      {/*          ))}*/}
-      {/*        </ul>*/}
-      {/*      </li>*/}
-      {/*    ))}*/}
-      {/*  </ul>*/}
-      {/*</div>*/}
 
       <ThemeProvider theme={createTheme({ typography: { fontSize: 16 } })}>
         <TableContainer>
@@ -199,6 +173,7 @@ export default function Students() {
           />
         )}
       </ThemeProvider>
+      {isLoading ? <LinearLoader /> : <div style={{ height: 20 }} />}
     </>
   );
 }
