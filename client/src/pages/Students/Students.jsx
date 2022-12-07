@@ -136,7 +136,7 @@ export default function Students() {
         </FormControl>
       </Box>
 
-      {isLoading && <LinearIndeterminate />}
+      {isLoading ? <LinearIndeterminate /> : <div style={{height: 4}}/>}
 
       <ThemeProvider theme={createTheme({ typography: { fontSize: 16 } })}>
         <TableContainer sx={{mt:5}}>
