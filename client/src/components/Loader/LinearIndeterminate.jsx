@@ -1,0 +1,13 @@
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
+
+export default function LinearIndeterminate() {
+  return (
+    <Box sx={{ width: '100%' }}>
+      <LinearProgress />
+    </Box>
+  );
+}
+
+{/*<LinearLoader prColor={'#3594DA'} indColor={'#4b22d4'} />}*/}

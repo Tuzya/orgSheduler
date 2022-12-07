@@ -1,8 +1,7 @@
 import React from 'react';
 import './students.css';
 
-import { DebounceInput } from 'react-debounce-input';
-import LinearLoader from '../../components/Loader/LinearLoader';
+import { DebounceInput } from 'react-debounce-input';;
 import { groupTypes } from '../../consts';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -12,7 +11,14 @@ import {
   TableBody,
   TablePagination,
   TableCell,
-  createTheme
+  createTheme,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+
+  Container
 } from '@mui/material';
 
 import { getStudents } from '../../store/students/actions';
@@ -22,6 +28,8 @@ import TableHead from '@mui/material/TableHead';
 
 import BgLetterAvatars from '../../components/BgLettersAvatar/BgLettersAvatar';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import LinearIndeterminate from '../../components/Loader/LinearIndeterminate';
+import Input from '@mui/material/Input';
 
 export default function Students() {
   const history = useHistory();
@@ -38,26 +46,25 @@ export default function Students() {
   const { data: students, isLoading } = useSelector((store) => store.students);
   const groups = useSelector((store) => store.camp.groups);
 
-  const filteredGroups = React.useMemo(
-    () => groups.filter((group) => group.groupType === search.groupType),
-    [groups, search.groupType]
-  );
-
   React.useEffect(() => {
     if (groups.length === 0) dispatch(getGroups());
   }, []);
 
   React.useEffect(() => {
+    // todo перевести на поиск из стора
     dispatch(getStudents(search));
   }, [search]);
 
+  const filteredGroups = React.useMemo(
+    () => groups.filter((group) => group.groupType === search.groupType),
+    [groups, search.groupType]
+  );
+
   const totalStudents = React.useMemo(
     () =>
-      groups
-        .filter((group) => group.groupType === search.groupType)
-        .reduce((total, group) => {
-          return total + group.students.length;
-        }, 0),
+      filteredGroups.reduce((total, group) => {
+        return total + group.students.length;
+      }, 0),
     [groups, search.groupType]
   );
 
@@ -70,77 +77,69 @@ export default function Students() {
   };
 
   return (
-    <>
-      <DebounceInput
-        className={'px-2'}
-        placeholder={'search students by name here...'}
-        minLength={2}
-        debounceTimeout={600}
-        onChange={(e) => {
-          setSearch((state) => ({ ...state, name: e.target.value }));
-        }}
-      />
-      <div>
-        <div className="input-field" style={{ minWidth: '300px' }}>
-          <select
-            className="browser-default"
+    <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>
+      <Box sx={{mb:5}}>
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <DebounceInput
+            element={Input}
+            placeholder={'search students by name here...'}
+            minLength={2}
+            debounceTimeout={600}
             onChange={(e) => {
-              setSearch((state) => ({ ...state, groupType: e.target.value, groupId: '', page: 0 }));
+              setSearch((state) => ({ ...state, name: e.target.value }));
+            }}
+          />
+        </FormControl>
+
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel id="group-type-label">Group Type</InputLabel>
+          <Select
+            labelId="group-type-label"
+            id="group-type"
+            label="Group Type"
+            value={search.groupType}
+            onChange={(e) => {
+              setSearch((state) => ({
+                ...state,
+                groupType: e.target.value,
+                groupId: '',
+                page: 0
+              }));
             }}
           >
             {Object.keys(groupTypes).map((type) => (
-              <option key={type} value={type}>
+              <MenuItem key={type} value={type}>
                 {type}
-              </option>
+              </MenuItem>
             ))}
-          </select>
-          <br />
-          <select
-            className="browser-default"
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth sx={{ mt: 2 }}>
+
+          <Select
             onChange={(e) => {
               setSearch((state) => ({ ...state, groupId: e.target.value, page: 0 }));
             }}
+            value={search.groupId}
+            displayEmpty
           >
-            <option key={'fff007'} value={''}>
+            <MenuItem key="fff007" value={''}>
               All Groups
-            </option>
-            {filteredGroups.map((group) => (
-              <option key={group._id} value={group._id}>
+            </MenuItem>
+            {filteredGroups?.map((group) => (
+              <MenuItem key={group._id} value={group._id}>
                 {group.name}
-              </option>
+              </MenuItem>
             ))}
-          </select>
-        </div>
-      </div>
-      {isLoading ? <LinearLoader /> : <div style={{ height: 20 }} />}
-      {/*<div style={{ marginTop: 20 }}>*/}
-      {/*  <ul className="collection">*/}
-      {/*    {students.map((student) => (*/}
-      {/*      <li key={student._id} className="collection-item ">*/}
-      {/*        <Link to={`/students/${student._id}`}>{student.name}</Link>, {student.group?.name}*/}
-      {/*        <ul className="collection">*/}
-      {/*          {student.history.map((st) => (*/}
-      {/*            <li key={st._id} className="collection-item">*/}
-      {/*              {`ph${st.phase}, ${st.groupType}, ${dayjs(st.date).format(*/}
-      {/*                'DD-MM-YY'*/}
-      {/*              )}, Проверял: ${st.teacher}`}*/}
-      {/*              <div>*/}
-      {/*                {`Комент: ${st.comment}`}*/}
-      {/*                <span*/}
-      {/*                  className={`new badge ${ratingColor[st.rating]}`}*/}
-      {/*                  data-badge-caption={st.rating ? st.rating : '-'}*/}
-      {/*                />*/}
-      {/*              </div>*/}
-      {/*            </li>*/}
-      {/*          ))}*/}
-      {/*        </ul>*/}
-      {/*      </li>*/}
-      {/*    ))}*/}
-      {/*  </ul>*/}
-      {/*</div>*/}
+          </Select>
+        </FormControl>
+      </Box>
+
+      {isLoading ? <LinearIndeterminate /> : <div style={{height: 4}}/>}
 
       <ThemeProvider theme={createTheme({ typography: { fontSize: 16 } })}>
-        <TableContainer>
+        <TableContainer sx={{mt:5}}>
           <Table
             // className={classes.table}
             sx={{ minWidth: 650 }}
@@ -177,8 +176,12 @@ export default function Students() {
                     <TableCell>{student.group?.name}</TableCell>
                     <TableCell align="right">
                       {student.history.length
-                        ? (student.history.reduce((totalRt, el) => totalRt + Number(el.rating), 0) /
-                          student.history.length).toFixed(1)
+                        ? (
+                          student.history.reduce(
+                            (totalRt, el) => totalRt + Number(el.rating),
+                            0
+                          ) / student.history.length
+                        ).toFixed(1)
                         : '-'}
                     </TableCell>
                   </TableRow>
@@ -199,6 +202,14 @@ export default function Students() {
           />
         )}
       </ThemeProvider>
-    </>
+    </Container>
   );
 }
+
+const styles = {
+  formbox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  }
+};

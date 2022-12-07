@@ -3,25 +3,30 @@ const Student = require('../models/Student');
 
 const { Schema, model } = mongoose;
 
-const groupSchema = new Schema({
-  name: { type: String, unique: true },
-  phase: { type: Number, default: 1 },
-  groupType: { type: String, default: 'waitlist' },
-  shedule: Object,
-  crshedule: {
-    type: Object,
-    days: {
+const groupSchema = new Schema(
+  {
+    name: { type: String, unique: true },
+    phase: { type: Number, default: 1 },
+    groupType: { type: String, default: 'waitlist' },
+    shedule: Object,
+    crshedule: {
       type: Object,
-      mon: Boolean,
-      tue: Boolean,
-      wed: Boolean,
-      thu: Boolean,
-      fri: Boolean
-    }
+      days: {
+        type: Object,
+        mon: Boolean,
+        tue: Boolean,
+        wed: Boolean,
+        thu: Boolean,
+        fri: Boolean
+      }
+    },
+    crtables: [{ crDay: String, tableData: [{}] }],
+    isArchived: { type: Boolean, default: false }
   },
-  crtables: [{ crDay: String, tableData: [{}] }],
-  isArchived: { type: Boolean, default: false },
-});
+  {
+    timestamps: true
+  }
+);
 
 groupSchema.pre('updateOne', function (next) {
   // Remove all the docs that refers
