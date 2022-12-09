@@ -71,7 +71,8 @@ export default function GroupEditForm() {
   const updateGroup = async (event) => {
     event.preventDefault();
     if (!students.length || parseInt(phase) > MAX_NUMS_PHASES || parseInt(phase) < 1 || !name)
-      return;
+      return alert('Ошибка валидации формы');
+    setLoad(true);
     const res = await putGroup(
       name,
       phase,
@@ -85,6 +86,7 @@ export default function GroupEditForm() {
       await dispatch(getGroups());
       return history.push(`/groups/${groupId}`);
     } else alert(`Что то пошло не так... ${res.err}`);
+    setLoad(false);
   };
 
   const regenerateSchedule = async (event) => {
@@ -110,6 +112,7 @@ export default function GroupEditForm() {
   const deleteGroup = async (event) => {
     event.preventDefault();
     if (!window.confirm(`Удалить группу ${name}?`)) return;
+    setLoad(true);
     try {
       const response = await fetch(`/api/groups/${groupId}`, {
         method: 'DELETE',
@@ -121,10 +124,12 @@ export default function GroupEditForm() {
       const delData = await response.json();
       if (delData.err) throw new Error(`Error while delete: ${delData.err}`);
       await dispatch(delGroup(groupId));
+      setLoad(false);
       history.push('/groups');
     } catch (err) {
       console.log('Error while delete:', err.message);
       alert(`Error while delete: ${err.message}`);
+      setLoad(false);
     }
   };
 

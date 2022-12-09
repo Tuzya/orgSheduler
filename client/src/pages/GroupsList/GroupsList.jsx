@@ -15,7 +15,7 @@ function GroupsList({ isAuth }) {
     if (groups.length === 0) dispatch(getGroups());
   }, [dispatch]);
 
-  if (isLoading) return <div className="spinner">Loading Groups...</div>;
+  if (isLoading) return <div className="spinner"/>;
   if (groups.length === 0)
     return (
       <div className="collection" style={{ textAlign: 'center' }}>
@@ -37,7 +37,7 @@ function GroupsList({ isAuth }) {
             key={group._id}
             isAuth={isAuth}
             name={group.name}
-            link={`/groups/${group._id}`}
+            groupPage={`/groups/${group._id}`}
             phase={group.phase}
             people={group.students?.map((student) => student.name).sort()}
             groupType={group.groupType}

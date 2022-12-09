@@ -23,6 +23,8 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Input from '@mui/material/Input';
+import ThemeProvider from "@mui/material/styles/ThemeProvider"
+import createTheme from "@mui/material/styles/createTheme"
 
 const rowsInit = (teachers, timeGaps, groupType) => [
   timeGaps.reduce(function (acc, cur, i) {
@@ -197,6 +199,7 @@ function CodeReviewTable({ group, isAuth }) {
         </div>
       </div>
       {crTables.map((crTablegroup) => (
+        <ThemeProvider theme={createTheme({ typography: { fontSize: '16', fontFamily: '"Comfortaa", cursive' } })}>
         <TableContainer
           key={crTablegroup.crDay}
           component={Paper}
@@ -255,6 +258,7 @@ function CodeReviewTable({ group, isAuth }) {
             </TableBody>
           </Table>
         </TableContainer>
+        </ThemeProvider>
       ))}
       {isAuth && (
         <Stack sx={{ pt: 4 }} direction="row" spacing={2} justifyContent="center">
