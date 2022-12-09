@@ -1,6 +1,22 @@
 const Student = require('../models/Student');
 const Group = require('../models/Group');
 
+exports.createStudents = async (req, res) => {
+  const {studentsNamesArr, groupId} = req.body;
+  try {
+    const students = await Student.createStudents(studentsNamesArr, groupId);
+    res.status(200).json(students);
+  } catch (err) {
+    console.log('createStudents error', err);
+    if (err.code === 11000)
+      return res
+        .status(400)
+        .json({ err: `This record already exist ${JSON.stringify(err.keyValue)}` });
+    res.status(500).json({ err: err.message });
+
+  }
+};
+
 exports.allStudents = async (req, res) => {
   try {
     const {
@@ -20,9 +36,9 @@ exports.allStudents = async (req, res) => {
       ).lean();
 
     const query = {
-          name: { $regex: name, $options: 'i' },
-          group: { $in: groupIds }
-        }
+      name: { $regex: name, $options: 'i' },
+      group: { $in: groupIds }
+    };
 
     const populateOpt = {
       path: 'group',
@@ -34,7 +50,7 @@ exports.allStudents = async (req, res) => {
       .populate(populateOpt)
       .limit(limit)
       .skip(page * limit)
-      .sort({ updatedAt: -1, name: 1 })
+      .sort({ updatedAt: -1, name: 1 });
 
     res.status(200).json(students);
   } catch (err) {

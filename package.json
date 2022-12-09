@@ -26,6 +26,7 @@
     "dev-front": "cd client && (COLOR=1 npm run start | cat)",
     "start": "node app.js",
     "seed": "node ./seeders/createDefaultGroups.js",
+    "seed_st": "node ./seeders/portStudents.js",
     "build": "cd client && npm install && npm run build"
   },
   "engines": {

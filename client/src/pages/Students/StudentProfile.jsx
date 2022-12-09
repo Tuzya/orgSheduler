@@ -32,45 +32,17 @@ export default function StudentProfile() {
   });
 
   React.useEffect(() => {
+        if (!groups.length) dispatch(getGroups());
     (async () => {
       setLoading(true);
-      try {
-        const student = await getStudent(studentId); //todo переписать чтоб данные брались и апдейтились в редакс
+        const student = await getStudent(studentId);
         if (student.err) return alert(student.err);
         setStudent(student);
-
-        if (!groups.length) dispatch(getGroups());
-      } catch (e) {
-        console.error('Err to get students or Groups', e.message);
-      } finally {
         setLoading(false);
-      }
     })();
   }, [dispatch]);
 
-  const submitHandlerStudent = async (event) => {
-    event.preventDefault();
-    const res = await updateStudent(student._id, student.name, student.group._id, student.photoUrl);
-    if (res.err) return alert(res.err);
-    setEdit(false);
-  };
 
-  const onChangeHandler = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    if (name === 'select') {
-      const groupName = event.target.options[event.target.selectedIndex].text;
-      setStudent((state) => ({
-        ...state,
-        group: { ...state.group, _id: value, name: groupName }
-      }));
-    } else
-      setStudent((state) => ({
-        ...state,
-        group: { ...state.group },
-        [name]: value
-      }));
-  };
 
   if (isEdit)
     return (
@@ -95,12 +67,9 @@ export default function StudentProfile() {
             <ul className="collection">
               {student.history.map((st) => (
                 <li key={st._id} className="collection-item">
-                  {`ph${st.phase}, ${st.groupType}, ${dayjs(st.date).format(
+                  {`ph${st.phase}, ${st.groupName} ${st.groupType}, ${dayjs(st.date).format(
                     'DD-MM-YY'
-                  )}, Проверял: ${
-                    //todo st.groupType исправить на group.groupType
-                    st.teacher
-                  }`}
+                  )}, Проверял: ${st.teacher}`}
                   <div>
                     {`Комент: ${st.comment}`}
                     <span

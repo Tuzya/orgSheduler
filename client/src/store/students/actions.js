@@ -1,6 +1,7 @@
 import actionTypes from "../types";
 
 const setStudents = (students) => ({type: actionTypes.SET_STUDENTS, payload: {students}});
+const setStudent = (student) => ({type: actionTypes.SET_STUDENT, payload: {student}});
 const setLoading = (isLoad) => ({type: actionTypes.SET_STUD_LOADING, payload: {isLoad}})
 
 export const getStudents = (searchProps) => async (dispatch) => {
@@ -19,13 +20,47 @@ export const getStudents = (searchProps) => async (dispatch) => {
   }
 }
 
-export const getStudent = async (id)  => {
+export const getStudent = (id) => async (dispatch) => {
+  dispatch(setLoading(true));
   try {
-    return (await fetch(`/api/students/${id}`)).json();
+    const res = await fetch(`/api/students/${id}`);
+    if (!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}`);
+    const student = await res.json();
+    if (student.err) throw new Error(`Err to get students: ${student.err}`);
+    dispatch(setStudent(student));
   } catch (e) {
-    console.log('Failed to fetch Student', e.message);
+    console.error('Failed to fetch Students', e.message);
+    alert(e.message);
+  } finally {
+    dispatch(setLoading(false));
+  }
+}
+
+export const createStudents = async (studentsNamesArr, groupId) => {
+  try {
+    return (
+      await fetch('/api/students', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({studentsNamesArr, groupId}),
+      })
+    ).json();
+  } catch (err) {
+    console.log('createStudents err ', err.message);
+    return err.message;
   }
 };
+
+// export const getStudent = async (id)  => {
+//   try {
+//     return (await fetch(`/api/students/${id}`)).json();
+//   } catch (e) {
+//     console.log('Failed to fetch Student', e.message);
+//   }
+// };
 
 export const getComment = async (stName, grName, date) => {
   try {

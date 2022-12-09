@@ -4,7 +4,7 @@ import './students.css';
 import { DebounceInput } from 'react-debounce-input';;
 import { groupTypes } from '../../consts';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {
   TableContainer,
   Table,
@@ -17,7 +17,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-
   Container
 } from '@mui/material';
 
@@ -30,6 +29,12 @@ import BgLetterAvatars from '../../components/BgLettersAvatar/BgLettersAvatar';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import LinearIndeterminate from '../../components/Loader/LinearIndeterminate';
 import Input from '@mui/material/Input';
+import Badge from "@mui/material/Badge"
+import IconButton from "@mui/material/IconButton"
+import EditIcon from '@mui/icons-material/Edit';
+import PetsIcon from '@mui/icons-material/Pets';
+import Avatar from "@mui/material/Avatar"
+import ListItemAvatar from "@mui/material/ListItemAvatar/ListItemAvatar"
 
 export default function Students() {
   const history = useHistory();
@@ -79,7 +84,7 @@ export default function Students() {
   return (
     <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>
       <Box sx={{mb:5}}>
-        <FormControl fullWidth sx={{ mt: 2 }}>
+        <FormControl fullWidth  sx={{ mt: 2 }}>
           <DebounceInput
             element={Input}
             placeholder={'search students by name here...'}
@@ -91,7 +96,7 @@ export default function Students() {
           />
         </FormControl>
 
-        <FormControl fullWidth sx={{ mt: 2 }}>
+        <FormControl fullWidth  size="small" sx={{ mt: 2 }}>
           <InputLabel id="group-type-label">Group Type</InputLabel>
           <Select
             labelId="group-type-label"
@@ -115,7 +120,7 @@ export default function Students() {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth sx={{ mt: 2 }}>
+        <FormControl fullWidth  size="small" sx={{ mt: 2 }}>
 
           <Select
             onChange={(e) => {
@@ -144,7 +149,7 @@ export default function Students() {
             // className={classes.table}
             sx={{ minWidth: 650 }}
             aria-labelledby="tableTitle"
-            size={'small'}
+            size={'medium'}
             aria-label="simple table"
           >
             <TableHead>
@@ -157,6 +162,14 @@ export default function Students() {
             </TableHead>
             <TableBody>
               {students.map((student) => {
+                const rating = student.history.length
+                  ? Math.round(
+                    student.history.reduce(
+                      (totalRt, el) => totalRt + Number(el.rating),
+                      0
+                    ) / student.history.length
+                  )
+                  : '-'
                 return (
                   <TableRow
                     hover
@@ -168,21 +181,21 @@ export default function Students() {
                     style={{ cursor: 'pointer' }}
                   >
                     <TableCell>
-                      <BgLetterAvatars name={student.name} />
+                      <Badge badgeContent={rating.toString()} color="success">
+                        <BgLetterAvatars name={student.name} />
+                      </Badge>
+
                     </TableCell>
                     <TableCell component="th" scope="row">
                       {student.name}
                     </TableCell>
                     <TableCell>{student.group?.name}</TableCell>
                     <TableCell align="right">
-                      {student.history.length
-                        ? (
-                          student.history.reduce(
-                            (totalRt, el) => totalRt + Number(el.rating),
-                            0
-                          ) / student.history.length
-                        ).toFixed(1)
-                        : '-'}
+                      <Link to={`/students/${student._id}/edit`}>
+                        <IconButton edge="end" aria-label="edit">
+                          <EditIcon />
+                        </IconButton>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 );

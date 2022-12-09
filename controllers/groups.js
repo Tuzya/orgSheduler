@@ -33,9 +33,6 @@ exports.createGroup = async (req, res) => {
     const group = await Group.createGroupAndStudents(name, phase, students, shedule, groupType);
     res.status(201).json(group);
   } catch (err) {
-    // console.log('createGroup error', err.name);
-    // console.log('createGroup error', err.code);
-    // console.log('createGroup error', err.keyValue);
     if (err.code === 11000)
       return res
         .status(400)
