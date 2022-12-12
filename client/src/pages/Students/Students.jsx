@@ -159,7 +159,7 @@ export default function Students() {
                 <TableCell />
                 <TableCell>Name</TableCell>
                 <TableCell>Group</TableCell>
-                <TableCell align="right">{'Rating'}</TableCell>
+                <TableCell align="right">{''}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
