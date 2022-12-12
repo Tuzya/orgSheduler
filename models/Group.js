@@ -121,12 +121,12 @@ groupSchema.statics.updateGroupAndStudents = async function (
 groupSchema.statics.deleteGroupAndStudents = async function (id) {
   const group = await this.findById(id);
   const students = await Student.find({ group: group.id }, { _id: 1 });
-  let inactiveGroup = await this.findOne({ name: 'Inactive' });
+  const inactiveGroup = await this.findOne({ name: 'Inactive' });
+  if(!inactiveGroup) throw new Error('Inactive group did not find. Launch "npm run seed".')
   const studentsIds = students.map((student) => student._id);
-  if (!inactiveGroup)
-    inactiveGroup = new this({ name: 'Inactive', isArchived: true, groupType: 'inactive' });
+
   //перемещаем студентов в гр. inactive
-  const updatedStudents = await Student.updateMany({ _id: { $in: studentsIds } }, [
+  await Student.updateMany({ _id: { $in: studentsIds } }, [
     {
       $set: {
         name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
@@ -134,8 +134,6 @@ groupSchema.statics.deleteGroupAndStudents = async function (id) {
       }
     }
   ]);
-  inactiveGroup.students = studentsIds;
-  await inactiveGroup.save();
   return this.findByIdAndDelete(id);
 };
 

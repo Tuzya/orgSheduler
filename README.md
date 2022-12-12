@@ -16,7 +16,7 @@ npm start        - из ./client папки
 ##  Запуск (dev c удаленной тестовой БД)
 npm install                          - в корневой папке
 npm install                          - в ./client папке
-npm run seed  
+NODE_ENV=prodtest npm run seed  
 NODE_ENV=prodtest npm run dev-back   - из корневой папки
 npm start                            - из ./client папки
 

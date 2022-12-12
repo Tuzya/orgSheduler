@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
-require('./connection');
+require('../connection');
 const fs = require('fs').promises;
 const Student = require('../models/Student');
 const Group = require('../models/Group');
 
 const main = async () => {
-  const studentsArr = await fs.readFile('students');
+  const studentsArr = await fs.readFile('./seeders/students');
   const students = JSON.parse(studentsArr);
   const groups = await Group.find().lean();
   for (let i = 0; i < groups.length; i++) {
     const group = await Group.findOne({name: groups[i].name})
+    if(!groups[i].students) continue;
     for (let j = 0; j < groups[i].students.length; j++) {
       stModel = {
         name: groups[i].students[j],

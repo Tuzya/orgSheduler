@@ -13,12 +13,15 @@ const groups = [
     groupType: 'inactive'
   })
 ];
-Group.create(groups)
-  .then((res) => {
-    console.log('Created:', res);
-    mongoose.disconnect();
-  })
-  .catch((err) => {
-    console.error('Seeds failed', err.message);
-    mongoose.disconnect();
-  });
+mongoose.connection.on('connected', function () {
+  Group.create(groups)
+    .then((res) => {
+      console.log('Created:', res);
+      mongoose.disconnect();
+    })
+    .catch((err) => {
+      console.error('Seeds failed', err.message);
+      mongoose.disconnect();
+    });
+});
+
