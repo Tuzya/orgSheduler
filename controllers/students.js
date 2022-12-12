@@ -54,7 +54,7 @@ exports.allStudents = async (req, res) => {
 
     res.status(200).json(students);
   } catch (err) {
-    console.log('allStudents get error', err.message);
+    console.log('allStudents get error', err);
     res.status(500).json({ err: err.message });
   }
 };
@@ -115,21 +115,40 @@ exports.updComment = async (req, res) => {
   }
 };
 
-// exports.updStudent = async (req, res) => {res.end()}
 
 exports.updStudent = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, group_id, photoUrl } = req.body;
-    console.log('file-students.js req.body:', req.body);
     const result = await Student.updateOne(
       { _id: id },
       { name: name, group: group_id, photoUrl: photoUrl }
     );
-    console.log('file-students.js res:', result);
     res.status(200).json({ message: 'ok' });
   } catch (err) {
     console.log('Student update error', err.message);
     res.status(500).json({ err: err.message });
   }
 };
+
+exports.delStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('file-students.js id:', id);
+    const inactiveGroup = await Group.findOne({ name: 'Inactive' });
+    if(!inactiveGroup) throw new Error('Inactive group did not find. Launch "npm run seed".')
+    await Student.updateOne({ _id: id  }, [
+      {
+        $set: {
+          name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
+          group: inactiveGroup._id
+        }
+      }
+    ]);
+    res.status(200).json({ message: 'ok' });
+  } catch (err) {
+    console.log('Student delete error', err.message);
+    res.status(500).json({ err: err.message });
+  }
+};
+

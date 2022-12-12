@@ -1,15 +1,16 @@
 import actionTypes from "../types";
 
 const setStudents = (students) => ({type: actionTypes.SET_STUDENTS, payload: {students}});
-const setStudent = (student) => ({type: actionTypes.SET_STUDENT, payload: {student}});
+export const setStudent = (student) => ({type: actionTypes.SET_STUDENT, payload: {student}});
 const setLoading = (isLoad) => ({type: actionTypes.SET_STUD_LOADING, payload: {isLoad}})
+const delStorStudent = (id) => ({type: actionTypes.DEL_STUDENT, payload: {id}})
 
-export const getStudents = (searchProps) => async (dispatch) => {
+export const getStudents = (searchProps = {}) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
    const res = await fetch(`/api/students?search=${JSON.stringify(searchProps)}`);
-    if (!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}`);
    const students = await res.json();
+    if (!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}. ${students.err}`);
     if (students.err) throw new Error(`Err to get students: ${students.err}`);
   dispatch(setStudents(students));
   } catch (e) {
@@ -24,12 +25,35 @@ export const getStudent = (id) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const res = await fetch(`/api/students/${id}`);
-    if (!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}`);
     const student = await res.json();
+    if (!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status}. ${student.err}`);
     if (student.err) throw new Error(`Err to get students: ${student.err}`);
     dispatch(setStudent(student));
   } catch (e) {
     console.error('Failed to fetch Students', e.message);
+    alert(e.message);
+  } finally {
+    dispatch(setLoading(false));
+  }
+}
+
+export const deleteStudent = (id) => async (dispatch) => {
+  dispatch(setLoading(true));
+  dispatch(delStorStudent(id))
+  try {
+    const res = await fetch(`/api/students/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: null
+    });
+    const student = await res.json();
+    if (!res.ok) throw new Error(`Server Error: ${res.statusText} ${res.status} ${student?.err}`);
+    if (student.err) throw new Error(`Err to get students: ${student.err}`);
+  } catch (e) {
+    console.error('Failed to delete Students', e.message);
     alert(e.message);
   } finally {
     dispatch(setLoading(false));
