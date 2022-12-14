@@ -1,8 +1,18 @@
 import React from 'react';
-import { DAYS, GROUPS, MAX_NUMS_PHASES, schemaInit } from '../../consts';
+import { DAYS, GROUPS, groupTypes, MAX_NUMS_PHASES, schemaInit } from '../../consts';
 import LinearLoader from '../../components/Loader/LinearLoader';
 import { getSchemas, putSchemas } from '../../libs/reqFunct/Schemas';
 import useInput from '../../hooks/input-hook';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import {Avatar, Box, Button, InputLabel, MenuItem, Select, Stack, Typography} from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import Divider from "@mui/material/Divider"
+import EscalatorWarningIcon from '@mui/icons-material/EscalatorWarning';
 
 export default function PairsSchema() {
   const [isLoad, setLoad] = React.useState(false);
@@ -35,91 +45,105 @@ export default function PairsSchema() {
       ...state,
       [key]: {
         ...state[key],
-        [week]: { ...state[key][week], [day]: people },
-      },
+        [week]: { ...state[key][week], [day]: people }
+      }
     }));
   };
 
   let line;
   online ? (line = 'online') : (line = 'offline');
   const weeks = Object.keys(schemas[line]);
-  // const weeks = ['w1', 'w2', 'w3', 'w4'];
-  const phases = [...Array(MAX_NUMS_PHASES).keys()].map((x) =>
-    (++x).toString()
-  );
+  const phases = [...Array(MAX_NUMS_PHASES).keys()].map((x) => (++x).toString());
 
   return (
-    <div>
-      <h4>Pairs Schema</h4>
-      <form
-        name="radioGroup"
-        onSubmit={(e) => generateSchema(e, line, schemas[line], phase)}
-      >
+    <div id="#pairsschema">
+      <Box sx={styles.formbox}>
+        <Avatar sx={{ m: 2, width: 60, height: 60, bgcolor: 'secondary.main' }}>
+          <EscalatorWarningIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Pairs Schema
+        </Typography>
+      </Box>
+      <form name="radioGroup" onSubmit={(e) => generateSchema(e, line, schemas[line], phase)}>
         <div className="wrap">
           {weeks.map((week) => (
-            <div key={week}>
+            <FormControl key={week}>
               <b>{week}</b>
               {DAYS.map((day) => (
-                <div key={day}>
-                  <p>
-                    <b>{day}</b>
-                  </p>
-                  {Object.keys(GROUPS).map((group, i) => (
-                    <label key={i}>
-                      <input
-                        name={day + week}
-                        type="radio"
-                        disabled={isLoad}
-                        checked={
-                          schemas[line][week] &&
-                          schemas[line][week][day] === GROUPS[group]
+                <div key={day} style={{marginTop: 15}}>
+                  <FormLabel id={day}>{day}</FormLabel>
+                  <Divider />
+                  <RadioGroup aria-labelledby={day} name={'radio-buttons-group' + week}>
+                    {Object.keys(GROUPS).map((group, i) => (
+                      <FormControlLabel
+                        key={i}
+                        control={
+                          <Radio
+                            name={day + week}
+                            type="radio"
+                            disabled={isLoad}
+                            checked={
+                              schemas[line][week] && schemas[line][week][day] === GROUPS[group]
+                            }
+                            onChange={() => {
+                              setSchemasHandler(week, day, line, GROUPS[group]);
+                            }}
+                          />
                         }
-                        onChange={() => {
-                          setSchemasHandler(week, day, line, GROUPS[group]);
-                        }}
+                        label={group}
                       />
-                      <span>{group}</span>
-                      <br />
-                    </label>
-                  ))}
+                    ))}
+                  </RadioGroup>
                 </div>
               ))}
-            </div>
+            </FormControl>
           ))}
         </div>
-        <div className="input-field" style={{ minWidth: '300px' }}>
-          <select
-            className="browser-default"
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel id="group-name-label">Group Type *</InputLabel>
+          <Select
+            labelId="group-name-label"
+            id="group-name"
+            label="Group Type *"
             onChange={(e) => {
               setPhase(e.target.value);
             }}
+            value={phase}
           >
-            {phases.map((phaseNum) => (
-              <option key={phaseNum} value={phaseNum}>
-                Phase {phaseNum}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          <label>
-            <input
-              type="checkbox"
-              checked={online}
-              onChange={(e) => setOnline(e.target.checked)}
+            {phases.map((phaseNum) => {
+              return (
+                <MenuItem key={phaseNum} value={phaseNum}>
+                  Phase {phaseNum}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+
+        <Stack sx={{ p: 4 }} direction="row" spacing={2} justifyContent="center">
+          <FormGroup>
+            <FormControlLabel
+              control={<Checkbox checked={online} onChange={(e) => setOnline(e.target.checked)} />}
+              label="Online"
             />
-            <span>Online</span>
-          </label>
-          <button
-            type="submit"
-            className="btn waves-effect waves-light"
-            disabled={isLoad}
-          >
+          </FormGroup>
+          <Button variant="contained" type="submit" disabled={isLoad}>
             Save {line} scheme
-          </button>
-        </div>
+          </Button>
+        </Stack>
+
         {isLoad && <LinearLoader />}
       </form>
     </div>
   );
 }
+
+const styles = {
+  formbox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: '20px'
+  }
+};

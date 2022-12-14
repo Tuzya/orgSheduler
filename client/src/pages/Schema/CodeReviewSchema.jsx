@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 
 import './Schema.css';
 import { daysCR, groupTypes } from '../../consts';
-import LinearLoader from '../../components/Loader/LinearLoader';
 import { getTeachersAndGaps, updateTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import useInput from '../../hooks/input-hook';
 import { getGroups, updAllGroups } from '../../store/camp/actions';
