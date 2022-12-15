@@ -1,10 +1,9 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 
 import useInput from '../../hooks/input-hook';
 import { groupTypes } from '../../consts';
-import { addGroup, getGroups} from '../../store/camp/actions';
+import { getGroups} from '../../store/camp/actions';
 import {
   Avatar,
   Button,
@@ -22,13 +21,11 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import LinearIndeterminate from "../../components/Loader/LinearIndeterminate"
 import {createStudents} from "../../store/students/actions"
 
-
 export default function StudentsCreateForm() {
-  const history = useHistory();
   const dispatch = useDispatch();
   const [isLoad, setLoad] = React.useState(false);
   const groups = useSelector((state) => state.camp.groups).filter((group) => (group.groupType === groupTypes.waitlist));
-  const { value: studentsNames, bind: bindNames } = useInput('');
+  const { value: studentsNames, bind: bindNames, setValue:  setStudentsNames} = useInput('');
   const { value: groupId, setValue: setGroupId } = useInput('');
   React.useEffect(() => {
     if(groups.length === 0) {
@@ -42,22 +39,19 @@ export default function StudentsCreateForm() {
     setLoad(true);
 
     const students = await createStudents(studentsNamesArr, groupId);
-    console.log('file-StudentsCreate.jsx students:', students);
     if (students.err) {
       setLoad(false);
       return alert(students.err);
     }
     alert(`${studentsNames} created successfully.`)
-    // dispatch(addGroup(group));
-
     setLoad(false);
-
-    // return history.push(`/groups/${group._id}`);
+    setStudentsNames('')
   };
 
   const handleChange = ({ target }) => {
     setGroupId(target.value);
   };
+
   return (
     <>
       <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>

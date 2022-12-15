@@ -6,17 +6,17 @@ const {saltRounds} = require('../config/constants');
 exports.login = (req, res, next) => {
   passport.authenticate('local', (err, user) => {
     if (err) {
-      console.error('Auth Error', err);
-      return res.status(400).json(err);
+      console.error('Auth Error:', err);
+      return res.status(400).json({err: 'Wrong name or password.'});
     }
     return req.logIn(user, (err) => {
       if (err) {
         console.error('Login Error', err);
-        return res.status(400).json(err);
+        return res.status(400).json({err});
       }
       return res
         .status(202)
-        .send();
+        .json({message: 'ok'});
     });
   })(req, res, next);
 };
@@ -39,13 +39,14 @@ exports.signup = async (req, res) => {
           email,
           password: hash,
         });
-        return res.status(200).send('Now log in');
+        return res.status(200).json({message: 'Now log in'});
       }
-      return res.status(400).send('This username is already used');
+      return res.status(400).json({err: 'This username is already used'});
     }
-    return res.status(403).send('Forbidden');
+    return res.status(403).json({err: 'Forbidden'});
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error(err);
+    res.status(500).json({err: err.message});
   }
 };
 

@@ -163,30 +163,4 @@ const styles = {
   }
 };
 
-// return (
-//   <form name="newGroup" onSubmit={generateSchedule}>
-//     <input type="text" {...bindName} placeholder="NameYearGroupType" />
-//     <input
-//       type="number"
-//       {...bindPhase}
-//       placeholder="Phase"
-//       min="1"
-//       max={MAX_NUMS_PHASES.toString()}
-//     />
-//     <input type="text" {...bindStudents} placeholder="Students" />
-//     <div className="input-field" style={{ minWidth: '300px' }}>
-//       <select className="browser-default" onChange={handleChange} value={groupType}>
-//         {Object.keys(groupTypes).map((type) => (
-//           <option key={type} value={type}>
-//             {type}
-//           </option>
-//         ))}
-//       </select>
-//     </div>
-//     <button type="submit" className="btn" disabled={isLoad}>
-//       Create
-//     </button>
-//     {isLoad && <LinearLoader prColor={'#3594DA'} indColor={'#4b22d4'} />}
-//   </form>
-// );
 
