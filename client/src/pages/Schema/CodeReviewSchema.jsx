@@ -186,13 +186,15 @@ export default function CodeReviewSchema() {
             }}
             value={groupType}
           >
-            {Object.keys(groupTypes).map((type) => {
-              return (
-                <MenuItem key={type} value={type}>
-                  {type}
-                </MenuItem>
-              );
-            })}
+            {Object.keys(groupTypes)
+              .filter((type) => type !== groupTypes.inactive && type !== groupTypes.waitlist)
+              .map((type) => {
+                return (
+                  <MenuItem key={type} value={type}>
+                    {type}
+                  </MenuItem>
+                );
+              })}
           </Select>
         </FormControl>
 
