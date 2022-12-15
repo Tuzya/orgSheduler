@@ -1,7 +1,7 @@
 import actionTypes from '../types';
 
 const setAuth = (isAuth) => ({ type: actionTypes.SET_AUTH, payload: { isAuth } });
-const setUser = (user) => ({ type: actionTypes.SET_USER, payload: { user } });
+// const setUser = (user) => ({ type: actionTypes.SET_USER, payload: { user } });
 const setLoading = (isLoading) => ({ type: actionTypes.SET_AUTH_LOADING, payload: { isLoading } });
 
 export const checkAuth = () => async (dispatch) => {
@@ -27,18 +27,18 @@ export const login = (e) => async (dispatch) => {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-type': 'application/json',
+        'Content-type': 'application/json'
       },
       body: JSON.stringify({
         username: username.value,
-        password: password.value,
-      }),
+        password: password.value
+      })
     });
-    if (loginResponse.status === 202) {
-      dispatch(setAuth(true));
-    } else {
-      alert(loginResponse.status);
-    }
+    const data = await loginResponse.json();
+    if (loginResponse.status === 202) return dispatch(setAuth(true));
+      console.error('Login error:', data.err)
+      alert(`${loginResponse.status} ${data.err}`);
+
   } catch (e) {
     console.log('Login error:', e.message);
     alert(`Login error:, ${e.message}`);
@@ -76,19 +76,16 @@ export const createUser = (e, history) => async (dispatch) => {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-type': 'application/json',
+        'Content-type': 'application/json'
       },
-      body: JSON.stringify(user),
+      body: JSON.stringify(user)
     });
-    if (signUpResponse.status === 200) {
-      dispatch(setUser({name: user.username}))
-      history.push('/')
-    } else {
-      console.log('signUpResponse', signUpResponse);
-      alert(signUpResponse.status);
-    }
+    const data = await signUpResponse.json();
+    if (signUpResponse.status === 200) return history.push('/login');
+    console.log('signUpResponse', signUpResponse);
+    alert(`${signUpResponse.status} ${data.err}`);
   } catch (e) {
-    console.log('sign-up error:', e.message);
-    alert(`sign-up error: ${e.message}`)
+    console.log('sign-up error:', e);
+    alert(`sign-up error: ${e.message}`);
   }
 };
