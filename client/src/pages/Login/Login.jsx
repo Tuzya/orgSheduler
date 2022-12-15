@@ -20,7 +20,7 @@ function Login({isAuth}) {
           <BorderColorIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          User create
+          User login
         </Typography>
       </Box>
       <Box component="form" sx={{ mt: 1 }} onSubmit={loginHandler}>
