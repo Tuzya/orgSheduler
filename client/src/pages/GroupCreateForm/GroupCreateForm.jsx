@@ -22,8 +22,7 @@ import {
   MenuItem
 } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import LinearIndeterminate from "../../components/Loader/LinearIndeterminate"
-
+import LinearIndeterminate from '../../components/Loader/LinearIndeterminate';
 
 export default function GroupCreateForm() {
   const history = useHistory();
@@ -41,7 +40,6 @@ export default function GroupCreateForm() {
   const generateSchedule = async (event) => {
     event.preventDefault();
     if (!students.length || parseInt(phase) > MAX_NUMS_PHASES || parseInt(phase) < 1 || !name)
-
       return alert('Ошибка валидации формы');
     const studentsArr = [...new Set(students.split(/ *, */g))];
 
@@ -111,7 +109,7 @@ export default function GroupCreateForm() {
               required
               fullWidth
               id="Students"
-              label="Students"
+              label="Students names by commas"
             />
             <TextField
               {...bindPhase}
@@ -133,21 +131,22 @@ export default function GroupCreateForm() {
                 onChange={handleChange}
                 value={groupType}
               >
-                {Object.keys(groupTypes).map((type) => (
-                  <MenuItem key={type} value={type}>
-                    {type}
-                  </MenuItem>
-                ))}
+                {Object.keys(groupTypes)
+                  .filter((type) => type !== groupTypes.waitlist && type !== groupTypes.inactive)
+                  .map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {type}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
-
 
             <Stack sx={{ p: 4 }} direction="row" spacing={2} justifyContent="center">
               <Button variant="contained" disabled={isLoad} onClick={generateSchedule}>
                 Create
               </Button>
             </Stack>
-        {isLoad && <LinearIndeterminate/>}
+            {isLoad && <LinearIndeterminate />}
           </Box>
         </Box>
       </Container>
@@ -162,5 +161,3 @@ const styles = {
     alignItems: 'center'
   }
 };
-
-

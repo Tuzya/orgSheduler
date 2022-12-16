@@ -101,7 +101,6 @@ exports.getComment = async (req, res) => {
 
 exports.updComment = async (req, res) => {
   const { name, groupId, historyEl } = req.body;
-
   try {
     const student = await Student.findOne({ name: name, group: groupId });
     const index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
