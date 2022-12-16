@@ -40,7 +40,7 @@ function Navbar({ isAuth }) {
               <>
                 <StyledLink to="/">Groups</StyledLink>
                 <StyledLink to="/groups/new">New Group</StyledLink>
-                <StyledLink to="/groups/schema">Schema</StyledLink>
+                <StyledLink to="/groups/schema">Schemas</StyledLink>
                 <StyledLink to="/students">Students</StyledLink>
                 <StyledLink to="/students/new">New Students</StyledLink>
                 <StyledLink to="/" onClick={logOutHandler}>

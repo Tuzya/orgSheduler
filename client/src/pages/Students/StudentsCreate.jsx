@@ -17,7 +17,7 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
+import AddIcon from '@mui/icons-material/Add';
 import LinearIndeterminate from "../../components/Loader/LinearIndeterminate"
 import {createStudents} from "../../store/students/actions"
 
@@ -57,7 +57,7 @@ export default function StudentsCreateForm() {
       <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>
         <Box sx={styles.formbox}>
           <Avatar sx={{ m: 1, width: 60, height: 60, bgcolor: 'secondary.main' }}>
-            <BorderColorIcon />
+            <AddIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Students create
