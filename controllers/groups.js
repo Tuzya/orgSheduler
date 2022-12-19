@@ -4,9 +4,9 @@ const Student = require('../models/Student');
 exports.allGroups = async (req, res) => {
   const { name = '' } = req.query;
   try {
-    const allTheGroups = await Group.find({ name: { $regex: name, $options: 'i' } })
-      .sort({ createdAt: 1 })
-      .lean();
+    const allTheGroups = await Group.find({ name: { $regex: name, $options: 'i' } }, null, {
+      sort: { name: 1 }
+    }).lean();
     const stidentsPr = allTheGroups.map((group) =>
       Student.find({ group: group._id }, { _id: 1, name: 1 }).lean()
     );

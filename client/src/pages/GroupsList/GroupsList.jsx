@@ -25,7 +25,7 @@ function GroupsList({ isAuth }) {
 
   const filteredGroups = groups.filter(
     (group) => group.groupType !== groupTypes.inactive && group.groupType !== groupTypes.waitlist
-  ).sort((a, b) => a.groupType.localeCompare(b.groupType));
+  );
 
   return (
     <Grid item xs={12} md={6}>

@@ -39,7 +39,7 @@ export default function Students() {
 
   const [search, setSearch] = React.useState({
     name: '',
-    groupType: groupTypes.online,
+    groupType: window.localStorage.getItem('studentsSelectedGrType') || groupTypes.online,
     groupId: '',
     page: 0,
     limit: 25
@@ -113,6 +113,7 @@ export default function Students() {
                 groupId: '',
                 page: 0
               }));
+              window.localStorage.setItem('studentsSelectedGrType', e.target.value);
             }}
           >
             {Object.keys(groupTypes).map((type) => (
