@@ -46,7 +46,7 @@ function GroupPage({ isAuth }) {
       ) : (
         <div />
       )}
-      <ExamGeneration></ExamGeneration>
+      {isAuth && <ExamGeneration></ExamGeneration>}
     </div>
   );
 }
