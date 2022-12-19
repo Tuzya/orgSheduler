@@ -25,6 +25,7 @@ function GroupPage({ isAuth }) {
   }, [dispatch]);
 
   if (isLoading) return <div className="spinner" />;
+
   if (isObjEmpty(group))
     return (
       <div className="group-page">
@@ -33,6 +34,8 @@ function GroupPage({ isAuth }) {
         </div>
       </div>
     );
+
+  const isCodeReview = !Object.values(group.crshedule?.crdays).every((day) => !day);
   return (
     <div className="group-page">
       <div className="group-schedule-header">
@@ -40,7 +43,7 @@ function GroupPage({ isAuth }) {
         <div>{`(${group.groupType}, Phase: ${group.phase})`}</div>
       </div>
       {group.shedule ? <GroupShedule shedule={group.shedule} /> : <div />}
-      {group.students ? (<CodeReviewTable group={groupWithStudentsAsNames} isAuth={isAuth}/>) : (<div />)}
+      {isCodeReview ? (<CodeReviewTable group={groupWithStudentsAsNames} isAuth={isAuth}/>) : (<div />)}
     </div>
   );
 }

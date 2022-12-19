@@ -109,7 +109,7 @@ export default function GroupCreateForm() {
               required
               fullWidth
               id="Students"
-              label="Students names by commas"
+              label="Students names by comma"
             />
             <TextField
               {...bindPhase}
