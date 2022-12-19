@@ -15,7 +15,7 @@ function GroupsList({ isAuth }) {
     if (groups.length === 0) dispatch(getGroups());
   }, [dispatch]);
 
-  if (isLoading) return <div className="spinner"/>;
+  if (isLoading) return <div className="spinner" />;
   if (groups.length === 0)
     return (
       <div className="collection" style={{ textAlign: 'center' }}>
@@ -25,15 +25,16 @@ function GroupsList({ isAuth }) {
 
   const filteredGroups = groups.filter(
     (group) => group.groupType !== groupTypes.inactive && group.groupType !== groupTypes.waitlist
-  );
-
-  // console.log(filteredGroups.map((group) => (group.crtables?.map(crdays => crdays.crDay))));
+  ).sort((a, b) => a.groupType.localeCompare(b.groupType));
 
   return (
     <Grid item xs={12} md={6}>
       <List sx={{ width: '100%', minWidth: 300, bgcolor: 'background.paper' }}>
-        {filteredGroups.map((group) => (
-          <GroupItem
+        {filteredGroups.map((group) => {
+          const codeReviewDays = Object.entries(group.crshedule.crdays)
+            .filter((day) => day[1])
+            .map((day) => ` ${DAYTORU[day[0]]}`)
+          return <GroupItem
             key={group._id}
             isAuth={isAuth}
             name={group.name}
@@ -41,9 +42,9 @@ function GroupsList({ isAuth }) {
             phase={group.phase}
             people={group.students?.map((student) => student.name).sort()}
             groupType={group.groupType}
-            codeReviewDays={group?.crtables?.map((crDays) => ` ${DAYTORU[crDays.crDay]}`)}
+            codeReviewDays={codeReviewDays}
           />
-        ))}
+        })}
       </List>
     </Grid>
   );

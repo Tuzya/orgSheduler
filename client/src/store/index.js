@@ -3,9 +3,10 @@ import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from '@redux-devtools/extension';
 
 import { authReducer } from './auth/reducers';
-import { checkAuth } from './auth/actions';
 import { campReducer } from './camp/reducers';
 import { studentsReducer } from './students/reducers';
+
+import { checkAuth } from './auth/actions';
 
 const reducers = combineReducers({
   auth: authReducer,

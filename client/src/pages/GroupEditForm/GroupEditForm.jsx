@@ -45,19 +45,23 @@ export default function GroupEditForm() {
       setLoad(true);
       try {
         const group = await (await fetch(`/api/groups/${groupId}`)).json();
-        let allStudents = await (
+        const allStudents = await (
           await fetch(`/api/students?search=${JSON.stringify({ groupType: group.groupType })}`)
         ).json();
+        let waitListStudents = await (
+          await fetch(`/api/students?search=${JSON.stringify({ groupType: groupTypes.waitlist })}`)
+        ).json();
+        if (waitListStudents.length) allStudents.push(...waitListStudents); // добавляем в список студентов из waitlist
 
-        const defaultStudents = group.students
-          .map((student1) => allStudents.find((student2) => student1._id === student2._id))
-          .sort((a, b) => a.name.localeCompare(b.name));
-        setAllStudents(allStudents);
+        const defaultStudents = group.students.map((student1) =>
+          allStudents.find((student2) => student1._id === student2._id)
+        );
+        setAllStudents(allStudents.sort((a, b) => a.name.localeCompare(b.name)));
         setName(group.name);
         setPhase(group.phase);
         setGroupType(group.groupType);
         setStudents(group.students);
-        setDefaultStudents(defaultStudents);
+        setDefaultStudents(defaultStudents.sort((a, b) => a.name.localeCompare(b.name)));
         setShedule(JSON.stringify(group.shedule, '', 4));
       } catch (e) {
         console.error('Load error group', e.message);
@@ -157,7 +161,6 @@ export default function GroupEditForm() {
   return (
     <>
       <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>
-
         <Box sx={styles.formbox}>
           <Avatar sx={{ m: 1, width: 60, height: 60, bgcolor: 'secondary.main' }}>
             <BorderColorIcon />

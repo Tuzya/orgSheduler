@@ -12,7 +12,7 @@ import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
 import { getComment, updateStudentComment } from '../../store/students/actions';
 import { getGroups, updCRTablesGroups } from '../../store/camp/actions';
 
-import styled from "@mui/material/styles/styled";
+import styled from '@mui/material/styles/styled';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -23,8 +23,8 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Input from '@mui/material/Input';
-import ThemeProvider from "@mui/material/styles/ThemeProvider"
-import createTheme from "@mui/material/styles/createTheme"
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import createTheme from '@mui/material/styles/createTheme';
 
 const rowsInit = (teachers, timeGaps, groupType) => [
   timeGaps.reduce(function (acc, cur, i) {
@@ -188,6 +188,7 @@ function CodeReviewTable({ group, isAuth }) {
     await updateStudentComment(studentsName, group._id, historyEl);
   };
 
+  if (!crTables.length) return null;
   return (
     <>
       <div>
@@ -199,65 +200,63 @@ function CodeReviewTable({ group, isAuth }) {
         </div>
       </div>
       {crTables.map((crTablegroup) => (
-        <ThemeProvider theme={createTheme({ typography: { fontSize: '16', fontFamily: '"Comfortaa", cursive' } })}>
-        <TableContainer
+        <ThemeProvider
+          theme={createTheme({ typography: { fontSize: 16, fontFamily: '"Comfortaa", cursive' } })}
           key={crTablegroup.crDay}
-          component={Paper}
-
-          sx={{ marginBottom: 10, opacity: isLoad ? 0.5 : 1,  }}
         >
-          <Table className="stripped" sx={{ minWidth: 650 }} aria-label="simple table">
-            <caption>{DAYTORU[crTablegroup.crDay]}</caption>
-            <TableHead>
-              <TableRow>
-                {columns(group.name, teachers).map((column, i) => (
-                  <TableCell key={column.key} align={i ? 'right' : 'left'}>
-                    {' '}
-                    {column.header}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {timeGaps.map((time, i) => (
-                <TableRow key={time}>
-                  {crTablegroup.tableData.map((cell, colNum) => {
-                    const row = `row${i + 1}`;
-                    return (
-                      <TableCell
-                        key={colNum}
-                        align={colNum ? 'right' : 'left'}
-                        component="th"
-                        scope="row"
-                        sx={{
-                          cursor:
-                            cell[row] === ' ' || cell[row] === 'Педсовет' || !colNum
-                              ? 'default'
-                              : 'pointer'
-                        }}
-                        onDoubleClick={(e) => {
-                          onAddComment(e, group, colNum);
-                        }}
-                      >
-                        {!isEdit ? (
-                          cell[row]
-                        ) : (
-                          <Input
-                            type="text"
-                            defaultValue={cell[row]}
-                            onChange={(e) =>
-                              handleInputChange(e.target.value, crTablegroup.crDay, colNum, row)
-                            }
-                          />
-                        )}
-                      </TableCell>
-                    );
-                  })}
+          <TableContainer component={Paper} sx={{ marginBottom: 10, opacity: isLoad ? 0.5 : 1 }}>
+            <Table className="stripped" sx={{ minWidth: 650 }} aria-label="simple table">
+              <caption>{DAYTORU[crTablegroup.crDay]}</caption>
+              <TableHead>
+                <TableRow>
+                  {columns(group.name, teachers).map((column, i) => (
+                    <TableCell key={column.key} align={i ? 'right' : 'left'}>
+                      {' '}
+                      {column.header}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {timeGaps.map((time, i) => (
+                  <TableRow key={time}>
+                    {crTablegroup.tableData.map((cell, colNum) => {
+                      const row = `row${i + 1}`;
+                      return (
+                        <TableCell
+                          key={colNum}
+                          align={colNum ? 'right' : 'left'}
+                          component="th"
+                          scope="row"
+                          sx={{
+                            cursor:
+                              cell[row] === ' ' || cell[row] === 'Педсовет' || !colNum
+                                ? 'default'
+                                : 'pointer'
+                          }}
+                          onDoubleClick={(e) => {
+                            onAddComment(e, group, colNum);
+                          }}
+                        >
+                          {!isEdit ? (
+                            cell[row]
+                          ) : (
+                            <Input
+                              type="text"
+                              defaultValue={cell[row]}
+                              onChange={(e) =>
+                                handleInputChange(e.target.value, crTablegroup.crDay, colNum, row)
+                              }
+                            />
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </ThemeProvider>
       ))}
       {isAuth && (
@@ -291,15 +290,15 @@ function CodeReviewTable({ group, isAuth }) {
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
-    backgroundColor: '#fff2cc',
+    backgroundColor: '#fff2cc'
   },
   '&:nth-of-type(even)': {
-    backgroundColor: '#cfe2f3',
+    backgroundColor: '#cfe2f3'
   },
   // hide last border
   '&:last-child td, &:last-child th': {
-    border: 0,
-  },
+    border: 0
+  }
 }));
 
 CodeReviewTable.propTypes = {

@@ -14,8 +14,7 @@
     "mongoose": "^6.7.4",
     "morgan": "^1.10.0",
     "passport": "^0.6.0",
-    "passport-local": "^1.0.0",
-    "react-debounce-input": "^3.3.0"
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20",
@@ -27,6 +26,7 @@
     "dev-front": "cd client && (COLOR=1 npm run start | cat)",
     "start": "node app.js",
     "seed": "node ./seeders/createDefaultGroups.js",
+    "seed_st": "node ./seeders/portStudents.js",
     "build": "cd client && npm install && npm run build"
   },
   "engines": {

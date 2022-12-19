@@ -4,10 +4,28 @@ import { useHistory } from 'react-router-dom';
 
 import './Schema.css';
 import { daysCR, groupTypes } from '../../consts';
-import LinearLoader from '../../components/Loader/LinearLoader';
 import { getTeachersAndGaps, updateTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import useInput from '../../hooks/input-hook';
 import { getGroups, updAllGroups } from '../../store/camp/actions';
+import {
+  Avatar,
+  Box,
+  Button,
+  Container,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material';
+import CodeIcon from '@mui/icons-material/Code';
+import LinearIndeterminate from '../../components/Loader/LinearIndeterminate';
+import Checkbox from '@mui/material/Checkbox';
+import FormLabel from '@mui/material/FormLabel';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
@@ -30,8 +48,8 @@ export default function CodeReviewSchema() {
         }
         let schemaCRInitGroups = fetchedGroups?.map((group) => {
           if (!group.crshedule) group.crshedule = { crdays: { ...daysCR } };
-          group.students = group.students.map((student) => (student.name))
-          return group
+          group.students = group.students.map((student) => student.name);
+          return group;
         });
 
         setGroups(schemaCRInitGroups);
@@ -97,81 +115,109 @@ export default function CodeReviewSchema() {
   };
 
   return (
-    <div>
-      <h4>Code Review Schema</h4>
-      <div className="wrap" style={{ minWidth: 450 }}>
-        <form onSubmit={(e) => setCRSchemasToGroups(e, groups)}>
-          <div className="row">
-            <div className="input-field col s12">
-              <input
-                {...bindTeachers}
-                id="teachers"
-                type="text"
-                className="validate"
-                value={teachers}
-                placeholder="Teachers"
-              />
-            </div>
-            <div className="input-field col s12">
-              <input
-                {...bindTimegaps}
-                id="timegaps"
-                type="text"
-                className="validate"
-                value={timegaps}
-                placeholder="Time Gaps"
-              />
-            </div>
-          </div>
+    <Container component="main" maxWidth="xl" sx={{ mt: 0 }}>
+      <Box sx={styles.formbox}>
+        <Avatar sx={{ m: 1, width: 60, height: 60, bgcolor: 'secondary.main' }}>
+          <CodeIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Code Review Schema
+        </Typography>
+      </Box>
+      <Box component="form" noValidate sx={{ mt: 1 }}>
+        <TextField
+          {...bindTeachers}
+          id="teachers"
+          type="text"
+          value={teachers}
+          label="Teachers"
+          margin="normal"
+          required
+          fullWidth
+        />
+
+        <TextField
+          {...bindTimegaps}
+          id="timegaps"
+          type="text"
+          className="validate"
+          value={timegaps}
+          label="Time Gaps"
+          margin="normal"
+          required
+          fullWidth
+        />
+        <Box sx={{ mt: 2 }}>
           {groups
             .filter((group) => group.groupType === groupType)
             .map((group) => (
-              <div key={group.name}>
-                <div>
-                  <span style={{ marginLeft: 25 }}>
-                    {`${group.groupType} ${group.phase} Ph 
-                    ${group.name} ${group.students.length} st.`}
-                  </span>
-                </div>
-
-                <div style={{ marginBottom: 20, marginTop: 10 }}>
-                  {Object.keys(group.crshedule.crdays).map((day) => (
-                    <label key={day}>
-                      <input
-                        type="checkbox"
-                        checked={group.crshedule.crdays[day]}
-                        onChange={(e) => setDaysAndGroup(day, group.name, e.target.checked)}
+              <div key={group.name} style={{ marginTop: 15 }}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">{`${group.groupType} ${group.phase} Ph 
+                    ${group.name} ${group.students.length} st.`}</FormLabel>
+                  <FormGroup aria-label="position" row>
+                    {Object.keys(group.crshedule.crdays).map((day) => (
+                      <FormControlLabel
+                        key={day}
+                        value="top"
+                        control={
+                          <Checkbox
+                            checked={group.crshedule.crdays[day]}
+                            onChange={(e) => setDaysAndGroup(day, group.name, e.target.checked)}
+                          />
+                        }
+                        label={day}
                       />
-                      <span style={{ marginLeft: 25 }}>{day}</span>
-                    </label>
-                  ))}
-                  <div className="divider"> </div>
-                </div>
+                    ))}
+                  </FormGroup>
+                </FormControl>
               </div>
             ))}
-          <div className="input-field" style={{ minWidth: '300px' }}>
-            <select
-              className="browser-default"
-              onChange={(e) => {
-                setGrType(e.target.value);
-              }}
-            >
-              {Object.keys(groupTypes).map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <button type="submit" className="btn waves-effect waves-light" disabled={isLoad}>
-              Save CodeReview scheme
-            </button>
-          </div>
-        </form>
-      </div>
+        </Box>
 
-      {isLoad && <LinearLoader />}
-    </div>
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel id="group-name-label">Group Type *</InputLabel>
+          <Select
+            labelId="group-name-label"
+            id="group-name"
+            label="Group Type *"
+            onChange={(e) => {
+              setGrType(e.target.value);
+            }}
+            value={groupType}
+          >
+            {Object.keys(groupTypes)
+              .filter((type) => type !== groupTypes.inactive && type !== groupTypes.waitlist)
+              .map((type) => {
+                return (
+                  <MenuItem key={type} value={type}>
+                    {type}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </FormControl>
+
+        <Stack sx={{ p: 4 }} direction="row" spacing={2} justifyContent="center">
+          <Button
+            variant="contained"
+            type="button"
+            disabled={isLoad}
+            onClick={(e) => setCRSchemasToGroups(e, groups)}
+          >
+            Save CodeReview scheme
+          </Button>
+        </Stack>
+      </Box>
+      {isLoad && <LinearIndeterminate />}
+    </Container>
   );
 }
+
+const styles = {
+  formbox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  }
+};

@@ -41,4 +41,25 @@ studentsSchema.statics.findActive = function (query) {
   return this.find(query);
 };
 
+studentsSchema.statics.createStudents = async function (studentsNamesArr, groupId) {
+  const uniqStudents = [...new Set(studentsNamesArr)];
+  const studentsInDb = await this.find({ name: { $in: uniqStudents } });
+  if (studentsInDb.length !== 0) {
+    const err = new Error(
+      `Student(s) ${studentsInDb.map((student) => student.name)} already exist`
+    );
+    err.code = 11000;
+    err.keyValue = studentsInDb.map((student) => student.name);
+    throw err;
+  }
+  return await this.create(
+    uniqStudents.map((studentName) => ({
+      name: studentName,
+      group: groupId,
+      history: []
+    }))
+  );
+
+};
+
 module.exports = model('Student', studentsSchema);

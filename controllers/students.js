@@ -1,6 +1,22 @@
 const Student = require('../models/Student');
 const Group = require('../models/Group');
 
+exports.createStudents = async (req, res) => {
+  const {studentsNamesArr, groupId} = req.body;
+  try {
+    const students = await Student.createStudents(studentsNamesArr, groupId);
+    res.status(200).json(students);
+  } catch (err) {
+    console.log('createStudents error', err);
+    if (err.code === 11000)
+      return res
+        .status(400)
+        .json({ err: `This record already exist ${JSON.stringify(err.keyValue)}` });
+    res.status(500).json({ err: err.message });
+
+  }
+};
+
 exports.allStudents = async (req, res) => {
   try {
     const {
@@ -20,9 +36,9 @@ exports.allStudents = async (req, res) => {
       ).lean();
 
     const query = {
-          name: { $regex: name, $options: 'i' },
-          group: { $in: groupIds }
-        }
+      name: { $regex: name, $options: 'i' },
+      group: { $in: groupIds }
+    };
 
     const populateOpt = {
       path: 'group',
@@ -34,11 +50,11 @@ exports.allStudents = async (req, res) => {
       .populate(populateOpt)
       .limit(limit)
       .skip(page * limit)
-      .sort({ updatedAt: -1, name: 1 })
+      .sort({ updatedAt: -1, name: 1 });
 
     res.status(200).json(students);
   } catch (err) {
-    console.log('allStudents get error', err.message);
+    console.log('allStudents get error', err);
     res.status(500).json({ err: err.message });
   }
 };
@@ -85,7 +101,6 @@ exports.getComment = async (req, res) => {
 
 exports.updComment = async (req, res) => {
   const { name, groupId, historyEl } = req.body;
-
   try {
     const student = await Student.findOne({ name: name, group: groupId });
     const index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
@@ -99,21 +114,40 @@ exports.updComment = async (req, res) => {
   }
 };
 
-// exports.updStudent = async (req, res) => {res.end()}
 
 exports.updStudent = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, group_id, photoUrl } = req.body;
-    console.log('file-students.js req.body:', req.body);
     const result = await Student.updateOne(
       { _id: id },
       { name: name, group: group_id, photoUrl: photoUrl }
     );
-    console.log('file-students.js res:', result);
     res.status(200).json({ message: 'ok' });
   } catch (err) {
     console.log('Student update error', err.message);
     res.status(500).json({ err: err.message });
   }
 };
+
+exports.delStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('file-students.js id:', id);
+    const inactiveGroup = await Group.findOne({ name: 'Inactive' });
+    if(!inactiveGroup) throw new Error('Inactive group did not find. Launch "npm run seed".')
+    await Student.updateOne({ _id: id  }, [
+      {
+        $set: {
+          name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
+          group: inactiveGroup._id
+        }
+      }
+    ]);
+    res.status(200).json({ message: 'ok' });
+  } catch (err) {
+    console.log('Student delete error', err.message);
+    res.status(500).json({ err: err.message });
+  }
+};
+
