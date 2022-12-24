@@ -8,6 +8,7 @@ import './App.css';
 import MainNav from '../../navigate/MainNav';
 import Navbar from '../../navigate/Navbar';
 import { createThemeOptions } from '../../consts';
+// import PopUpCompCodeReviewMessage from "../PopUp/PopUpCodeReviewMessage"
 
 function App() {
   const isAuth = useSelector((state) => state.auth.isAuth);
@@ -22,6 +23,7 @@ function App() {
         <Navbar isAuth={isAuth} />
         {isLoading ? <div className="spinner" /> : <MainNav isAuth={isAuth} />}
       </div>
+      {/*{isAuth && <PopUpCompCodeReviewMessage />}*/}
     </ThemeProvider>
   );
 }
