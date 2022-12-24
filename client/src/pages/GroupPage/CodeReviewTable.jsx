@@ -156,6 +156,7 @@ function CodeReviewTable({ group, isAuth }) {
   };
 
   const onAddComment = async (e, group, colNum) => {
+    console.log('file-CodeReviewTable.jsx group:', group);
     if (isLoad) return;
     const currentDate = new Date().setHours(0, 0, 0, 0);
     const studentsName = e.target.innerText;
@@ -163,6 +164,9 @@ function CodeReviewTable({ group, isAuth }) {
     setLoad(true);
     const lastRecord = await getComment(studentsName, group._id, currentDate);
     setLoad(false);
+    if (lastRecord.err) {
+      return alert(`Get Comment Error: ${lastRecord.err}`);
+    }
     const form = [
       { name: 'Comments Student' },
       { name: 'Comment', id: 'comment' },
@@ -184,7 +188,10 @@ function CodeReviewTable({ group, isAuth }) {
       comment: modal.result.comment
     };
 
-    await updateStudentComment(studentsName, group._id, historyEl);
+    const lastComment = await updateStudentComment(studentsName, group._id, historyEl);
+    if (modal.result.comment === lastComment.comment && modal.result.rating === lastComment.rating)
+      alert('Comment Saved to DB');
+    else alert(`Error to save comment: ${lastComment.err}`);
   };
 
   if (!crTables.length) return null;
@@ -287,18 +294,18 @@ function CodeReviewTable({ group, isAuth }) {
   );
 }
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: '#fff2cc'
-  },
-  '&:nth-of-type(even)': {
-    backgroundColor: '#cfe2f3'
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0
-  }
-}));
+// const StyledTableRow = styled(TableRow)(({ theme }) => ({
+//   '&:nth-of-type(odd)': {
+//     backgroundColor: '#fff2cc'
+//   },
+//   '&:nth-of-type(even)': {
+//     backgroundColor: '#cfe2f3'
+//   },
+//   // hide last border
+//   '&:last-child td, &:last-child th': {
+//     border: 0
+//   }
+// }));
 
 CodeReviewTable.propTypes = {
   isAuth: PropTypes.bool.isRequired,

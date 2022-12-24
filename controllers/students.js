@@ -82,6 +82,7 @@ exports.getStudent = async (req, res) => {
 
 exports.getComment = async (req, res) => {
   const { name, group, date } = req.query;
+  console.log('file-students.js stName, group,:', name, group);
   try {
     const student = await Student.findOne(
       { name, group, 'history.date': new Date(parseInt(date)) },
@@ -94,7 +95,7 @@ exports.getComment = async (req, res) => {
       res.status(200).json({ rating: null, comment: null });
     }
   } catch (err) {
-    console.log('getComment error', err);
+    console.error('getComment error', err);
     res.status(500).json({ err: err.message });
   }
 };
@@ -106,8 +107,9 @@ exports.updComment = async (req, res) => {
     const index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
     if (index === -1) student.history.push(historyEl);
     else student.history[index] = historyEl;
-    await student.save();
-    res.status(200).json({ message: 'ok' });
+    const updatedStudent = await student.save();
+    const lastComment = updatedStudent.history[updatedStudent.history.length-1]
+    res.status(200).json(lastComment);
   } catch (err) {
     console.log('updStudent error', err);
     res.status(500).json({ err: err.message });
