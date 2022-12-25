@@ -136,7 +136,7 @@ function CodeReviewTable({ group, isAuth }) {
     setEdit(false);
     setLoad(true);
     await updCRTablesGroups(crTablesRef.current, group._id);
-    await dispatch(getGroups()); //todo запись в стор из базы новых данных. переделать запись в стейт напрямую
+    await dispatch(getGroups()); //todo сделать запись в стор новых данных. (переделать запись в стейт напрямую)
     setLoad(false);
   };
 
