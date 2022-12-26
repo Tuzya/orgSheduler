@@ -3,19 +3,21 @@ import Button from '@mui/material/Button';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 
-function PopUpComp() {
+function PopUpComp({ message, variant }) {
+  // variant could be success, error, warning, info, or default
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const popUpData = useSelector((state) => state.popup);
 
   React.useEffect(() => {
     let count = 0;
+    let id = 0;
     if (popUpData.groupsCrTables.length && popUpData.teachersAndGaps.length) {
-      setInterval(() => {
-        handleClickVariant('This is a success message! ' + ++count);
+      id = setInterval(() => {
+        popUpHandler(++count, variant);
       }, 3000);
     }
+    return () => clearInterval(id);
   }, [popUpData]);
-
 
   const action = (snackbarId) => (
     <Button
@@ -26,11 +28,11 @@ function PopUpComp() {
       close
     </Button>
   );
-  const handleClickVariant = (message) => {
-    // variant could be success, error, warning, info, or default
+  const popUpHandler = (message = '', variant = 'info') => {
     enqueueSnackbar(message, {
-      variant: 'info',
-      action, preventDuplicate: true
+      variant,
+      action,
+      preventDuplicate: true
     });
   };
   return null;

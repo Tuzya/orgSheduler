@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { useSelector } from 'react-redux';
 import createTheme from '@mui/material/styles/createTheme';
 import { ThemeProvider } from '@mui/material';
@@ -8,7 +8,7 @@ import './App.css';
 import MainNav from '../../navigate/MainNav';
 import Navbar from '../../navigate/Navbar';
 import { createThemeOptions } from '../../consts';
-// import PopUpCompCodeReviewMessage from "../PopUp/PopUpCodeReviewMessage"
+const PopUpCompCodeReviewMessage = lazy(() => import('../PopUp/PopUpCodeReviewMessage'));
 
 function App() {
   const isAuth = useSelector((state) => state.auth.isAuth);
@@ -23,7 +23,11 @@ function App() {
         <Navbar isAuth={isAuth} />
         {isLoading ? <div className="spinner" /> : <MainNav isAuth={isAuth} />}
       </div>
-      {/*{isAuth && <PopUpCompCodeReviewMessage />}*/}
+      {isAuth && (
+        <Suspense fallback={<>...</>}>
+          <PopUpCompCodeReviewMessage />
+        </Suspense>
+      )}
     </ThemeProvider>
   );
 }
