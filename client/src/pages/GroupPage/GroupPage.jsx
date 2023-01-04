@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -18,7 +18,7 @@ function GroupPage({ isAuth }) {
     [group]
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     const group = groups.find((group) => group._id === groupId);
     if (group) dispatch(setGroup(group));
     else dispatch(getGroup(groupId));
@@ -35,7 +35,7 @@ function GroupPage({ isAuth }) {
       </div>
     );
 
-  const isCodeReview = !Object.values(group.crshedule?.crdays).every((day) => !day);
+  // const isCodeReview = !Object.values(group.crshedule?.crdays).every((day) => !day);
   return (
     <div className="group-page">
       <div className="group-schedule-header">
@@ -43,7 +43,7 @@ function GroupPage({ isAuth }) {
         <div>{`(${group.groupType}, Phase: ${group.phase})`}</div>
       </div>
       {group.shedule ? <GroupShedule shedule={group.shedule} /> : <div />}
-      {isCodeReview ? (<CodeReviewTable group={groupWithStudentsAsNames} isAuth={isAuth}/>) : (<div />)}
+      <CodeReviewTable group={groupWithStudentsAsNames} isAuth={isAuth}/>
     </div>
   );
 }

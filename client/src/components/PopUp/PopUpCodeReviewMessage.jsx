@@ -2,18 +2,25 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
-import { getCurrentHour, getCurrentMinutes, getCurrentWeekDay } from '../../libs/functions';
+import { getCurrentWeekDay, indexOfCurrentTimeGaps } from '../../libs/functions';
+import FloatingButton from './FloatingButton';
 
-function PopUpComp({ message, variant }) {
+function PopUpComp() {
   // variant could be success, error, warning, info, or default
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const popUpData = useSelector((state) => state.popup);
+  const [timeGaps, setTimeGaps] = React.useState({});
+  const [teachers, setTeachers] = React.useState({});
+  const [tablesByCurrentDay, setTablesByCurrentDay] = React.useState([]);
 
   React.useEffect(() => {
-    let count = 0;
-    let id = 0;
     if (popUpData.groupsCrTables.length && popUpData.teachersAndGaps.length) {
       const currentTime = new Date();
+      const teachers = popUpData.teachersAndGaps.reduce(
+        (acc, data) => ({ ...acc, [data.groupType]: data.teachers }),
+        {}
+      );
+      setTeachers(teachers);
       const timeGaps = popUpData.teachersAndGaps.reduce((acc, data) => {
         return {
           ...acc,
@@ -25,30 +32,17 @@ function PopUpComp({ message, variant }) {
           })
         };
       }, {});
+      setTimeGaps(timeGaps);
 
       const currentWeekDay = getCurrentWeekDay();
-
-      const filteredByCurrentDay = popUpData.groupsCrTables.map((table) =>
-        table.crtables.filter((crtables) => crtables.crDay === currentWeekDay)
-      );
-      // console.log('file-PopUpCodeReviewMessage.jsx filteredByCurrentDay:', filteredByCurrentDay);
-
-      // const filteredByCurentHours = filteredByCurrentDay.map((crtables) =>
-      //   crtables.map((crtable) =>
-      //     crtable.tableData.map((row,i) => ())
-      //
-      //
-      //   )
-      // );
-      // .map((data) => data.tableData.map((tableData, i) => tableData))
-
-      var time = '10:00-10:10'.match(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/i);
-
-      id = setInterval(() => {
-        popUpHandler(++count, variant);
-      }, 30000);
+      const tablesByCurrentDay = popUpData.groupsCrTables.reduce((acc, group) => {
+        const crtables = group.crtables.filter((table) => table.crDay === currentWeekDay);
+        if (crtables.length)
+          return [...acc, { name: group.name, groupType: group.groupType, crtables }];
+        return [...acc];
+      }, []);
+      setTablesByCurrentDay(tablesByCurrentDay);
     }
-    return () => clearInterval(id);
   }, [popUpData]);
 
   const action = (snackbarId) => (
@@ -67,12 +61,38 @@ function PopUpComp({ message, variant }) {
       preventDuplicate: true
     });
   };
-  return null;
+
+  const onClickFloatingBtn = () => {
+    const matchedCodeReview = tablesByCurrentDay.reduce((acc, group) => {
+      const i = indexOfCurrentTimeGaps(timeGaps[group.groupType]);
+      if (i === -1) return [...acc];
+      const matched = group.crtables.reduce((crtablesAcc, crtables) => {
+        const tableData = crtables.tableData
+          .map((tableData, index) => {
+            if (index === 0) return { student: ' ' };
+            return {
+              time: crtables.tableData[0][`row${i + 1}`],
+              group: group.name,
+              teacher: index !== 0 ? teachers[group.groupType][index - 1] : undefined,
+              student: tableData[`row${i + 1}`]
+            };
+          })
+          .filter((data) => data.student !== ' ' && data.student !== 'Педсовет');
+        return [...crtablesAcc, ...tableData];
+      }, []);
+      return [...acc, ...matched];
+    }, []);
+    matchedCodeReview.forEach((dataCR) => {
+      const codeReviewInfo = `time: ${dataCR.time}, teacher: ${dataCR.teacher}, group: ${dataCR.group} student: ${dataCR.student}`;
+      popUpHandler(codeReviewInfo);
+    });
+  };
+  return <FloatingButton onClickFloatingBtn={onClickFloatingBtn} />;
 }
 
 export default function PopUpCodeReviewMessage() {
   return (
-    <SnackbarProvider maxSnack={10} autoHideDuration={60000}>
+    <SnackbarProvider maxSnack={15} autoHideDuration={180000}>
       <PopUpComp />
     </SnackbarProvider>
   );

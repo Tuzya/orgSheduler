@@ -15,3 +15,10 @@ export const getCurrentWeekDay = () => {
 
 export const getCurrentHour = () => new Date().getHours();
 export const getCurrentMinutes = () => new Date().getMinutes();
+export const indexOfCurrentTimeGaps = (timeGaps = []) => {
+  const currentGap = timeGaps.find((time) => {
+    const timeDiffInMinutes = (new Date().getTime() - time) / 1000 / 60;
+    return -10 < timeDiffInMinutes && timeDiffInMinutes < 10; //ten minutes before and ten after
+  })
+  return timeGaps.indexOf(currentGap)
+}
