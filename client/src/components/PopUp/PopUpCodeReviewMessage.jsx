@@ -82,6 +82,7 @@ function PopUpComp() {
       }, []);
       return [...acc, ...matched];
     }, []);
+    if (matchedCodeReview.length === 0) return popUpHandler('no code review now');
     matchedCodeReview.forEach((dataCR) => {
       const codeReviewInfo = `time: ${dataCR.time}, teacher: ${dataCR.teacher}, group: ${dataCR.group} student: ${dataCR.student}`;
       popUpHandler(codeReviewInfo);
