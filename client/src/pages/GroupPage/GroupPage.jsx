@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import './GroupPage.css';
 import GroupShedule from './GroupShedule';
 import CodeReviewTable from './CodeReviewTable';
+import ExamGeneration from './ExamGeneration';
 import { getGroup, setGroup } from '../../store/camp/actions';
 import { isObjEmpty } from '../../libs/functions';
 
@@ -44,6 +45,7 @@ function GroupPage({ isAuth }) {
       </div>
       {group.shedule ? <GroupShedule shedule={group.shedule} /> : <div />}
       <CodeReviewTable group={groupWithStudentsAsNames} isAuth={isAuth}/>
+      {isAuth && <ExamGeneration></ExamGeneration>}
     </div>
   );
 }
