@@ -71,7 +71,7 @@ export default function StudentsCreateForm() {
               required
               fullWidth
               id="name"
-              label="Student(s) Name"
+              label="Students names by comma"
             />
 
             <FormControl fullWidth sx={{ mt: 2 }}>

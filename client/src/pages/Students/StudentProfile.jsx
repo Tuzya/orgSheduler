@@ -20,14 +20,14 @@ export default function StudentProfile() {
   const { studentId } = useParams();
 
   const students = useSelector((state) => state.students.data);
-  const student =
-    students.find((student) => student._id === studentId) ||
-    useSelector((state) => state.students.student);
+  const studentFind = students.find((student) => student._id === studentId);
+  const studentSel = useSelector((state) => state.students.student);
+  const student = studentFind || studentSel;
   const isLoading = useSelector((state) => state.students.isLoading);
 
   React.useEffect(() => {
     if (!students.length) dispatch(getStudent(studentId));
-  }, [dispatch]);
+  }, []);
 
   return (
     <div style={{ marginTop: 20 }}>

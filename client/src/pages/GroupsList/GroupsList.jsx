@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import GroupItem from '../../components/GroupItem/GroupItem';
 import { getGroups } from '../../store/camp/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { DAYTORU, groupTypes } from '../../consts';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
+const PopUpCompCodeReviewMessage = lazy(() =>
+  import('../../components/PopUp/PopUpCodeReviewMessage')
+);
 
 function GroupsList({ isAuth }) {
   const groups = useSelector((state) => state.camp.groups);
@@ -25,7 +28,7 @@ function GroupsList({ isAuth }) {
 
   const filteredGroups = groups.filter(
     (group) => group.groupType !== groupTypes.inactive && group.groupType !== groupTypes.waitlist
-  ).sort((a, b) => a.groupType.localeCompare(b.groupType));
+  );
 
   return (
     <Grid item xs={12} md={6}>
@@ -33,19 +36,26 @@ function GroupsList({ isAuth }) {
         {filteredGroups.map((group) => {
           const codeReviewDays = Object.entries(group.crshedule.crdays)
             .filter((day) => day[1])
-            .map((day) => ` ${DAYTORU[day[0]]}`)
-          return <GroupItem
-            key={group._id}
-            isAuth={isAuth}
-            name={group.name}
-            groupPage={`/groups/${group._id}`}
-            phase={group.phase}
-            people={group.students?.map((student) => student.name).sort()}
-            groupType={group.groupType}
-            codeReviewDays={codeReviewDays}
-          />
+            .map((day) => ` ${DAYTORU[day[0]]}`);
+          return (
+            <GroupItem
+              key={group._id}
+              isAuth={isAuth}
+              name={group.name}
+              groupPage={`/groups/${group._id}`}
+              phase={group.phase}
+              people={group.students?.map((student) => student.name).sort()}
+              groupType={group.groupType}
+              codeReviewDays={codeReviewDays}
+            />
+          );
         })}
       </List>
+      {isAuth && (
+        <Suspense fallback={<>...</>}>
+          <PopUpCompCodeReviewMessage />
+        </Suspense>
+      )}
     </Grid>
   );
 }

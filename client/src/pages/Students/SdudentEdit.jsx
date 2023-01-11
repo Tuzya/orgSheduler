@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import LinearIndeterminate from '../../components/Loader/LinearIndeterminate';
-import { groupTypes } from '../../consts';
 
 export default function StudentEdit() {
   const dispatch = useDispatch();

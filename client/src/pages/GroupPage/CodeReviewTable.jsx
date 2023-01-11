@@ -2,7 +2,6 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Modal } from '@daypilot/modal';
-import { useDispatch } from 'react-redux';
 
 import LinearLoader from '../../components/Loader/LinearLoader';
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
@@ -10,9 +9,8 @@ import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import { isObjEmpty } from '../../libs/functions';
 import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
 import { getComment, updateStudentComment } from '../../store/students/actions';
-import { getGroups, updCRTablesGroups } from '../../store/camp/actions';
+import { updCRTablesGroups } from '../../store/camp/actions';
 
-import styled from '@mui/material/styles/styled';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -55,7 +53,6 @@ function CodeReviewTable({ group, isAuth }) {
   const [teachers, setTeachers] = React.useState([]);
   const [isEdit, setEdit] = React.useState(false);
   const history = useHistory();
-  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (!isObjEmpty(group)) {
@@ -87,7 +84,7 @@ function CodeReviewTable({ group, isAuth }) {
     }
   }, [group]);
 
-  const generateStudentsToTable = async (group, teachers, timeGaps) => {
+  const generateStudentsToTable = (group, teachers, timeGaps) => {
     let resCRTables = [];
     const crdays = group.crshedule?.crdays || {};
     Object.keys(crdays).forEach((day) => {
@@ -116,10 +113,7 @@ function CodeReviewTable({ group, isAuth }) {
       return { ...el, tableData };
     });
     crTablesRef.current = JSON.parse(JSON.stringify(crTablesData));
-    setcrTables(crTablesData);
-    setLoad(true);
-    await updCRTablesGroups(crTablesData, group._id);
-    setLoad(false);
+    handleInputSave();
   };
 
   const handleInputChange = (inputData, day, col, row) => {
@@ -135,8 +129,8 @@ function CodeReviewTable({ group, isAuth }) {
     setcrTables(crTablesRef.current);
     setEdit(false);
     setLoad(true);
-    await updCRTablesGroups(crTablesRef.current, group._id);
-    await dispatch(getGroups()); //todo запись в стор из базы новых данных. переделать запись в стейт напрямую
+    const res = await updCRTablesGroups(crTablesRef.current, group._id);
+    if (res.err) alert(`Update Table Error ${res.err}`);
     setLoad(false);
   };
 
@@ -156,6 +150,7 @@ function CodeReviewTable({ group, isAuth }) {
   };
 
   const onAddComment = async (e, group, colNum) => {
+    console.log('file-CodeReviewTable.jsx group:', group);
     if (isLoad) return;
     const currentDate = new Date().setHours(0, 0, 0, 0);
     const studentsName = e.target.innerText;
@@ -163,6 +158,9 @@ function CodeReviewTable({ group, isAuth }) {
     setLoad(true);
     const lastRecord = await getComment(studentsName, group._id, currentDate);
     setLoad(false);
+    if (lastRecord.err) {
+      return alert(`Get Comment Error: ${lastRecord.err}`);
+    }
     const form = [
       { name: 'Comments Student' },
       { name: 'Comment', id: 'comment' },
@@ -172,6 +170,7 @@ function CodeReviewTable({ group, isAuth }) {
       comment: lastRecord.comment || '',
       rating: lastRecord.rating || '5'
     };
+
     const modal = await Modal.form(form, data);
     if (modal.canceled) return;
     const historyEl = {
@@ -184,10 +183,15 @@ function CodeReviewTable({ group, isAuth }) {
       comment: modal.result.comment
     };
 
-    await updateStudentComment(studentsName, group._id, historyEl);
+    const lastComment = await updateStudentComment(studentsName, group._id, historyEl);
+    if (modal.result.comment === lastComment.comment && modal.result.rating === lastComment.rating)
+      alert('Comment Saved to DB');
+    else alert(`Error to save comment: ${lastComment.err}`);
   };
 
-  if (!crTables.length) return null;
+  const handleFocus = (event) => event.target.select();
+
+  if (!crTables.length) return <></>;
   return (
     <>
       <div>
@@ -246,6 +250,7 @@ function CodeReviewTable({ group, isAuth }) {
                               onChange={(e) =>
                                 handleInputChange(e.target.value, crTablegroup.crDay, colNum, row)
                               }
+                              onClick={handleFocus}
                             />
                           )}
                         </TableCell>
@@ -287,18 +292,18 @@ function CodeReviewTable({ group, isAuth }) {
   );
 }
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: '#fff2cc'
-  },
-  '&:nth-of-type(even)': {
-    backgroundColor: '#cfe2f3'
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0
-  }
-}));
+// const StyledTableRow = styled(TableRow)(({ theme }) => ({
+//   '&:nth-of-type(odd)': {
+//     backgroundColor: '#fff2cc'
+//   },
+//   '&:nth-of-type(even)': {
+//     backgroundColor: '#cfe2f3'
+//   },
+//   // hide last border
+//   '&:last-child td, &:last-child th': {
+//     border: 0
+//   }
+// }));
 
 CodeReviewTable.propTypes = {
   isAuth: PropTypes.bool.isRequired,

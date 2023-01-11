@@ -26,6 +26,7 @@ import Checkbox from '@mui/material/Checkbox';
 import FormLabel from '@mui/material/FormLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import {isTimeGapsValid} from "../../libs/functions"
 
 export default function CodeReviewSchema() {
   const [groups, setGroups] = React.useState([]);
@@ -94,6 +95,7 @@ export default function CodeReviewSchema() {
   };
   const setCRSchemasToGroups = async (event, groups) => {
     event.preventDefault();
+    if(!isTimeGapsValid(timegaps)) return alert('Указанное время не соответствует формату HH:MM')
     setLoad(true);
     try {
       const resGr = await updAllGroups(groups);
