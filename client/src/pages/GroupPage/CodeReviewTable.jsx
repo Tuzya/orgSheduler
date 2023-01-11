@@ -95,7 +95,7 @@ function CodeReviewTable({ group, isAuth }) {
     let counter = 0;
     const cellsInTable = teachers.length * timeGaps.length - teachers.length;
     if (resCRTables.length && cellsInTable * resCRTables.length < group.students.length)
-    // alert('Студенты не помещаются в таблицу!');
+    alert('Студенты не помещаются в таблицу!');
       return 
     const crTablesData = resCRTables.map((el) => {
       let index = 0;
