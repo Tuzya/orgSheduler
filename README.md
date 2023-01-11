@@ -22,7 +22,7 @@ npm start                            - из ./client папки
 
 ##  Запуск (production)
 npm install  
-npm run seed  
+NODE_ENV=production npm run seed  
 npm run build  
 NODE_ENV=production npm start
 
