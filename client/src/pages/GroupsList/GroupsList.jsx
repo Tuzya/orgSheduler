@@ -34,7 +34,7 @@ function GroupsList({ isAuth }) {
     <Grid item xs={12} md={6}>
       <List sx={{ width: '100%', minWidth: 300, bgcolor: 'background.paper' }}>
         {filteredGroups.map((group) => {
-          const codeReviewDays = Object.entries(group.crshedule.crdays)
+          const codeReviewDays = Object.entries(group.crshedule?.crdays || {})
             .filter((day) => day[1])
             .map((day) => ` ${DAYTORU[day[0]]}`);
           return (
