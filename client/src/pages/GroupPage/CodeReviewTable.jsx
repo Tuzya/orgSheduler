@@ -126,6 +126,7 @@ function CodeReviewTable({ group, isAuth }) {
   };
 
   const handleInputSave = async () => {
+    console.log('tut')
     setcrTables(crTablesRef.current);
     setEdit(false);
     setLoad(true);
