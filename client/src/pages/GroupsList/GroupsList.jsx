@@ -52,7 +52,7 @@ function GroupsList({ isAuth }) {
         })}
       </List>
       {isAuth && (
-        <Suspense fallback={<>...</>}>
+        <Suspense fallback={<>{'\u00A0'}</>}>
           <PopUpCompCodeReviewMessage />
         </Suspense>
       )}
