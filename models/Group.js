@@ -18,7 +18,7 @@ const groupSchema = new Schema(
         wed: Boolean,
         thu: Boolean,
         fri: Boolean
-      }
+      },
     },
     crtables: [{ crDay: String, tableData: [{}] }],
     isArchived: { type: Boolean, default: false }
@@ -122,7 +122,7 @@ groupSchema.statics.deleteGroupAndStudents = async function (id) {
   const group = await this.findById(id);
   const students = await Student.find({ group: group.id }, { _id: 1 });
   const inactiveGroup = await this.findOne({ name: 'Inactive' });
-  if(!inactiveGroup) throw new Error('Inactive group did not find. Launch "npm run seed".')
+  if (!inactiveGroup) throw new Error('Inactive group did not find. Launch "npm run seed".');
   const studentsIds = students.map((student) => student._id);
 
   //перемещаем студентов в гр. inactive

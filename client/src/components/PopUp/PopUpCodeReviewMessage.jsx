@@ -77,7 +77,7 @@ function PopUpComp() {
               student: tableData[`row${i + 1}`]
             };
           })
-          .filter((data) => data.student !== ' ' && data.student !== 'Педсовет');
+          .filter((data) => data.student !== ' ' && data.student !== 'Педсовет' && data.student !== '');
         return [...crtablesAcc, ...tableData];
       }, []);
       return [...acc, ...matched];
