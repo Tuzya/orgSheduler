@@ -17,7 +17,7 @@ const SdudentEdit = lazy(() => import("../pages/Students/SdudentEdit"));
 export default function MainNav({ isAuth }) {
   return (
     <main>
-      <Suspense fallback={<>...</>}>
+      <Suspense fallback={<div className="spinner" />}>
         <Switch>
           <Route exact path="(/|/groups)">
             <GroupsList isAuth={isAuth} />
