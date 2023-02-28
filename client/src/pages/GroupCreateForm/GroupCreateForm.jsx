@@ -49,7 +49,7 @@ export default function GroupCreateForm() {
     const online = groupType === groupTypes.online;
     if (!schemas?.[online ? 'online' : 'offline']) {
       alert(
-        `Схема для фазы ${phase} ${
+        `Схема пар (Pairs Schema) для фазы ${phase} ${
           online ? 'онлайн' : 'оффлайн'
         } группы не существует.\nСперва создайте эту схему.`
       );

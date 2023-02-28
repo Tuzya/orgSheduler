@@ -148,6 +148,7 @@ export default function CodeReviewSchema() {
           margin="normal"
           required
           fullWidth
+          placeholder={'12:30-12:55, 13:00-13:30'}
         />
         <Box sx={{ mt: 2 }}>
           {groups

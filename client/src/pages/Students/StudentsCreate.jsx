@@ -35,7 +35,7 @@ export default function StudentsCreateForm() {
   const createStudent = async (event) => {
     event.preventDefault();
     if (!studentsNames || !groupId) return alert('Ошибка валидации формы');
-    const studentsNamesArr = studentsNames.split(/ *, */g);
+    const studentsNamesArr = studentsNames.replace(/\s+/g, ' ').replace(/,\s*$/, '').trim().split(/ *, */g);
     setLoad(true);
 
     const students = await createStudents(studentsNamesArr, groupId);
