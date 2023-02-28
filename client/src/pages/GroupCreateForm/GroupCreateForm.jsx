@@ -41,7 +41,8 @@ export default function GroupCreateForm() {
     event.preventDefault();
     if (!students.length || parseInt(phase) > MAX_NUMS_PHASES || parseInt(phase) < 1 || !name)
       return alert('Ошибка валидации формы');
-    const studentsArr = [...new Set(students.split(/ *, */g))];
+    // удаляем лишние пробелы между слов, убираем запятые в конце, исключаем повторяющиеся имена
+    const studentsArr = [...new Set(students.replace(/\s+/g, ' ').replace(/,\s*$/, '').trim().split(/ *, */g))];
 
     setLoad(true);
     const schemas = await getSchemas(phase);
