@@ -103,7 +103,7 @@ exports.getComment = async (req, res) => {
 exports.updComment = async (req, res) => {
   const { name, groupId, historyEl } = req.body;
   try {
-    const student = await Student.findOne({ name: name.replace(/\s+/g, ' ').trim(), group: groupId });
+     const student = await Student.findOne({ name: name.replace(/\s+/g, ' ').trim(), group: groupId });
     if(!student) throw new Error(`Student ${name} did not found`);
     const index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
     if (index === -1) student.history.push(historyEl);
@@ -122,7 +122,7 @@ exports.updStudent = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, group_id, photoUrl } = req.body;
-    const result = await Student.updateOne(
+    await Student.updateOne(
       { _id: id },
       { name: name, group: group_id, photoUrl: photoUrl }
     );

@@ -11,8 +11,8 @@ const mongooseStoreOpt = require('../connection');
 const User = require('../models/User');
 
 function addMiddlewares(router) {
-  router.use(express.urlencoded({ extended: true }));
-  router.use(express.json());
+  router.use(express.urlencoded({ limit: '30mb', extended: true }));
+  router.use(express.json({ limit: '30mb' }));
 
   router.use(morgan('dev'));
 
@@ -23,9 +23,6 @@ function addMiddlewares(router) {
   };
   router.use(corsMiddleware);
   router.use(express.static('public'));
-
-  router.use(express.urlencoded({ extended: false }));
-  router.use(express.json());
 
   passport.use(new LocalStrategy(
     async (username, password, done) => {
