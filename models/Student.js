@@ -4,7 +4,7 @@ const studentsSchema = new Schema(
   {
     name: { type: String, required: true, unique: true },
     group: { type: Schema.Types.ObjectId, ref: 'Group' },
-    photoUrl: {type: String, default: ''},
+    photoUrl: { type: String, default: '' },
     history: [
       {
         phase: Number,
@@ -13,7 +13,12 @@ const studentsSchema = new Schema(
         date: Date,
         teacher: String,
         rating: String,
-        comment: String
+        comment: String,
+        quality: {
+          type: String,
+          enum: ['normal', 'problem'],
+          default: 'normal'
+        }
       }
     ]
   },
@@ -35,7 +40,7 @@ studentsSchema.statics.findActive = function (query) {
     query = {};
   }
   query.groupType =
-    (query.groupType === undefined || query.groupType === '')
+    query.groupType === undefined || query.groupType === ''
       ? { $regex: /\b(?!inactive\b)\w+/, $options: 'i' } // ищем студентов у которых groupType не inactive
       : query.groupType;
   return this.find(query);
@@ -59,7 +64,6 @@ studentsSchema.statics.createStudents = async function (studentsNamesArr, groupI
       history: []
     }))
   );
-
 };
 
 module.exports = model('Student', studentsSchema);

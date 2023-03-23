@@ -33,7 +33,7 @@ export default function PairsSchema() {
   const generateSchema = async (event, key, schema, phase) => {
     event.preventDefault();
     setLoad(true);
-    const res = await putSchemas(key, schema, phase); //todo try-catch
+    const res = await putSchemas(key, schema, phase);
     setLoad(false);
     if (res?.message === 'ok')
       alert(`${key === 'offline' ? 'Оффлайн' : 'Онлайн'} схема обновлена...`);
