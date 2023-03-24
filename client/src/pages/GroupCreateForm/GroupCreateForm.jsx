@@ -74,7 +74,6 @@ export default function GroupCreateForm() {
     }
     setGroupId(group._id);
     dispatch(addGroup(group));
-    // setSchedule(generatedSchedule); // TODO: check if is is ok
     setLoad(false);
     sessionStorage.clear();
     return history.push(`/groups/${group._id}`);

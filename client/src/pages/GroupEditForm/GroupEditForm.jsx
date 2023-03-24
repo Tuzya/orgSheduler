@@ -127,7 +127,7 @@ export default function GroupEditForm() {
       });
       const delData = await response.json();
       if (delData.err) throw new Error(`Error while delete: ${delData.err}`);
-      await dispatch(delGroup(groupId));
+      dispatch(delGroup(groupId));
       setLoad(false);
       history.push('/groups');
     } catch (err) {

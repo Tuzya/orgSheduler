@@ -82,17 +82,20 @@ exports.getStudent = async (req, res) => {
 
 exports.getComment = async (req, res) => {
   const { name, group, date } = req.query;
-  console.log('file-students.js stName, group,:', name, group);
   try {
+    // const student = await Student.findOne( // показываем последний коммент, если кликнули в тот же день
+    //   { name, group, 'history.date': new Date(parseInt(date)) },
+    //   { history: 1 }
+    // ).lean();
     const student = await Student.findOne(
-      { name, group, 'history.date': new Date(parseInt(date)) },
-      { history: 1 }
+        { name, group },
+        { history: 1 }
     ).lean();
     if (student) {
       const lastRecord = student.history[student.history.length - 1];
-      res.status(200).json({ rating: lastRecord.rating, comment: lastRecord.comment });
+      res.status(200).json({ rating: lastRecord.rating, comment: lastRecord.comment, quality: lastRecord.quality });
     } else {
-      res.status(200).json({ rating: null, comment: null });
+      res.status(200).json({ rating: null, comment: null, quality: null });
     }
   } catch (err) {
     console.error('getComment error', err);
@@ -136,7 +139,6 @@ exports.updStudent = async (req, res) => {
 exports.delStudent = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('file-students.js id:', id);
     const inactiveGroup = await Group.findOne({ name: 'Inactive' });
     if(!inactiveGroup) throw new Error('Inactive group did not find. Launch "npm run seed".')
     await Student.updateOne({ _id: id  }, [

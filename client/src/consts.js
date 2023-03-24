@@ -55,6 +55,11 @@ export const rating = [
   {name: "0", id: "0"},
 ];
 
+export const quality = [
+  {name: "normal", id: "normal"},
+  {name: "problem", id: "problem"},
+];
+
 export const createThemeOptions = {
   palette: {
     primary: { main: '#4520ab' },

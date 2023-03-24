@@ -82,7 +82,6 @@ export const createUser = (e, history) => async (dispatch) => {
     });
     const data = await signUpResponse.json();
     if (signUpResponse.status === 200) return history.push('/login');
-    console.log('signUpResponse', signUpResponse);
     alert(`${signUpResponse.status} ${data.err}`);
   } catch (e) {
     console.log('sign-up error:', e);

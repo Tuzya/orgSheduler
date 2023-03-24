@@ -7,7 +7,7 @@ import LinearLoader from '../../components/Loader/LinearLoader';
 import { GenerateRandomNumbers } from '../../libs/randomNumber';
 import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 import { isObjEmpty } from '../../libs/functions';
-import { DAYS, DAYTORU, groupTypes, rating } from '../../consts';
+import { DAYS, DAYTORU, groupTypes, quality, rating } from '../../consts';
 import { getComment, updateStudentComment } from '../../store/students/actions';
 import { updCRTablesGroups } from '../../store/camp/actions';
 
@@ -126,7 +126,6 @@ function CodeReviewTable({ group, isAuth }) {
   };
 
   const handleInputSave = async () => {
-    console.log('tut')
     setcrTables(crTablesRef.current);
     setEdit(false);
     setLoad(true);
@@ -151,25 +150,27 @@ function CodeReviewTable({ group, isAuth }) {
   };
 
   const onAddComment = async (e, group, colNum) => {
-    console.log('file-CodeReviewTable.jsx group:', group);
     if (isLoad) return;
     const currentDate = new Date().setHours(0, 0, 0, 0);
     const studentsName = e.target.innerText;
     if (colNum === 0 || studentsName === '' || studentsName === 'Педсовет' || !isAuth) return;
     setLoad(true);
     const lastRecord = await getComment(studentsName, group._id, currentDate);
+
     setLoad(false);
     if (lastRecord.err) {
       return alert(`Get Comment Error: ${lastRecord.err}`);
     }
     const form = [
       { name: 'Comments Student' },
-      { name: 'Comment', id: 'comment' },
-      { name: 'Rating', id: 'rating', options: rating }
+      { name: 'Last Comment', id: 'comment' },
+      { name: 'Last Rating', id: 'rating', options: rating },
+      { name: 'Quality', id: 'quality', options: quality }
     ];
     const data = {
       comment: lastRecord.comment || '',
-      rating: lastRecord.rating || '5'
+      rating: lastRecord.rating || '5',
+      quality: lastRecord.quality || 'normal',
     };
 
     const modal = await Modal.form(form, data);
@@ -181,10 +182,12 @@ function CodeReviewTable({ group, isAuth }) {
       teacher: teachers[colNum - 1],
       date: currentDate, // если комент в тот же самый день - то он обновиться. если в другой - запушиться. поэтому отсекаем время от даты.
       rating: modal.result.rating,
-      comment: modal.result.comment
+      comment: modal.result.comment,
+      quality: modal.result.quality
     };
-
+    setLoad(true);
     const lastComment = await updateStudentComment(studentsName, group._id, historyEl);
+    setLoad(false);
     if (modal.result.comment === lastComment.comment && modal.result.rating === lastComment.rating)
       alert('Comment Saved to DB');
     else alert(`Error to save comment: ${lastComment.err}`);
