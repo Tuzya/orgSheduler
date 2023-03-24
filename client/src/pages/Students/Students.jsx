@@ -2,7 +2,7 @@ import React from 'react';
 import './students.css';
 
 import { DebounceInput } from 'react-debounce-input';
-import { groupTypes } from '../../consts';
+import { groupTypes } from 'consts';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import {
@@ -20,8 +20,8 @@ import {
   Container
 } from '@mui/material';
 
-import { getStudents } from '../../store/students/actions';
-import { getGroups } from '../../store/camp/actions';
+import { getStudents } from 'store/students/actions';
+import { getGroups } from 'store/camp/actions';
 import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
 

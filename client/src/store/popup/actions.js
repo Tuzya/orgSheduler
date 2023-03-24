@@ -1,9 +1,9 @@
 import actionTypes from '../types';
 import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
 
-const setTeachers = (teachers) => ({ type: actionTypes.SET_TEACHERS, payload: { teachers } });
-const setTimegaps = (timeGaps) => ({ type: actionTypes.SET_TIMEGAPS, payload: { timeGaps } });
-const setCrtables = (crTables) => ({ type: actionTypes.SET_CRTABLES, payload: { crTables } });
+// const setTeachers = (teachers) => ({ type: actionTypes.SET_TEACHERS, payload: { teachers } });
+// const setTimegaps = (timeGaps) => ({ type: actionTypes.SET_TIMEGAPS, payload: { timeGaps } });
+// const setCrtables = (crTables) => ({ type: actionTypes.SET_CRTABLES, payload: { crTables } });
 const setPopUpData = (data) => ({ type: actionTypes.SET_POPUPDATA, payload: { data } });
 
 export const getPopUpData = () => async (dispatch) => {

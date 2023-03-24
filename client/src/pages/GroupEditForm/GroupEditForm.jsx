@@ -17,13 +17,13 @@ import {
 } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import Autocomplete from '@mui/material/Autocomplete/Autocomplete';
-
-import { getShedule } from '../../libs/groups-splitter';
 import './GroupEditForm.css';
-import useInput from '../../hooks/input-hook';
-import { getSchemas } from '../../libs/reqFunct/Schemas';
-import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
-import { delGroup, getGroups, putGroup } from '../../store/camp/actions';
+
+import { getShedule } from 'libs/groups-splitter';
+import useInput from 'hooks/input-hook';
+import { getSchemas } from 'libs/reqFunct/Schemas';
+import { groupTypes, MAX_NUMS_PHASES } from 'consts';
+import { delGroup, getGroups, putGroup } from 'store/camp/actions';
 
 export default function GroupEditForm() {
   const history = useHistory();

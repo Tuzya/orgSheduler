@@ -3,13 +3,13 @@ import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Modal } from '@daypilot/modal';
 
-import LinearLoader from '../../components/Loader/LinearLoader';
-import { GenerateRandomNumbers } from '../../libs/randomNumber';
-import { getTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
-import { isObjEmpty } from '../../libs/functions';
-import { DAYS, DAYTORU, groupTypes, quality, rating } from '../../consts';
-import { getComment, updateStudentComment } from '../../store/students/actions';
-import { updCRTablesGroups } from '../../store/camp/actions';
+import LinearLoader from 'components/Loader/LinearLoader';
+import { GenerateRandomNumbers } from 'libs/randomNumber';
+import { getTeachersAndGaps } from 'libs/reqFunct/teachersAndTimes';
+import { isObjEmpty } from 'libs/functions';
+import { DAYS, DAYTORU, groupTypes, quality, rating } from 'consts';
+import { getComment, updateStudentComment } from 'store/students/actions';
+import { updCRTablesGroups } from 'store/camp/actions';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';

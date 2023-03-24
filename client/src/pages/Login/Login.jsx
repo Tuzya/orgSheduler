@@ -1,10 +1,10 @@
 import React from 'react';
-import { login } from '../../store/auth/actions';
 import { useDispatch } from 'react-redux';
 import { Avatar, Button, TextField, Box, Typography, Container, Stack } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { login } from 'store/auth/actions';
 
 
 function Login({isAuth}) {

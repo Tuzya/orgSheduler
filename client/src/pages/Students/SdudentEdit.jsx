@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import { deleteStudent, getStudent, setStudent, updateStudent } from '../../store/students/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
-import { getGroups } from '../../store/camp/actions';
+import { deleteStudent, getStudent, setStudent, updateStudent } from 'store/students/actions';
+import { getGroups } from 'store/camp/actions';
 import {
   Avatar,
   Box,
@@ -17,7 +17,7 @@ import {
   Typography
 } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import LinearIndeterminate from '../../components/Loader/LinearIndeterminate';
+import LinearIndeterminate from 'components/Loader/LinearIndeterminate';
 
 export default function StudentEdit() {
   const dispatch = useDispatch();

@@ -1,8 +1,8 @@
 import React from 'react';
-import { DAYS, GROUPS, groupTypes, MAX_NUMS_PHASES, schemaInit } from '../../consts';
-import LinearLoader from '../../components/Loader/LinearLoader';
-import { getSchemas, putSchemas } from '../../libs/reqFunct/Schemas';
-import useInput from '../../hooks/input-hook';
+import { DAYS, GROUPS, MAX_NUMS_PHASES, schemaInit } from '../../consts';
+import LinearLoader from 'components/Loader/LinearLoader';
+import { getSchemas, putSchemas } from 'libs/reqFunct/Schemas';
+import useInput from 'hooks/input-hook';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';

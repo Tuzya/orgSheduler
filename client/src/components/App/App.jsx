@@ -5,9 +5,9 @@ import { ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 
 import './App.css';
-import MainNav from '../../navigate/MainNav';
-import Navbar from '../../navigate/Navbar';
-import { createThemeOptions } from '../../consts';
+import MainNav from 'navigate/MainNav';
+import Navbar from 'navigate/Navbar';
+import { createThemeOptions } from 'consts';
 
 function App() {
   const isAuth = useSelector((state) => state.auth.isAuth);

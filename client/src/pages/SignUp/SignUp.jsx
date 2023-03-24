@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { createUser } from '../../store/auth/actions';
+import { createUser } from 'store/auth/actions';
 import { useDispatch } from 'react-redux';
 import { Avatar, Button, TextField, Box, Typography, Container, Stack } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
