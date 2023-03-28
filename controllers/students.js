@@ -2,7 +2,7 @@ const Student = require('../models/Student');
 const Group = require('../models/Group');
 
 exports.createStudents = async (req, res) => {
-  const {studentsNamesArr, groupId} = req.body;
+  const { studentsNamesArr, groupId } = req.body;
   try {
     const students = await Student.createStudents(studentsNamesArr, groupId);
     res.status(200).json(students);
@@ -13,7 +13,6 @@ exports.createStudents = async (req, res) => {
         .status(400)
         .json({ err: `This record already exist ${JSON.stringify(err.keyValue)}` });
     res.status(500).json({ err: err.message });
-
   }
 };
 
@@ -87,13 +86,16 @@ exports.getComment = async (req, res) => {
     //   { name, group, 'history.date': new Date(parseInt(date)) },
     //   { history: 1 }
     // ).lean();
-    const student = await Student.findOne(
-        { name, group },
-        { history: 1 }
-    ).lean();
-    if (student) {
+    const student = await Student.findOne({ name, group }, { history: 1 }).lean();
+    if (student && student.history.length !== 0) {
       const lastRecord = student.history[student.history.length - 1];
-      res.status(200).json({ rating: lastRecord.rating, comment: lastRecord.comment, quality: lastRecord.quality });
+      res
+        .status(200)
+        .json({
+          rating: lastRecord.rating,
+          comment: lastRecord.comment,
+          quality: lastRecord.quality
+        });
     } else {
       res.status(200).json({ rating: null, comment: null, quality: null });
     }
@@ -106,13 +108,16 @@ exports.getComment = async (req, res) => {
 exports.updComment = async (req, res) => {
   const { name, groupId, historyEl } = req.body;
   try {
-     const student = await Student.findOne({ name: name.replace(/\s+/g, ' ').trim(), group: groupId });
-    if(!student) throw new Error(`Student ${name} did not found`);
+    const student = await Student.findOne({
+      name: name.replace(/\s+/g, ' ').trim(),
+      group: groupId
+    });
+    if (!student) throw new Error(`Student ${name} did not found`);
     const index = student.history.findIndex((history) => history.date.getTime() === historyEl.date);
     if (index === -1) student.history.push(historyEl);
     else student.history[index] = historyEl;
     const updatedStudent = await student.save();
-    const lastComment = updatedStudent.history[updatedStudent.history.length-1]
+    const lastComment = updatedStudent.history[updatedStudent.history.length - 1];
     res.status(200).json(lastComment);
   } catch (err) {
     console.log('updStudent error', err);
@@ -120,15 +125,11 @@ exports.updComment = async (req, res) => {
   }
 };
 
-
 exports.updStudent = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, group_id, photoUrl } = req.body;
-    await Student.updateOne(
-      { _id: id },
-      { name: name, group: group_id, photoUrl: photoUrl }
-    );
+    await Student.updateOne({ _id: id }, { name: name, group: group_id, photoUrl: photoUrl });
     res.status(200).json({ message: 'ok' });
   } catch (err) {
     console.log('Student update error', err.message);
@@ -140,8 +141,8 @@ exports.delStudent = async (req, res) => {
   try {
     const { id } = req.params;
     const inactiveGroup = await Group.findOne({ name: 'Inactive' });
-    if(!inactiveGroup) throw new Error('Inactive group did not find. Launch "npm run seed".')
-    await Student.updateOne({ _id: id  }, [
+    if (!inactiveGroup) throw new Error('Inactive group did not find. Launch "npm run seed".');
+    await Student.updateOne({ _id: id }, [
       {
         $set: {
           name: { $concat: ['$name', '_', new Date().valueOf().toString(36)] },
@@ -155,4 +156,3 @@ exports.delStudent = async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 };
-

@@ -1,9 +1,9 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import useInput from '../../hooks/input-hook';
-import { groupTypes } from '../../consts';
-import { getGroups} from '../../store/camp/actions';
+import useInput from 'hooks/input-hook';
+import { groupTypes } from 'consts';
+import { getGroups} from 'store/camp/actions';
 import {
   Avatar,
   Button,
@@ -18,8 +18,8 @@ import {
   MenuItem
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import LinearIndeterminate from "../../components/Loader/LinearIndeterminate"
-import {createStudents} from "../../store/students/actions"
+import LinearIndeterminate from "components/Loader/LinearIndeterminate"
+import {createStudents} from "store/students/actions"
 
 export default function StudentsCreateForm() {
   const dispatch = useDispatch();

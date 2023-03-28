@@ -1,5 +1,5 @@
 import React from 'react';
-import { DAYTORU, GROUPS, PEOPLE_PER_GR, PEOPLE_PER_PAIR } from '../../consts';
+import { DAYTORU, GROUPS, PEOPLE_PER_GR, PEOPLE_PER_PAIR } from 'consts';
 
 export default function GroupSchedule({ shedule = [] }) {
   const pairs = (group, people) => {

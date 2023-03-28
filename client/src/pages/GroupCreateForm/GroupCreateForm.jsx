@@ -3,11 +3,11 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import './GroupCreateForm.css';
-import useInput from '../../hooks/input-hook';
-import { getSchemas } from '../../libs/reqFunct/Schemas';
-import { getShedule } from '../../libs/groups-splitter';
+import useInput from 'hooks/input-hook';
+import { getSchemas } from 'libs/reqFunct/Schemas';
+import { getShedule } from 'libs/groups-splitter';
 import { groupTypes, MAX_NUMS_PHASES } from '../../consts';
-import { createGroup, addGroup } from '../../store/camp/actions';
+import { createGroup, addGroup } from 'store/camp/actions';
 import {
   Avatar,
   Button,
@@ -22,7 +22,7 @@ import {
   MenuItem
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import LinearIndeterminate from '../../components/Loader/LinearIndeterminate';
+import LinearIndeterminate from 'components/Loader/LinearIndeterminate';
 
 export default function GroupCreateForm() {
   const history = useHistory();

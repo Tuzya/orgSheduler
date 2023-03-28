@@ -1,12 +1,12 @@
 import React, { lazy, Suspense } from 'react';
-import GroupItem from '../../components/GroupItem/GroupItem';
-import { getGroups } from '../../store/camp/actions';
+import GroupItem from 'components/GroupItem/GroupItem';
+import { getGroups } from 'store/camp/actions';
 import { useDispatch, useSelector } from 'react-redux';
-import { DAYTORU, groupTypes } from '../../consts';
+import { DAYTORU, groupTypes } from 'consts';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 const PopUpCompCodeReviewMessage = lazy(() =>
-  import('../../components/PopUp/PopUpCodeReviewMessage')
+  import('components/PopUp/PopUpCodeReviewMessage')
 );
 
 function GroupsList({ isAuth }) {
@@ -46,6 +46,7 @@ function GroupsList({ isAuth }) {
               phase={group.phase}
               people={group.students?.map((student) => student.name).sort()}
               groupType={group.groupType}
+              createdAt={group.createdAt}
               codeReviewDays={codeReviewDays}
             />
           );

@@ -3,10 +3,10 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import './Schema.css';
-import { daysCR, groupTypes } from '../../consts';
-import { getTeachersAndGaps, updateTeachersAndGaps } from '../../libs/reqFunct/teachersAndTimes';
-import useInput from '../../hooks/input-hook';
-import { getGroups, updAllGroups } from '../../store/camp/actions';
+import { daysCR, groupTypes } from 'consts';
+import { getTeachersAndGaps, updateTeachersAndGaps } from 'libs/reqFunct/teachersAndTimes';
+import useInput from 'hooks/input-hook';
+import { getGroups, updAllGroups } from 'store/camp/actions';
 import {
   Avatar,
   Box,

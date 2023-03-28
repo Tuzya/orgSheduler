@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getStudent } from '../../store/students/actions';
+import { getStudent } from 'store/students/actions';
 
 import { useSelector, useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
-import LinearLoader from '../../components/Loader/LinearIndeterminate';
+import LinearLoader from 'components/Loader/LinearIndeterminate';
 
 const ratingColor = {
   0: 'red',
