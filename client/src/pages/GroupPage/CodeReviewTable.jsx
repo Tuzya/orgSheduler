@@ -163,8 +163,8 @@ function CodeReviewTable({ group, isAuth }) {
     }
     const form = [
       { name: 'Comments Student' },
-      { name: 'Last Comment', id: 'comment' },
-      { name: 'Last Rating', id: 'rating', options: rating },
+      { name: 'Last Comment/Comment', id: 'comment' },
+      { name: 'Last Rating/Rating', id: 'rating', options: rating },
       { name: 'Quality', id: 'quality', options: quality }
     ];
     const data = {

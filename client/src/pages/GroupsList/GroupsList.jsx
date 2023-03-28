@@ -46,6 +46,7 @@ function GroupsList({ isAuth }) {
               phase={group.phase}
               people={group.students?.map((student) => student.name).sort()}
               groupType={group.groupType}
+              createdAt={group.createdAt}
               codeReviewDays={codeReviewDays}
             />
           );
