@@ -10,7 +10,7 @@ function checkNoAuth(req, res, next) {
   if (!req.isAuthenticated()) {
     next();
   } else {
-    res.status(401).json({ err: 'Alredy Authorized' });
+    res.status(401).json({ err: 'Already Authorized' });
   }
 }
 
