@@ -24,7 +24,10 @@ exports.allGroups = async (req, res) => {
 exports.groups = async (req, res) => {
   try {
     const group = await Group.findOne({ _id: req.params.id }).lean();
-    if (group) group.students = await Student.find({ group: group._id }).lean();
+    if (group) {
+      const settings = req.isAuthenticated() ? {} : { history: 0 };
+      group.students = await Student.find({ group: group._id }, settings).lean();
+    }
     res.status(200).json(group);
   } catch (err) {
     console.error('getGroup error', err.message);
