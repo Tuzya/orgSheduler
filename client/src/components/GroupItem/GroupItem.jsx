@@ -12,6 +12,11 @@ import ListItem from '@mui/material/ListItem';
 import EditIcon from '@mui/icons-material/Edit';
 import PetsIcon from '@mui/icons-material/Pets';
 import InfoIcon from '@mui/icons-material/Info';
+import { groupTypes } from 'consts';
+
+const getFormatDate = (date, addWeeks) =>
+  `${dayjs(date).format('DD.MM')}-${dayjs(date).add(addWeeks, 'week').format('DD.MM.')}`;
+const isOnline = (grType) => grType === groupTypes.online;
 
 function GroupItem({
   groupPage,
@@ -36,8 +41,14 @@ function GroupItem({
           primaryTypographyProps={{ style: { fontSize: '1.2rem' } }}
           primary={name}
           secondaryTypographyProps={{ style: { fontSize: '1rem' } }}
-          secondary={`${groupType}. ${isAuth ? dayjs(createdAt).format('DD.MM.') : ''}  
-          Фаза: ${phase}. Студентов: ${people.length}. 
+          secondary={`${groupType}. ${
+            isAuth
+              ? isOnline(groupType)
+                ? getFormatDate(createdAt, 12)
+                : getFormatDate(createdAt, 15)
+              : ''
+          }  
+          Фаза: ${phase}. ${isAuth ? 'Студентов: ' + people.length : '' }
           ${codeReviewDays.length ? 'Дни\u00A0кодревью:' + codeReviewDays : ''}`}
           title={people.join('\n')}
         />
