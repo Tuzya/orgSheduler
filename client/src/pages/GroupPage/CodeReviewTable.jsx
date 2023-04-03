@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Modal } from '@daypilot/modal';
@@ -9,7 +10,7 @@ import { getTeachersAndGaps } from 'libs/reqFunct/teachersAndTimes';
 import { isObjEmpty } from 'libs/functions';
 import { DAYS, DAYTORU, groupTypes, quality, rating } from 'consts';
 import { getComment, updateStudentComment } from 'store/students/actions';
-import { updCRTablesGroups } from 'store/camp/actions';
+import { getGroup, updCRTablesGroups } from 'store/camp/actions';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -53,6 +54,7 @@ function CodeReviewTable({ group, isAuth }) {
   const [teachers, setTeachers] = React.useState([]);
   const [isEdit, setEdit] = React.useState(false);
   const history = useHistory();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (!isObjEmpty(group)) {
@@ -95,7 +97,7 @@ function CodeReviewTable({ group, isAuth }) {
     let counter = 0;
     const cellsInTable = teachers.length * timeGaps.length - teachers.length;
     if (resCRTables.length && cellsInTable * resCRTables.length < group.students.length)
-    alert('Студенты не помещаются в таблицу!');
+      alert('Студенты не помещаются в таблицу!');
     const crTablesData = resCRTables.map((el) => {
       let index = 0;
       const tableData = rowsInit(teachers, timeGaps, group.groupType);
@@ -131,6 +133,7 @@ function CodeReviewTable({ group, isAuth }) {
     setLoad(true);
     const res = await updCRTablesGroups(crTablesRef.current, group._id);
     if (res.err) alert(`Update Table Error ${res.err}`);
+    dispatch(getGroup(group._id)); // todo передалать, чтобы обновленные код ревью писались в глоб стор
     setLoad(false);
   };
 
@@ -170,7 +173,7 @@ function CodeReviewTable({ group, isAuth }) {
     const data = {
       comment: lastRecord.comment || '',
       rating: lastRecord.rating || '5',
-      quality: lastRecord.quality || 'normal',
+      quality: lastRecord.quality || 'normal'
     };
 
     const modal = await Modal.form(form, data);
