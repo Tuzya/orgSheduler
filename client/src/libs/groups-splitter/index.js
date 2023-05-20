@@ -54,7 +54,6 @@ import fisherYatesShuffle from './fisherYatesShuffles';
  * @param {{offline: shedule, online: shedule}} schemas - { offline: shedule, online: shedule }
  * @param {boolean} shouldShuffle - boolean
  */
-// eslint-disable-next-line import/prefer-default-export
 export function getShedule(students, weeksCount, isOnline = false, phase, schemas, shouldShuffle) {
   console.log('Invoking getShedule', students, weeksCount, isOnline, phase, schemas, shouldShuffle);
   // const gotPairs = getPairs(students, shouldShuffle);
