@@ -24,45 +24,45 @@ function addMiddlewares(router) {
   router.use(corsMiddleware);
   router.use(express.static('public'));
 
-  passport.use(new LocalStrategy(
-    async (username, password, done) => {
-      const currentUser = await User.findOne({ username });
-      if (currentUser === null) {
-        return done('Error. Username not found!');
-      }
-      const isPasswordCorrect = await bcrypt.compare(password, currentUser.password);
-      if (isPasswordCorrect) {
-        const user = {
-          id: currentUser.id,
-          nickname: currentUser.nickname,
-          email: currentUser.email,
-        };
-        return done(null, user);
-      }
-      return done('Error. Password not correct!');
-    },
-  ));
+  // passport.use(new LocalStrategy(
+  //   async (username, password, done) => {
+  //     const currentUser = await User.findOne({ username });
+  //     if (currentUser === null) {
+  //       return done('Error. Username not found!');
+  //     }
+  //     const isPasswordCorrect = await bcrypt.compare(password, currentUser.password);
+  //     if (isPasswordCorrect) {
+  //       const user = {
+  //         id: currentUser.id,
+  //         nickname: currentUser.nickname,
+  //         email: currentUser.email,
+  //       };
+  //       return done(null, user);
+  //     }
+  //     return done('Error. Password not correct!');
+  //   },
+  // ));
 
-  router.use(session({
-    key: 'elbrus_scheduler_sid',
-    store: new MongoStore(mongooseStoreOpt),
-    secret: process.env.COOKIESSECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 },
-  }));
+  // router.use(session({
+  //   key: 'elbrus_scheduler_sid',
+  //   store: new MongoStore(mongooseStoreOpt),
+  //   secret: process.env.COOKIESSECRET,
+  //   resave: false,
+  //   saveUninitialized: false,
+  //   cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 },
+  // }));
 
-  router.use(passport.initialize());
-  router.use(passport.session());
+  // router.use(passport.initialize());
+  // router.use(passport.session());
 
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
+  // passport.serializeUser((user, done) => {
+  //   done(null, user.id);
+  // });
 
-  passport.deserializeUser(async (id, done) => {
-    const user = await User.findById(id).select({ password: 0, __v: 0}).lean();
-    done(null, user);
-  });
+  // passport.deserializeUser(async (id, done) => {
+  //   const user = await User.findById(id).select({ password: 0, __v: 0}).lean();
+  //   done(null, user);
+  // });
 }
 
 function addErrorHandlers(router) {
