@@ -1,14 +1,14 @@
 const express = require('express');
 const createError = require('http-errors');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+// const passport = require('passport');
+// const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+// const MongoStore = require('connect-mongo');
 
 const morgan = require('morgan');
 const bcrypt = require('bcrypt');
-const mongooseStoreOpt = require('../connection');
-const User = require('../models/User');
+// const mongooseStoreOpt = require('../connection');
+// const User = require('../models/User');
 
 function addMiddlewares(router) {
   router.use(express.urlencoded({ limit: '30mb', extended: true }));

@@ -2,7 +2,7 @@ const path = require('path');
 require('dotenv').config();
 const express = require('express');
 
-const indexRouter = require('./routes/index');
+// const indexRouter = require('./routes/index');
 // const groupsRouter = require('./routes/groups');
 // const schemasRouter = require('./routes/schemas');
 // const teachersRouter = require('./routes/teachers');
