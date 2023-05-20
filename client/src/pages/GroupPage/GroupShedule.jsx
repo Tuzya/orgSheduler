@@ -1,11 +1,12 @@
 import React from 'react';
 import { DAYTORU, GROUPS, PEOPLE_PER_GR, PEOPLE_PER_PAIR } from 'consts';
+import cutNames from './cutNames';
 
 export default function GroupSchedule({ shedule = [] }) {
   const pairs = (group, people) => {
     let peoplePerGroup = PEOPLE_PER_PAIR;
     let groupC = [...group];
-    let groupsCount = groupC.length / 2; //кол-во пар
+    let groupsCount = groupC.length / 2; // кол-во пар
     const res = [];
     if (people === GROUPS.solo) return [['Solo']];
     if (people === GROUPS.groups) {
@@ -41,7 +42,7 @@ export default function GroupSchedule({ shedule = [] }) {
                 <b>{DAYTORU[day]}</b>
                 {Object.keys(shedule[week][day]).map((people) =>
                   pairs(shedule[week][day][people], people).map((pair, i) => (
-                    <li key={i}>{pair.join(' --- ')}</li>
+                    <li key={i}>{pair.map(cutNames).join(' --- ')}</li>
                   ))
                 )}
               </ul>

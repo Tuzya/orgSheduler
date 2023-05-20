@@ -4,10 +4,10 @@ const DUMMY = -1;
 // returns an array of round representations (array of player pairs).
 // http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
 export default function getPairs(students, shouldShuffle = true) {
-  let n;      //num players
+  let n; // num players
   const rs = []; // rs = round array
   let ps = [...students];
-  if(shouldShuffle) ps = shuffle(students);
+  if (shouldShuffle) ps = shuffle(students);
   if (ps.length % 2 === 1) ps.push('Solo');
   n = ps.length;
   if (!ps) {
