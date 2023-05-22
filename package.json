@@ -27,7 +27,9 @@
     "start": "node app.js",
     "seed": "node ./seeders/createDefaultGroups.js",
     "seed_st": "node ./seeders/portStudents.js",
-    "build": "cd client && npm install && npm run build"
+    "build": "cd client && npm install && npm run build",
+    "local-build": "npm install && NODE_ENV=production npm run seed && npm run build",
+    "local-start": "NODE_ENV=production npm start"
   },
   "engines": {
     "node": "18.x"

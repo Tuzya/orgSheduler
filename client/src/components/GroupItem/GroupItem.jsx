@@ -48,7 +48,7 @@ function GroupItem({
                 : getFormatDate(createdAt, 15)
               : ''
           }  
-          Фаза: ${phase}. ${isAuth ? 'Студентов: ' + people.length : '' }
+          Фаза: ${phase}. ${isAuth ? 'Студентов: ' + people.length : ''}
           ${codeReviewDays.length ? 'Дни\u00A0кодревью:' + codeReviewDays : ''}`}
           title={people.join('\n')}
         />

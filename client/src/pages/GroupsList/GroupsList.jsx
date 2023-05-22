@@ -5,13 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DAYTORU, groupTypes } from 'consts';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
-const PopUpCompCodeReviewMessage = lazy(() =>
-  import('components/PopUp/PopUpCodeReviewMessage')
-);
+const PopUpCompCodeReviewMessage = lazy(() => import('components/PopUp/PopUpCodeReviewMessage'));
 
-function GroupsList({ isAuth }) {
+function GroupsList() {
   const groups = useSelector((state) => state.camp.groups);
   const isLoading = useSelector((state) => state.camp.isLoading);
+  const isAuth = useSelector((state) => state.auth.isAuth);
+
   const dispatch = useDispatch();
 
   React.useEffect(() => {
